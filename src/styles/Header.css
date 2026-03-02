@@ -1,0 +1,94 @@
+/* Configuration de la barre de navigation */
+.navbar {
+  display: grid;
+  /* Colonne 1 : Taille du logo | Colonne 2 : Tout le reste */
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  padding: 15px 5%;
+  background-color: #ffffff;
+  border-bottom: 2px solid #f4f4f4;
+  gap: 25px; /* Espace entre le logo et le bloc de texte */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* Bloc contenant l'image du logo */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-image {
+  /* Cette hauteur permet de couvrir le titre + la nav */
+  height: 90px; 
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.logo-image:hover {
+  transform: scale(1.05); /* Petit effet de zoom au survol */
+}
+
+/* Bloc regroupant Titre + Menu */
+.header-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; /* Change 'flex-start' par 'center' */
+  text-align: center;  /* Assure que le texte lui-même est centré */
+  width: 100%;         /* Prend toute la place restante */
+}
+
+/* Style du titre */
+.header-content h1 {
+  margin: 0;
+  font-family: 'Playfair Display', serif; /* Si tu as une police élégante */
+  font-size: 3rem;
+  color: #4a0404; /* Couleur bordeaux */
+  letter-spacing: 1px;
+  
+
+}
+
+/* Liste des liens de navigation */
+.nav-links {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0; /* Espace entre le titre et les liens */
+  gap: 25px;
+}
+
+/* Style des liens individuels */
+.nav-links a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  transition: color 0.3s ease;
+  position: relative;
+}
+
+/* Effet au survol des liens */
+.nav-links a:hover {
+  color: #4a0404;
+}
+
+/* Petite barre qui s'affiche sous le lien au survol */
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: #4a0404;
+  transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+

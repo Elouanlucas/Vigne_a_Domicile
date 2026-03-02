@@ -1,0 +1,23 @@
+.home-content {
+  display: grid;
+  /* 3/4 pour la première colonne, 1/4 pour la deuxième */
+  grid-template-columns: 3fr 1fr; 
+  gap: 30px; /* Un bel espace entre les deux */
+  padding: 20px;
+  align-items: start;
+}
+
+.Panier_style{
+    background-color: #4a0404;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* On s'assure que sur mobile (petit écran), 
+   les produits et le panier passent l'un sous l'autre */
+@media (max-width: 1024px) {
+  .home-content {
+    grid-template-columns: 1fr;
+  }
+}
