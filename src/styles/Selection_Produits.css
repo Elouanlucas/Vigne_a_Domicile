@@ -1,0 +1,61 @@
+/* Le titre et le texte */
+.produits-tout {
+  padding: 20px;
+  width: 100%;
+}
+
+/* Le conteneur qui défile */
+.produits-container-horizontal {
+  display: flex;
+  overflow-x: auto; /* Active le défilement horizontal */
+  gap: 20px;
+  padding: 20px 10px;
+  scroll-behavior: smooth; /* Pour un défilement fluide */
+  scrollbar-width: thin; /* Pour un scrollbar discret sur Firefox */
+}
+
+/* Masquer la barre de défilement moche sur Chrome/Safari (Optionnel) */
+.produits-container-horizontal::-webkit-scrollbar {
+  height: 8px;
+}
+.produits-container-horizontal::-webkit-scrollbar-thumb {
+  background: #4a0404; /* Couleur bordeaux */
+  border-radius: 10px;
+}
+
+/* La carte de chaque vin */
+.vin-card {
+  flex: 0 0 250px; /* IMPORTANT : empêche la carte de rétrécir (largeur fixe 250px) */
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.vin-card:hover {
+  transform: translateY(-5px);
+}
+
+.vin-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain; /* Garde les proportions de la bouteille */
+  margin-bottom: 10px;
+}
+
+.vin-price {
+  font-weight: bold;
+  color: #4a0404;
+}
+
+.btn-add {
+  background: #4a0404;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+}

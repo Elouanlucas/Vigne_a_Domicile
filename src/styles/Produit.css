@@ -8,10 +8,14 @@
 }
 
 .Panier_style{
+    position: sticky;
+    top: 20px;
+    height: calc(100vh - 40px);
     background-color: #4a0404;
     color: white;
     padding: 20px;
     border-radius: 8px;
+    overflow-y: auto;
 }
 
 /* On s'assure que sur mobile (petit écran), 
