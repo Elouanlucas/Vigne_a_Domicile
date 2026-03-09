@@ -1,0 +1,35 @@
+.preferences-page {
+    padding: 20px;
+}
+.preferences-page h1 {
+    color: #333;
+}
+.preferences-page label {
+    display: block;
+    margin-bottom: 10px;
+}
+.preferences-page input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
+.preferences-page input[type="checkbox"]:checked {
+    background-color: #333;
+    position: relative;
+}
+
+.preferences-page input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 14px;
+}

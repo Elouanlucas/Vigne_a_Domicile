@@ -19,6 +19,7 @@ const CartBadge = styled(Badge)`
 const Header = () => {
   const [isHovered, setIsHovered] = useState(false);
   const { panierItems, handleRetirer, handleToutRetirer } = useCart();
+  const totalQuantity = panierItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <header className="navbar">
@@ -34,6 +35,7 @@ const Header = () => {
                 <li><a href="/produits">Produits</a></li>
                 <li><a href="/APropos">A propos</a></li>
                 <li><a href="/contact">Contact</a></li>
+                <li><a href='/Preferences'>Preferences</a></li>
                 
             </ul>
             </nav>
@@ -42,7 +44,7 @@ const Header = () => {
             {/* Le panier sera intégré ici */}
                 <IconButton>
                     <ShoppingCartIcon fontSize="very_large" />
-                    <CartBadge badgeContent={panierItems.length} color="primary" overlap="circular" />
+                    <CartBadge badgeContent={totalQuantity} color="primary" overlap="circular" />
                 </IconButton>
                 {isHovered && (
                   <div className="panier-dropdown">

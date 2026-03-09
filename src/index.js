@@ -6,6 +6,9 @@ import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Produit from './pages/Produit';
 import APropos from './pages/APropos';
+import Error from './pages/Error';
+import Preferences from './pages/Preferences';
+
 import { CartProvider } from './context/CartContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -19,6 +22,9 @@ root.render(
           <Route path="/contact" element={<Contact />} />
           <Route path="/produits" element={<Produit />} />
           <Route path="/APropos" element={<APropos />} />
+          <Route path="/Preferences" element={<Preferences />} />
+
+          <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>
     </CartProvider>
