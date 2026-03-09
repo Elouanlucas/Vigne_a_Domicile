@@ -1,5 +1,8 @@
 import '../styles/Header.css';
 import logoSommelier from '../assets/icon/logo_sommelier.png';
+import { useState } from 'react';
+import Panier from './Panier';
+import { useCart } from '../context/CartContext';
 
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
@@ -14,6 +17,9 @@ const CartBadge = styled(Badge)`
 `;
 
 const Header = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const { panierItems, handleRetirer, handleToutRetirer } = useCart();
+
   return (
     <header className="navbar">
         <div className="logo">
@@ -32,12 +38,17 @@ const Header = () => {
             </ul>
             </nav>
         </div>
-        <div className="header-panier">
+        <div className="header-panier" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             {/* Le panier sera intégré ici */}
                 <IconButton>
                     <ShoppingCartIcon fontSize="very_large" />
-                    <CartBadge badgeContent={2} color="primary" overlap="circular" />
+                    <CartBadge badgeContent={panierItems.length} color="primary" overlap="circular" />
                 </IconButton>
+                {isHovered && (
+                  <div className="panier-dropdown">
+                    <Panier items={panierItems} onRetirer={handleRetirer} onToutRetirer={handleToutRetirer} />
+                  </div>
+                )}
         </div>
     </header>
   );
