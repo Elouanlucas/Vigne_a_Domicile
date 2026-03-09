@@ -1,13 +1,13 @@
 /* Configuration de la barre de navigation */
 .navbar {
   display: grid;
-  /* Colonne 1 : Taille du logo | Colonne 2 : Tout le reste */
-  grid-template-columns: auto 1fr;
+  /* 3 colonnes : Logo | Contenu central | Panier à droite */
+  grid-template-columns: auto 1fr auto; 
   align-items: center;
   padding: 15px 5%;
   background-color: #ffffff;
   border-bottom: 2px solid #f4f4f4;
-  gap: 25px; /* Espace entre le logo et le bloc de texte */
+  gap: 25px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -90,5 +90,11 @@
 
 .nav-links a:hover::after {
   width: 100%;
+}
+
+/* On s'assure que le panier est bien aligné à droite */
+.header-panier {
+  display: flex;
+  justify-content: flex-end;
 }
 

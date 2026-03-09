@@ -1,27 +1,45 @@
+/* 1. Assurer que la page prend toute la hauteur */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* 2. Flexbox pour Header - Contenu - Footer */
+.produit-page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Force la hauteur à la taille de l'écran */
+}
+
+/* 3. La zone centrale (Produits + Panier) prend tout l'espace disponible */
 .home-content {
   display: grid;
-  /* 3/4 pour la première colonne, 1/4 pour la deuxième */
-  grid-template-columns: 3fr 1fr; 
-  gap: 30px; /* Un bel espace entre les deux */
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+  flex: 1;         /* Crucial : s'étire entre le Header et le Footer */
+  overflow: hidden; /* Empêche la page entière de scroller */
   padding: 20px;
-  align-items: start;
+  background-color: #f9f9f9;
 }
 
-.Panier_style{
-    position: sticky;
-    top: 20px;
-    height: calc(100vh - 40px);
-    background-color: #4a0404;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    overflow-y: auto;
+/* 4. Les colonnes avec scroll indépendant */
+.Produits_style {
+  overflow-y: auto; /* Scroll uniquement ici */
+  padding-right: 10px;
 }
 
-/* On s'assure que sur mobile (petit écran), 
-   les produits et le panier passent l'un sous l'autre */
+.Panier_style {
+  background-color: #4a0404;
+  color: white;
+  border-radius: 8px;
+  overflow-y: auto; /* Le panier scrolle s'il est trop long */
+  padding: 20px;
+}
+
+/* Responsive */
 @media (max-width: 1024px) {
   .home-content {
     grid-template-columns: 1fr;
+    overflow-y: auto; /* Sur mobile, on autorise le scroll global */
   }
 }

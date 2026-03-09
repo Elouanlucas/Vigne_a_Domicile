@@ -5,6 +5,7 @@ import './styles/index.css';
 import Home from './pages/Home';
 import Contact from './pages/Contact';
 import Produit from './pages/Produit';
+import APropos from './pages/APropos';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -15,6 +16,7 @@ root.render(
         <Route path="/" element={<Home />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/produits" element={<Produit />} />
+        <Route path="/APropos" element={<APropos />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

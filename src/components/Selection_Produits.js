@@ -8,8 +8,6 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 
 const Produits = ({ onAjouter }) => {
-  // On crée un état local pour stocker les quantités de chaque produit
-  // { id_du_produit: quantite }
   const [quantities, setQuantities] = useState({});
 
   const handleQtyChange = (id, value) => {
@@ -20,7 +18,7 @@ const Produits = ({ onAjouter }) => {
         [id]: numValue
       });
     }
-  };
+  };  
 
   const renderWineCard = (vin) => {
     const qty = quantities[vin.id] || 1; // Quantité par défaut = 1
