@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Email, Phone, LocationOn, Instagram, LinkedIn, Facebook } from '@mui/icons-material';
+import { ThemeContext } from '../context/ThemeContext';
 import '../styles/Contacter.css'; // Crée ce fichier pour le style
 
 function Contacter() {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <main className="contact-page">
+    <main className={`contact-page ${theme}`}>
       <div className="contact-card">
         <h1>Nous contacter</h1>
         <p className="subtitle">Une question ? Une envie de découvrir nos vins ? Nous sommes là pour vous.</p>

@@ -1,27 +1,51 @@
+/* --- Base de la page --- */
 .preferences-page {
     padding: 20px;
+    min-height: 80vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* --- Thèmes --- */
+.preferences-page.light {
+    background-color: white;
+    color: black;
+}
+
+.preferences-page.dark {
+    background-color: #121212;
+    color: white;
+}
+
+/* --- Titres --- */
 .preferences-page h1 {
-    color: #333;
+    /* Utilise la couleur actuelle du thème */
+    color: inherit; 
 }
+
+/* --- Label --- */
 .preferences-page label {
     display: block;
     margin-bottom: 10px;
+    cursor: pointer;
 }
+
+/* --- Checkbox (Style global) --- */
 .preferences-page input[type="checkbox"] {
     appearance: none;
     width: 20px;
     height: 20px;
-    border: 2px solid #333;
+    border: 2px solid currentColor; /* S'adapte à la couleur du texte */
     border-radius: 5px;
     cursor: pointer;
     vertical-align: middle;
     margin-right: 10px;
+    position: relative;
+    transition: all 0.2s;
 }
 
+/* --- Checkbox (État coché) --- */
 .preferences-page input[type="checkbox"]:checked {
-    background-color: #333;
-    position: relative;
+    background-color: currentColor; /* Devient noir en clair, blanc en sombre */
 }
 
 .preferences-page input[type="checkbox"]:checked::after {
@@ -30,6 +54,11 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
-    font-size: 14px;
+    /* Couleur inversée par rapport au fond de la case */
+    color: var(--checked-icon-color, #fff); 
+}
+
+/* Ajustement spécifique pour le mode sombre de la coche */
+.preferences-page.dark input[type="checkbox"]:checked::after {
+    color: #000; /* La coche devient noire sur fond blanc */
 }

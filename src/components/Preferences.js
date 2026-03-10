@@ -1,20 +1,21 @@
 import '../styles/Preferences.css';
-import { useState } from 'react';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
 function Preferences() {
-    const [isDarkMode, setIsDarkMode] = useState(false);
+    const { theme, toggleTheme } = useContext(ThemeContext);
 
     return (
-        <div className='preferences-page'>
-        <h1>Préférences Utilisateur</h1>
-        <label>
-        <input 
-            type="checkbox" 
-            checked={isDarkMode} 
-            onChange={(e) => setIsDarkMode(e.target.checked)} 
-        />
-        Mode Sombre
-        </label>
+        <div className= {`preferences-page ${theme}`}>
+            <h1>Préférences Utilisateur</h1>
+            <label>
+                <input 
+                    type="checkbox" 
+                    checked={theme === 'dark'} 
+                    onChange={toggleTheme} 
+                />
+                Mode Sombre
+            </label>
         </div>
     );
 };

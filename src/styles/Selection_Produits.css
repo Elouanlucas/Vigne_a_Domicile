@@ -2,37 +2,38 @@
 .produits-tout {
   padding: 20px;
   width: 100%;
+  color: var(--text-color);
 }
 
 /* Le conteneur qui défile */
 .produits-container-horizontal {
   display: flex;
-  overflow-x: auto; /* Active le défilement horizontal */
+  overflow-x: auto;
   gap: 20px;
   padding: 20px 10px;
-  scroll-behavior: smooth; /* Pour un défilement fluide */
-  scrollbar-width: thin; /* Pour un scrollbar discret sur Firefox */
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
-/* Masquer la barre de défilement moche sur Chrome/Safari (Optionnel) */
+/* Barre de défilement */
 .produits-container-horizontal::-webkit-scrollbar {
   height: 8px;
 }
 .produits-container-horizontal::-webkit-scrollbar-thumb {
-  background: #4a0404; /* Couleur bordeaux */
+  background: var(--primary-color);
   border-radius: 10px;
 }
 
 /* La carte de chaque vin */
 .vin-card {
-  flex: 0 0 250px; /* IMPORTANT : empêche la carte de rétrécir (largeur fixe 250px) */
-  background: white;
-  border: 1px solid #eee;
+  flex: 0 0 250px;
+  background: var(--card-bg); /* S'adapte au mode sombre */
+  border: 1px solid var(--border-color, #eee);
   border-radius: 12px;
   padding: 15px;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-  transition: transform 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s, background-color 0.3s;
 }
 
 .vin-card:hover {
@@ -42,20 +43,25 @@
 .vin-image {
   width: 100%;
   height: 200px;
-  object-fit: contain; /* Garde les proportions de la bouteille */
+  object-fit: contain;
   margin-bottom: 10px;
 }
 
 .vin-price {
   font-weight: bold;
-  color: #4a0404;
+  color: var(--primary-color); /* Bordeaux dynamique */
 }
 
 .btn-add {
-  background: #4a0404;
+  background: var(--primary-color);
   color: white;
   border: none;
   padding: 8px 15px;
   border-radius: 5px;
   cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.btn-add:hover {
+  opacity: 0.8;
 }

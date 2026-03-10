@@ -5,9 +5,28 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-color);
+  color: var(--text-color);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Variables pour le thème clair */
+:root {
+  --primary-color: #4a0404;
+  --bg-color: #fff;
+  --text-color: #333333;
+  --border-color: #eee;
+}
+
+/* Variables pour le thème sombre */
+body.dark {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --primary-color: #d32f2f; /* Bordeaux plus clair pour le mode sombre */
+  --card-bg: #1e1e1e; /* Un gris sombre pour les cartes en mode nuit */
+  --border-color: #333;
 }

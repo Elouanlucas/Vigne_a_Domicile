@@ -4,31 +4,28 @@
   margin: 40px auto;
   padding: 0 20px;
   line-height: 1.8;
-  color: #333;
+  color: var(--text-color); /* Variable pour le texte */
 }
 
 .histoire-header h1 {
   text-align: center;
-  color: #4a0404;
+  color: var(--primary-color); /* Ton bordeaux dynamique */
   font-size: 2.5rem;
   margin-bottom: 50px;
 }
+
 /* Titres de sections (H2) */
 .histoire-section h2, 
 .context-section h2 {
-  color: #4a0404; /* Même couleur que le H1 */
+  color: var(--primary-color);
   font-size: 1.6rem;
   margin-bottom: 25px;
-  padding-bottom: 6px; /* Espace entre le texte et la ligne */
-  
-  /* La délimitation sur toute la largeur */
-  border-bottom: 1px solid #4a0404; 
-  
-  /* Optionnel : si tu veux que la ligne ne fasse pas toute la largeur de l'écran, 
-     mais seulement celle du bloc histoire-container, c'est parfait comme ça. */
+  padding-bottom: 6px;
+  /* La ligne de délimitation utilise aussi la couleur primaire */
+  border-bottom: 1px solid var(--primary-color); 
 }
 
-/* Harmonisation des deux classes de conteneurs pour le même style */
+/* Harmonisation des deux classes de conteneurs */
 .histoire-image-container, 
 .context-image-container {
   display: flex;
@@ -37,12 +34,10 @@
   margin: 40px 0;
 }
 
-/* Gestion du texte et de l'image */
 .histoire-text {
   flex: 1;
 }
 
-/* Harmonisation des deux classes d'images */
 .histoire-image, 
 .context-image {
   flex: 0 0 40%;
@@ -53,29 +48,30 @@
   width: 100%;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  /* Ombre légèrement adaptée pour le mode sombre */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2); 
   display: block;
 }
 
-/* La logique du zigzag (Reverse) */
 .histoire-image-container.reverse {
   flex-direction: row-reverse;
 }
 
-/* Footer et sections */
 .histoire-section {
   margin-bottom: 60px;
 }
 
+/* Footer et sections */
 .histoire-credits {
   margin-top: 60px;
   padding: 20px;
-  background-color: #f9f9f9;
+  /* Utilisation de la couleur de fond de carte si tu en as une, sinon un gris très léger */
+  /*background-color: var(--card-bg, gray); */
   border-radius: 8px;
-  border-top: 2px solid #4a0404;
+  border-top: 2px solid var(--primary-color);
 }
 
-/* Responsive : passage en colonne sur mobile */
+/* Responsive */
 @media (max-width: 768px) {
   .histoire-image-container, 
   .context-image-container {

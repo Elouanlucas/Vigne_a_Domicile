@@ -15,7 +15,7 @@ function Produit() {
         <div className="Produits_style">
           <Produits onAjouter={handleAjouterAuPanier} />
         </div>
-        <div className="Panier_style">
+        <div className="Panier_style" >
           <Panier items={panierItems} onRetirer={handleRetirer} onToutRetirer={handleToutRetirer}/>
         </div>
       </div>

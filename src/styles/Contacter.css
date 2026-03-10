@@ -4,11 +4,12 @@
   align-items: center;
   justify-content: center;
   padding: 40px;
-  background-color: #f4f4f4;
+  background-color: var(--bg-color);
 }
 
 .contact-card {
-  background: white;
+  background: var(--bg-color);
+  color: var(--text-color);
   padding: 40px;
   border-radius: 16px;
   box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -17,8 +18,8 @@
   text-align: center;
 }
 
-.contact-card h1 { color: #4a0404; margin-bottom: 10px; }
-.subtitle { color: #666; margin-bottom: 30px; }
+.contact-card h1 { color: var(--primary-color); margin-bottom: 10px; }
+.subtitle { color: var(--text-color); margin-bottom: 30px; }
 
 .info-item {
   display: flex;
@@ -28,9 +29,9 @@
   font-size: 1.1rem;
 }
 
-.icon { color: #4a0404; }
+.icon { color: var(--primary-color); }
 
-.social-section { margin-top: 40px; border-top: 1px solid #eee; padding-top: 20px; }
+.social-section { margin-top: 40px; border-top: 1px solid var(--text-color); padding-top: 20px; }
 
 .social-icons {
   display: flex;

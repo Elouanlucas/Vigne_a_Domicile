@@ -1,14 +1,15 @@
 /* Configuration de la barre de navigation */
 .navbar {
   display: grid;
-  /* 3 colonnes : Logo | Contenu central | Panier à droite */
   grid-template-columns: auto 1fr auto; 
   align-items: center;
   padding: 15px 5%;
-  background-color: #ffffff;
-  border-bottom: 2px solid #f4f4f4;
+  /* Utilisation des variables pour le fond et la bordure */
+  background-color: var(--bg-color);
+  border-bottom: 2px solid var(--border-color, #f4f4f4);
   gap: 25px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
 }
 
 /* Bloc contenant l'image du logo */
@@ -19,7 +20,6 @@
 }
 
 .logo-image {
-  /* Cette hauteur permet de couvrir le titre + la nav */
   height: 90px; 
   width: auto;
   object-fit: contain;
@@ -27,7 +27,7 @@
 }
 
 .logo-image:hover {
-  transform: scale(1.05); /* Petit effet de zoom au survol */
+  transform: scale(1.05);
 }
 
 /* Bloc regroupant Titre + Menu */
@@ -35,20 +35,18 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center; /* Change 'flex-start' par 'center' */
-  text-align: center;  /* Assure que le texte lui-même est centré */
-  width: 100%;         /* Prend toute la place restante */
+  align-items: center;
+  text-align: center;
+  width: 100%;
 }
 
 /* Style du titre */
 .header-content h1 {
   margin: 0;
-  font-family: 'Playfair Display', serif; /* Si tu as une police élégante */
+  font-family: 'Playfair Display', serif;
   font-size: 3rem;
-  color: #4a0404; /* Couleur bordeaux */
+  color: var(--primary-color); /* Utilisation de la variable bordeaux */
   letter-spacing: 1px;
-  
-
 }
 
 /* Liste des liens de navigation */
@@ -56,14 +54,14 @@
   display: flex;
   list-style: none;
   padding: 0;
-  margin: 8px 0 0 0; /* Espace entre le titre et les liens */
+  margin: 8px 0 0 0;
   gap: 25px;
 }
 
 /* Style des liens individuels */
 .nav-links a {
   text-decoration: none;
-  color: #555;
+  color: var(--text-color); /* Utilisation de la variable de texte */
   font-weight: 500;
   font-size: 0.95rem;
   text-transform: uppercase;
@@ -73,10 +71,10 @@
 
 /* Effet au survol des liens */
 .nav-links a:hover {
-  color: #4a0404;
+  color: var(--primary-color);
 }
 
-/* Petite barre qui s'affiche sous le lien au survol */
+/* Petite barre sous le lien */
 .nav-links a::after {
   content: '';
   position: absolute;
@@ -84,7 +82,7 @@
   height: 2px;
   bottom: -4px;
   left: 0;
-  background-color: #4a0404;
+  background-color: var(--primary-color);
   transition: width 0.3s ease;
 }
 
@@ -92,11 +90,12 @@
   width: 100%;
 }
 
-/* On s'assure que le panier est bien aligné à droite */
+/* Panier */
 .header-panier {
   display: flex;
   justify-content: flex-end;
   position: relative;
+  color: var(--text-color);
 }
 
 .panier-dropdown {
@@ -104,11 +103,11 @@
   top: 100%;
   right: 0;
   z-index: 1000;
-  background: #4a0404;
-  border: 1px solid #ccc;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  background: #4a0404; /* Fond bordeaux fixe */
+  color: white;        /* Texte blanc pour contraster */
+  border: 1px solid #330000;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
   width: 300px;
-  max-height: 400px;
+  max-height: 600px;
   overflow-y: auto;
 }
-

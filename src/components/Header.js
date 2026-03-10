@@ -24,7 +24,9 @@ const Header = () => {
   return (
     <header className="navbar">
         <div className="logo">
-            <img src={logoSommelier} className="logo-image" alt="Logo" />
+            <a href="/">
+              <img src={logoSommelier} className="logo-image" alt="Logo" />
+            </a>
         </div>
         
         <div className="header-content"> 
@@ -43,8 +45,15 @@ const Header = () => {
         <div className="header-panier" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
             {/* Le panier sera intégré ici */}
                 <IconButton>
-                    <ShoppingCartIcon fontSize="very_large" />
-                    <CartBadge badgeContent={totalQuantity} color="primary" overlap="circular" />
+                  <ShoppingCartIcon 
+                    fontSize="large" 
+                    sx={{ color: 'var(--primary-color)' }} // Applique la couleur bordeaux/rouge
+                  />
+                  <CartBadge 
+                      badgeContent={totalQuantity} 
+                      color="primary" 
+                      overlap="circular" 
+                  />
                 </IconButton>
                 {isHovered && (
                   <div className="panier-dropdown">

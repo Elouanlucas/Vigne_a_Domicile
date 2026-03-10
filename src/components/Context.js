@@ -1,4 +1,4 @@
-import '../styles/Context.css';
+import '../styles/APropos.css';
 import Vigne from '../assets/img/vigne.jpg';
 import FamilleVigne from '../assets/img/vigne_ancienne.png';
 import PortraitSommelier from '../assets/img/tonneau_de_vin.png';
