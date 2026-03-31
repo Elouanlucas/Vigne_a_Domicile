@@ -8,7 +8,7 @@ function Home() {
       
       <main style={{ minHeight: '80vh', padding: '20px' }}>
         <h1>Accueil</h1>
-        <p>Bienvenue chez Vigne à Domicile !</p>
+        <p>Bienvenue chez Vigne à Domicile!!!</p>
       </main>
 
       <Footer />

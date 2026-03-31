@@ -1,0 +1,55 @@
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: e4a-backend
+    depends_on:
+      - db
+    environment:
+      PORT: 3001
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: e4a_user
+      DB_PASSWORD: e4a_password
+      DB_NAME: e4a_db
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: e4a-frontend
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
+      REACT_APP_API_URL: http://localhost:3001
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+
+  db:
+    image: mariadb:latest
+    container_name: e4a-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: e4a_db
+      MYSQL_USER: e4a_user
+      MYSQL_PASSWORD: e4a_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/create_tables.sql:/docker-entrypoint-initdb.d/01-create.sql:ro
+      - ./database/insert_tables.sql:/docker-entrypoint-initdb.d/02-insert.sql:ro
+
+  # docker exec -it e4a-db mariadb -u e4a_user -pe4a_password e4a_db
+
+volumes:
+  db_data:

@@ -14,14 +14,19 @@ html, body, #root {
 /* 3. La zone centrale */
 .home-content {
   display: grid;
-  grid-template-columns: 1fr 350px;
+  grid-template-columns: 1fr;
   gap: 20px;
   flex: 1;
   overflow: hidden;
   padding: 20px;
   /* Fond dynamique */
   background-color: var(--bg-color);
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, grid-template-columns 0.3s ease;
+}
+
+/* Quand le panier est visible */
+.home-content:has(.Panier_style) {
+  grid-template-columns: 1fr 350px;
 }
 
 /* 4. Les colonnes */

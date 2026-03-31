@@ -99,15 +99,64 @@
 }
 
 .panier-dropdown {
-  position: absolute;
-  top: 100%;
+  display: none;
+}
+
+/* Modale Panier Fullscreen */
+.panier-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
   right: 0;
-  z-index: 1000;
-  background: #4a0404; /* Fond bordeaux fixe */
-  color: white;        /* Texte blanc pour contraster */
-  border: 1px solid #330000;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  width: 300px;
-  max-height: 600px;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  z-index: 2000;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.panier-modal {
+  position: relative;
+  background: #4a0404;
+  color: white;
+  width: 90%;
+  max-width: 500px;
+  height: 100vh;
   overflow-y: auto;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.panier-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  z-index: 2001;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.panier-modal-close:hover {
+  transform: scale(1.1);
 }
