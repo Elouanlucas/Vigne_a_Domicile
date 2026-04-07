@@ -8,6 +8,9 @@ import Produit from './pages/Produit';
 import APropos from './pages/APropos';
 import Error from './pages/Error';
 import Preferences from './pages/Preferences';
+import Connexion from './pages/Connexion';
+import Inscription from './pages/Inscription';
+import UserPage from './pages/Utilisateur';
 
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -25,6 +28,9 @@ root.render(
             <Route path="/produits" element={<Produit />} />
             <Route path="/APropos" element={<APropos />} />
             <Route path="/Preferences" element={<Preferences />} />
+            <Route path="/connexion" element={<Connexion />} />
+            <Route path="/inscription" element={<Inscription />} />
+            <Route path="/Utilisateur" element={<UserPage />} />
 
             <Route path="*" element={<Error />} />
           </Routes>

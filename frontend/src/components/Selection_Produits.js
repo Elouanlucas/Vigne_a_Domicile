@@ -4,35 +4,55 @@ import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import InfoIcon from '@mui/icons-material/Info';
 
 const Produits = ({ onAjouter }) => {
   const [quantities, setQuantities] = useState({});
   const [vins, setVins] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedWine, setSelectedWine] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3001/')
-      .then(res => res.json())
-      .then(data => {
-        console.log("CONTENU DE DATA :", data);
-        setVins(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Erreur API :", err);
-        setLoading(false);
-      });
-  }, []);
+  fetch('http://localhost:3001/', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(res => {
+      if (!res.ok) {
+        throw new Error("Erreur de récupération des produits");
+      }
+      return res.json();
+    })
+    .then(data => {
+      setVins(data);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error("Erreur API :", err);
+      setLoading(false);
+    });
+}, []);
 
-  // Fonction pour convertir le Buffer MySQL en image Base64
-  const formatImage = (blobData) => {
-    if (!blobData || !blobData.data) return null;
+  // Fonction pour gérer l'affichage de l'image (BLOB ou URL)
+  const getImageUrl = (cover) => {
+    if (!cover) return 'https://via.placeholder.com/150';
     
-    // Conversion sécurisée du buffer
-    const base64 = btoa(
-      new Uint8Array(blobData.data).reduce((data, byte) => data + String.fromCharCode(byte), '')
-    );
-    return `data:image/jpeg;base64,${base64}`; // Utilise image/jpeg ou image/png selon tes fichiers
+    // Si c'est un Buffer (ton cas actuel), on le convertit
+    if (cover.data) {
+      const binary = cover.data.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
+      return `data:image/png;base64,${btoa(binary)}`;
+    }
+    
+    // Si c'est juste le nom du fichier (cas static)
+    return `http://localhost:3001/uploads/${cover}`;
   };
 
   const handleQtyChange = (id, value) => {
@@ -42,19 +62,56 @@ const Produits = ({ onAjouter }) => {
     }
   };
 
+  const openModal = (vin) => {
+    setSelectedWine(vin);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedWine(null);
+  };
+
   const renderWineCard = (vin) => {
     const qty = quantities[vin.id] || 1;
 
     return (
-      <div key={vin.id} className="vin-card">
-        {/* Affichage de l'image via la conversion BLOB */}
+      <div key={vin.id} className="vin-card" style={{ position: 'relative' }}>
+        {/* BOUTON INFO (i) */}
+        <IconButton 
+          onClick={() => openModal(vin)}
+          sx={{ 
+            position: 'absolute', 
+            top: 8, 
+            right: 8, 
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            '&:hover': { backgroundColor: '#f5f5f5' },
+            zIndex: 2,
+            boxShadow: 1
+          }}
+          size="small"
+        >
+          <InfoIcon sx={{ color: '#4a0404', fontSize: '1.1rem' }} />
+        </IconButton>
+
+        {/* IMAGE (Cliquable aussi) */}
         <img 
-            src={formatImage(vin.cover)} 
-            alt={vin.name} 
-            className="vin-image" 
-            onError={(e) => e.target.src = 'path/to/fallback-image.png'} // Image par défaut si erreur
+          src={getImageUrl(vin.cover)} 
+          alt={vin.name} 
+          className="vin-image" 
+          onClick={() => openModal(vin)} // <--- Clic sur photo activé
+          style={{ 
+            width: '100%', 
+            height: '200px', 
+            objectFit: 'contain', 
+            cursor: 'pointer' // Pointeur pour indiquer que c'est cliquable
+          }}
+          onError={(e) => {
+              e.target.src = 'https://via.placeholder.com/150';
+          }} 
         />
-        <h3>{vin.name}</h3>
+        
+        <h3 style={{ cursor: 'pointer' }} onClick={() => openModal(vin)}>{vin.name}</h3>
         <p className="vin-price">{vin.price}€</p>
         
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center', mt: 1 }}>
@@ -72,7 +129,7 @@ const Produits = ({ onAjouter }) => {
             size="small"
             value={qty}
             onChange={(e) => handleQtyChange(vin.id, e.target.value)}
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{ min: 1, max: 100 }}
             sx={{ width: '80px' }}
           />
         </Box>
@@ -83,24 +140,75 @@ const Produits = ({ onAjouter }) => {
   if (loading) return <p>Chargement des produits...</p>;
 
   return (
-    <section className="produits-tout">
-      <h1>Produits</h1>
-      {/* Sections filtrées par catégorie */}
-      <p>Rouges</p>
-      <div className="produits-container-horizontal">
-        {vins.filter(v => v.category === 'rouge').map(renderWineCard)}
-      </div>
+    <>
+      <section className="produits-tout">
+        <h1>Produits</h1>
+        
+        <p>Rouges</p>
+        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {vins.filter(v => v.category === 'rouge').map(renderWineCard)}
+        </div>
 
-      <p>Blancs</p>
-      <div className="produits-container-horizontal">
-        {vins.filter(v => v.category === 'blanc').map(renderWineCard)}
-      </div>
+        <p>Blancs</p>
+        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {vins.filter(v => v.category === 'blanc').map(renderWineCard)}
+        </div>
 
-      <p>Champagnes</p>
-      <div className="produits-container-horizontal">
-        {vins.filter(v => v.category === 'champagne').map(renderWineCard)}
-      </div>
-    </section>
+        <p>Champagnes</p>
+        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {vins.filter(v => v.category === 'champagne').map(renderWineCard)}
+        </div>
+        
+        <p>Rosés</p>
+        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {vins.filter(v => v.category === 'rosé').map(renderWineCard)}
+        </div>
+      </section>
+
+      {/* Modale Détails du Vin */}
+      <Dialog open={isModalOpen} onClose={closeModal} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #eee' }}>
+          <strong>{selectedWine?.name}</strong>
+          <IconButton onClick={closeModal} sx={{ color: '#4a0404' }}>
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ pt: 3 }}>
+          {selectedWine && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ textAlign: 'center' }}>
+                <img 
+                  src={getImageUrl(selectedWine.cover)} 
+                  alt={selectedWine.name}
+                  style={{ maxWidth: '100%', height: 'auto', maxHeight: '350px', objectFit: 'contain' }}
+                />
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f0f0f0', pb: 1 }}>
+                <span><strong>Prix :</strong> {selectedWine.price}€</span>
+                <span style={{ textTransform: 'capitalize' }}><strong>Catégorie :</strong> {selectedWine.category}</span>
+              </Box>
+              {selectedWine.description && (
+                <Box sx={{ backgroundColor: '#f9f9f9', p: 2, borderRadius: '8px', borderLeft: '4px solid #4a0404' }}>
+                  <p style={{ margin: 0, fontStyle: 'italic', color: '#555' }}>"{selectedWine.description}"</p>
+                </Box>
+              )}
+              <Button 
+                variant="contained" 
+                onClick={() => {
+                  onAjouter(selectedWine, quantities[selectedWine.id] || 1);
+                  closeModal();
+                }}
+                startIcon={<ShoppingCartIcon />}
+                sx={{ backgroundColor: '#4a0404', mt: 2, py: 1.5 }}
+                fullWidth
+              >
+                Ajouter au Panier
+              </Button>
+            </Box>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

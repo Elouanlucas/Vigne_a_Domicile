@@ -37,6 +37,7 @@ services:
   db:
     image: mariadb:latest
     container_name: e4a-db
+    command: --secure-file-priv=""
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: e4a_db

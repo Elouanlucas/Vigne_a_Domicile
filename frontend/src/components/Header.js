@@ -1,14 +1,18 @@
 import '../styles/Header.css';
 import logoSommelier from '../assets/icon/logo_sommelier.png';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Panier from './Panier';
 import { useCart } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
+
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -21,6 +25,20 @@ const Header = ({ onTogglePanier }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { panierItems, handleRetirer, handleToutRetirer } = useCart();
   const totalQuantity = panierItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  const [user, setUser] = useState(null);
+  
+  useEffect(() => {
+      const savedUser = localStorage.getItem('user');
+      const token = localStorage.getItem('token');
+      
+      // On ne considère l'utilisateur connecté que s'il a les DEUX
+      if (savedUser && token) {
+          setUser(JSON.parse(savedUser));
+      } else {
+          setUser(null);
+      }
+  }, []);
 
   const handleCartClick = () => {
     if (onTogglePanier) {
@@ -70,6 +88,25 @@ const Header = ({ onTogglePanier }) => {
                     overlap="circular" 
                 />
               </IconButton>
+              {user ? (
+                <Link to="/Utilisateur">
+                  <IconButton>
+                    <SettingsIcon 
+                      fontSize="large" 
+                      sx={{ color: 'var(--primary-color)' }} // 'blue' en anglais ou un code hexadécimal
+                    />
+                  </IconButton>
+                </Link>
+              ) : (
+                <Link to="/connexion">
+                  <IconButton>
+                    <AccountCircleIcon 
+                      fontSize="large" 
+                      sx={{ color: 'var(--primary-color)' }}
+                    />
+                  </IconButton>
+                </Link>
+              )}
           </div>
       </header>
 
