@@ -9,7 +9,9 @@ INSERT INTO
         dateDeNaissance,
         email,
         telephone,
-        role
+        role,
+        adresseDeLivraison,
+        photo
     )
 VALUES (
         'dev',
@@ -19,7 +21,9 @@ VALUES (
         '2000-05-15',
         'elouan@exemple.fr',
         '0601020304',
-        'admin'
+        'admin',
+        '123 Rue du Vin, 75000 Paris',
+        NULL
     ),
     (
         'lucas_wine',
@@ -29,7 +33,9 @@ VALUES (
         '1998-11-22',
         'lucas@exemple.fr',
         '0611223344',
-        'client'
+        'client',
+        '456 Avenue des Vignes, 69000 Lyon',
+        NULL
     ),
     (
         'sophie_caviste',
@@ -39,7 +45,9 @@ VALUES (
         '1995-02-10',
         'sophie@exemple.fr',
         '0788990011',
-        'client'
+        'client',
+        '789 Boulevard des Crus, 33000 Bordeaux',
+        NULL
     );
 
 -- Remplissage de la table vins

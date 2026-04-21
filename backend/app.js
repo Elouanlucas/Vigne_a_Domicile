@@ -14,6 +14,9 @@ app.use(express.json());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+const multer = require('multer'); // Pour gérer l'upload de fichiers
+const fs = require('fs');         // Pour vérifier/créer des dossiers
+
 // --- MIDDLEWARE DE VÉRIFICATION DU TOKEN ---
 const verifyToken = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
@@ -164,7 +167,7 @@ app.get('/api/user/:login', verifyToken, (req, res) => {
         return res.status(403).json({ message: "Accès non autorisé" });
     }
     
-    const sql = "SELECT nom, prenom, login, email, dateDeNaissance, telephone, role FROM Utilisateur WHERE login = ?";
+    const sql = "SELECT nom, prenom, login, email, dateDeNaissance, telephone, role, adresseDeLivraison, photo FROM Utilisateur WHERE login = ?";
 
     pool.query(sql, [login], (err, results) => {
         if (err) {
@@ -224,6 +227,77 @@ app.post('/api/commandes', (req, res) => {
         } finally {
             connection.release(); // On libère la connexion
         }
+    });
+});
+
+
+// Configuration du stockage des images
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = 'uploads/';
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath); // Crée le dossier s'il n'existe pas
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        // Nom unique pour éviter les doublons (timestamp + nom d'origine)
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
+
+
+app.post('/api/user/update-photo', upload.single('photo'), (req, res) => {
+    const { login } = req.body;
+    
+    // Log de contrôle : si ça affiche undefined, le problème est le FormData côté Front
+    console.log("Upload reçu pour le login :", login);
+    console.log("Infos fichier :", req.file);
+
+    if (!req.file) {
+        return res.status(400).json({ message: "Aucun fichier reçu par le serveur" });
+    }
+
+    const filePath = req.file.path;
+
+    try {
+        const imageBinaire = fs.readFileSync(filePath);
+        const sql = "UPDATE Utilisateur SET photo = ? WHERE login = ?";
+        
+        pool.query(sql, [imageBinaire, login], (err, result) => {
+            // Nettoyage du fichier temporaire
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath); 
+            }
+
+            if (err) {
+                console.error("❌ Erreur SQL Photo:", err);
+                return res.status(500).json({ error: "Erreur BDD lors de l'enregistrement" });
+            }
+            
+            res.json({ message: "Photo enregistrée avec succès !" });
+        });
+    } catch (error) {
+        console.error("❌ Erreur système :", error);
+        res.status(500).json({ message: "Erreur lors du traitement de l'image" });
+    }
+});
+
+app.put('/api/user/update-address', verifyToken, (req, res) => {
+    const { login, adresse } = req.body;
+
+    if (req.user.login !== login) {
+        return res.status(403).json({ message: "Non autorisé" });
+    }
+
+    const sql = "UPDATE Utilisateur SET adresseDeLivraison = ? WHERE login = ?";
+    pool.query(sql, [adresse, login], (err) => {
+        if (err) {
+            console.error("Erreur MAJ adresse:", err);
+            return res.status(500).json({ message: "Erreur serveur" });
+        }
+        res.json({ message: "Adresse mise à jour avec succès" });
     });
 });
 

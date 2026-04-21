@@ -18,15 +18,17 @@ CREATE TABLE Utilisateur (
     dateDeNaissance DATE NOT NULL,
     email VARCHAR(200) UNIQUE NOT NULL,
     telephone VARCHAR(20) NOT NULL,
+    photo LONGBLOB,
+    adresseDeLivraison VARCHAR(255),
     role ENUM('client', 'admin') DEFAULT 'client',
     PRIMARY KEY (numUtilisateur)
 ) ENGINE = InnoDB;
 
--- 4. Table des vins
+-- Dans la table vins, augmente la taille de cover
 CREATE TABLE vins (
     id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(255) NOT NULL,
-    cover VARCHAR(50),
+    cover VARCHAR(255), -- Augmenté ici
     price DECIMAL(10, 2) NOT NULL,
     category VARCHAR(50),
     description TEXT,
@@ -43,13 +45,13 @@ CREATE TABLE panier_utilisateur (
     CONSTRAINT fk_panier_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
--- Table items (Le contenu du panier)
+-- Dans panier_items, assure-toi que le nom est explicite
 CREATE TABLE panier_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
-    id_vin INT NOT NULL, -- On peut aussi renommer product_id en id_vin pour coller à la table 'vins'
+    id_vin INT NOT NULL, 
     quantity INT NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (order_id) REFERENCES panier_utilisateur (id) ON DELETE CASCADE,
-    FOREIGN KEY (id_vin) REFERENCES vins (id) ON DELETE CASCADE
+    CONSTRAINT fk_items_order FOREIGN KEY (order_id) REFERENCES panier_utilisateur (id) ON DELETE CASCADE,
+    CONSTRAINT fk_items_vin FOREIGN KEY (id_vin) REFERENCES vins (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;

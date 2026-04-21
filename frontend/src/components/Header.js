@@ -11,7 +11,6 @@ import Badge, { badgeClasses } from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import SettingsIcon from '@mui/icons-material/Settings';
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
@@ -35,13 +34,31 @@ const Header = ({ onTogglePanier }) => {
       if (savedUser && token) {
           const userObj = JSON.parse(savedUser);
           setUser(userObj);
-          // On récupère le rôle soit de l'objet user, soit du localStorage
           setRole(userObj.role || localStorage.getItem('role'));
       } else {
           setUser(null);
           setRole(null);
       }
   }, []);
+
+  // --- FONCTION MAGIQUE POUR TRANSFORMER LE BLOB EN IMAGE ---
+  const renderHeaderPhoto = (photoData) => {
+    if (!photoData) return null;
+
+    // MySQL renvoie souvent un objet { type: "Buffer", data: [...] }
+    if (photoData.type === 'Buffer' || photoData.data) {
+        const dataArray = photoData.data || photoData;
+        try {
+            const uint8Array = new Uint8Array(dataArray);
+            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+            return URL.createObjectURL(blob);
+        } catch (e) {
+            console.error("Erreur de conversion d'image", e);
+            return null;
+        }
+    }
+    return null;
+  };
 
   const handleCartClick = () => {
     if (onTogglePanier) {
@@ -74,12 +91,9 @@ const Header = ({ onTogglePanier }) => {
                     <li><Link to="/contact">Contact</Link></li>
                     <li><Link to="/Preferences">Preferences</Link></li>
                     
-                    {/* AFFICHAGE CONDITIONNEL : Menu Admin */}
                     {role === 'admin' && (
                       <li>
-                        <Link to="/administrateur">
-                          admin
-                        </Link>
+                        <Link to="/administrateur">admin</Link>
                       </li>
                     )}
                 </ul>
@@ -87,6 +101,7 @@ const Header = ({ onTogglePanier }) => {
           </div>
 
           <div className="header-panier">
+              {/* Icône Panier */}
               <IconButton onClick={handleCartClick}>
                 <ShoppingCartIcon 
                   fontSize="large" 
@@ -99,13 +114,29 @@ const Header = ({ onTogglePanier }) => {
                 />
               </IconButton>
 
+              {/* Icône Utilisateur / Photo de Profil */}
               {user ? (
                 <Link to="/Utilisateur">
-                  <IconButton>
-                    <SettingsIcon 
-                      fontSize="large" 
-                      sx={{ color: 'var(--primary-color)' }}
-                    />
+                  <IconButton sx={{ padding: '4px' }}>
+                    {user.photo ? (
+                      <img 
+                        src={renderHeaderPhoto(user.photo)} 
+                        alt="Profil" 
+                        style={{ 
+                          width: '42px', 
+                          height: '42px', 
+                          borderRadius: '50%', 
+                          objectFit: 'cover',
+                          border: '2px solid var(--primary-color)',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        }} 
+                      />
+                    ) : (
+                      <AccountCircleIcon 
+                        fontSize="large" 
+                        sx={{ color: 'var(--primary-color)' }}
+                      />
+                    )}
                   </IconButton>
                 </Link>
               ) : (
