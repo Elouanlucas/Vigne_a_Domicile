@@ -6,7 +6,7 @@ function Inscription() {
     const [formData, setFormData] = useState({
         login: '',
         motDePasse: '',
-        confirmerMotDePasse: '', // Nouveau champ
+        confirmerMotDePasse: '', 
         nom: '',
         prenom: '',
         dateDeNaissance: '',
@@ -20,7 +20,7 @@ function Inscription() {
 
         // Restriction pour le téléphone : on ne garde que les chiffres
         if (id === "telephone") {
-            const onlyNums = value.replace(/[^0-9]/g, ''); // Supprime tout ce qui n'est pas un chiffre
+            const onlyNums = value.replace(/[^0-9]/g, ''); 
             setFormData({ ...formData, [id]: onlyNums });
         } else {
             setFormData({
@@ -43,7 +43,8 @@ function Inscription() {
             // On retire confirmerMotDePasse avant d'envoyer au backend
             const { confirmerMotDePasse, ...dataToSend } = formData;
 
-            const response = await fetch('http://localhost:3001/api/register', {
+            // --- MISE À JOUR DE L'URL : /api/auth/register ---
+            const response = await fetch('http://localhost:3001/api/auth/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(dataToSend),
@@ -55,10 +56,12 @@ function Inscription() {
                 alert("Inscription réussie !");
                 navigate('/connexion');
             } else {
-                alert("Erreur: " + data.message);
+                // Le backend renvoie maintenant des messages précis (ex: "Email déjà utilisé")
+                alert("Erreur : " + data.message);
             }
         } catch (error) {
             console.error("Erreur lors de l'envoi:", error);
+            alert("Le serveur ne répond pas. Vérifiez que votre backend est lancé.");
         }
     };
 
@@ -67,7 +70,6 @@ function Inscription() {
             <div className="connexion-form">
                 <h2>Inscription</h2>
                 <form onSubmit={handleSubmit}>
-                    {/* Champs Nom et Prénom */}
                     <div className="form-group">
                         <label htmlFor="nom">Nom</label>
                         <input type="text" id="nom" value={formData.nom} onChange={handleChange} required />
@@ -77,7 +79,6 @@ function Inscription() {
                         <input type="text" id="prenom" value={formData.prenom} onChange={handleChange} required />
                     </div>
                     
-                    {/* Login et Email */}
                     <div className="form-group">
                         <label htmlFor="login">Login</label>
                         <input type="text" id="login" value={formData.login} onChange={handleChange} required />
@@ -87,7 +88,6 @@ function Inscription() {
                         <input type="email" id="email" value={formData.email} onChange={handleChange} required />
                     </div>
 
-                    {/* Mots de passe */}
                     <div className="form-group">
                         <label htmlFor="motDePasse">Mot de passe</label>
                         <input type="password" id="motDePasse" value={formData.motDePasse} onChange={handleChange} required />
@@ -97,7 +97,6 @@ function Inscription() {
                         <input type="password" id="confirmerMotDePasse" value={formData.confirmerMotDePasse} onChange={handleChange} required />
                     </div>
 
-                    {/* Infos complémentaires */}
                     <div className="form-group">
                         <label htmlFor="dateDeNaissance">Date de naissance</label>
                         <input type="date" id="dateDeNaissance" value={formData.dateDeNaissance} onChange={handleChange} required />

@@ -3,19 +3,26 @@ import logoSommelier from '../assets/icon/logo_sommelier.png';
 import { useEffect, useState } from 'react';
 import Panier from './Panier';
 import { useCart } from '../context/CartContext';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
+// Importations MUI
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Badge, { badgeClasses } from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCartOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import Box from '@mui/material/Box';
 
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
     right: -6px;
+    background-color: #4a0404;
+    color: white;
   }
 `;
 
@@ -23,133 +30,127 @@ const Header = ({ onTogglePanier }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { panierItems, handleRetirer, handleToutRetirer } = useCart();
   const totalQuantity = panierItems.reduce((sum, item) => sum + item.quantity, 0);
+  const location = useLocation();
 
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
-  
+  const [photoUrl, setPhotoUrl] = useState(null);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const openInfo = Boolean(anchorEl);
+
+  const handleOpenInfo = (event) => setAnchorEl(event.currentTarget);
+  const handleCloseInfo = () => setAnchorEl(null);
+
   useEffect(() => {
+    const updateUserData = () => {
       const savedUser = localStorage.getItem('user');
       const token = localStorage.getItem('token');
       
       if (savedUser && token) {
-          const userObj = JSON.parse(savedUser);
-          setUser(userObj);
-          setRole(userObj.role || localStorage.getItem('role'));
-      } else {
-          setUser(null);
-          setRole(null);
-      }
-  }, []);
-
-  // --- FONCTION MAGIQUE POUR TRANSFORMER LE BLOB EN IMAGE ---
-  const renderHeaderPhoto = (photoData) => {
-    if (!photoData) return null;
-
-    // MySQL renvoie souvent un objet { type: "Buffer", data: [...] }
-    if (photoData.type === 'Buffer' || photoData.data) {
-        const dataArray = photoData.data || photoData;
-        try {
-            const uint8Array = new Uint8Array(dataArray);
-            const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-            return URL.createObjectURL(blob);
-        } catch (e) {
-            console.error("Erreur de conversion d'image", e);
-            return null;
+        const userObj = JSON.parse(savedUser);
+        setUser(userObj);
+        setRole(userObj.role);
+        if (userObj.photo) {
+          setPhotoUrl(renderHeaderPhoto(userObj.photo));
+        } else {
+          setPhotoUrl(null);
         }
+      } else {
+        setUser(null);
+        setRole(null);
+        setPhotoUrl(null);
+      }
+    };
+    updateUserData();
+  }, [location.pathname]);
+
+  const renderHeaderPhoto = (photoData) => {
+    try {
+      if (!photoData) return null;
+      const dataArray = photoData.data || (Array.isArray(photoData) ? photoData : null);
+      if (dataArray) {
+        const uint8Array = new Uint8Array(dataArray);
+        const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+        return URL.createObjectURL(blob);
+      }
+    } catch (e) {
+      console.error("Erreur image", e);
     }
     return null;
   };
 
   const handleCartClick = () => {
-    if (onTogglePanier) {
-      onTogglePanier();
-    } else {
-      setIsOpen(!isOpen);
-    }
+    onTogglePanier ? onTogglePanier() : setIsOpen(!isOpen);
   };
 
-  const closePanier = () => {
-    setIsOpen(false);
-  };
+  const closePanier = () => setIsOpen(false);
 
   return (
     <>
       <header className="navbar">
-          <div className="logo">
-              <Link to="/">
-                <img src={logoSommelier} className="logo-image" alt="Logo" />
-              </Link>
-          </div>
-          
-          <div className="header-content"> 
-              <h1>Vigne à Domicile</h1>
-              <nav>
-                <ul className="nav-links">
-                    <li><Link to="/">Accueil</Link></li>
-                    <li><Link to="/produits">Produits</Link></li>
-                    <li><Link to="/APropos">A propos</Link></li>
-                    <li><Link to="/contact">Contact</Link></li>
-                    <li><Link to="/Preferences">Preferences</Link></li>
-                    
-                    {role === 'admin' && (
-                      <li>
-                        <Link to="/administrateur">admin</Link>
-                      </li>
-                    )}
-                </ul>
-              </nav>
-          </div>
+        {/* LOGO À GAUCHE */}
+        <div className="logo">
+          <Link to="/">
+            <img src={logoSommelier} className="logo-image" alt="Logo" />
+          </Link>
+        </div>
+        
+        {/* TITRE ET LIENS CENTRÉS */}
+        <div className="header-center-content"> 
+          <h1>Vigne à Domicile</h1>
+          <nav>
+            <ul className="nav-links">
+              <li><Link to="/">Accueil</Link></li>
+              <li><Link to="/produits">Produits</Link></li>
 
-          <div className="header-panier">
-              {/* Icône Panier */}
-              <IconButton onClick={handleCartClick}>
-                <ShoppingCartIcon 
-                  fontSize="large" 
-                  sx={{ color: 'var(--primary-color)' }}
-                />
-                <CartBadge 
-                    badgeContent={totalQuantity} 
-                    color="primary" 
-                    overlap="circular" 
-                />
-              </IconButton>
+              <li 
+                onMouseEnter={handleOpenInfo} 
+                onMouseLeave={handleCloseInfo}
+              >
+                <span className="nav-item-dropdown">
+                  Informations <KeyboardArrowDownIcon fontSize="small" />
+                </span>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={openInfo}
+                  onClose={handleCloseInfo}
+                  disableScrollLock={true}
+                  MenuListProps={{ onMouseEnter: () => {}, onMouseLeave: handleCloseInfo }}
+                  PaperProps={{ className: "info-menu-paper" }}
+                  sx={{ pointerEvents: 'none' }}
+                >
+                  <Box sx={{ pointerEvents: 'auto' }}>
+                    <MenuItem onClick={handleCloseInfo} component={Link} to="/APropos">À propos</MenuItem>
+                    <MenuItem onClick={handleCloseInfo} component={Link} to="/contact">Contact</MenuItem>
+                  </Box>
+                </Menu>
+              </li>
 
-              {/* Icône Utilisateur / Photo de Profil */}
-              {user ? (
-                <Link to="/Utilisateur">
-                  <IconButton sx={{ padding: '4px' }}>
-                    {user.photo ? (
-                      <img 
-                        src={renderHeaderPhoto(user.photo)} 
-                        alt="Profil" 
-                        style={{ 
-                          width: '42px', 
-                          height: '42px', 
-                          borderRadius: '50%', 
-                          objectFit: 'cover',
-                          border: '2px solid var(--primary-color)',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                        }} 
-                      />
-                    ) : (
-                      <AccountCircleIcon 
-                        fontSize="large" 
-                        sx={{ color: 'var(--primary-color)' }}
-                      />
-                    )}
-                  </IconButton>
-                </Link>
+              {user !== null && <li><Link to="/Preferences">Préférences</Link></li>}
+              {role === 'admin' && <li><Link to="/administrateur" className="admin-link">Admin</Link></li>}
+            </ul>
+          </nav>
+        </div>
+
+        {/* PANIER ET PROFIL À DROITE */}
+        <div className="header-right-icons">
+          <IconButton onClick={handleCartClick}>
+            <CartBadge badgeContent={totalQuantity} color="error" overlap="circular">
+              <ShoppingCartIcon fontSize="large" sx={{ color: 'var(--primary-color)' }} />
+            </CartBadge>
+          </IconButton>
+
+          <Link to={user ? "/Utilisateur" : "/connexion"}>
+            <IconButton sx={{ padding: '4px' }}>
+              {photoUrl ? (
+                <img src={photoUrl} alt="Profil" className="profile-img-nav" />
               ) : (
-                <Link to="/connexion">
-                  <IconButton>
-                    <AccountCircleIcon 
-                      fontSize="large" 
-                      sx={{ color: 'var(--primary-color)' }}
-                    />
-                  </IconButton>
-                </Link>
+                <AccountCircleIcon fontSize="large" sx={{ color: 'var(--primary-color)' }} />
               )}
-          </div>
+            </IconButton>
+          </Link>
+        </div>
       </header>
 
       {isOpen && !onTogglePanier && (

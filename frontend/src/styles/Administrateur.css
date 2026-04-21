@@ -1,0 +1,37 @@
+.admin-layout {
+    display: flex;
+    min-height: 85vh; /* vh = viewport height. 85% de la hauteur de l'écran */
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #4a0404;
+    color: white;
+    padding: 20px;
+}
+
+.admin-sidebar {
+    width: 250px;
+    background-color: #4a0404;
+    color: white;
+    padding: 20px;
+    /* Ajoute ceci : */
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.admin-sidebar li:hover, .admin-sidebar li.active {
+    background-color: #630606;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}

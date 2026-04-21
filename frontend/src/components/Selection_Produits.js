@@ -10,8 +10,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
+import { CurrencyContext } from '../context/CurrencyContext'; // Importe le contexte
+import { useContext } from 'react';
 
 const Produits = ({ onAjouter }) => {
+  const { formatPrice } = useContext(CurrencyContext); // Récupère la fonction
   const [quantities, setQuantities] = useState({});
   const [vins, setVins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -19,39 +22,40 @@ const Produits = ({ onAjouter }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-  fetch('http://localhost:3001/', {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error("Erreur de récupération des produits");
-      }
-      return res.json();
-    })
-    .then(data => {
-      setVins(data);
-      setLoading(false);
-    })
-    .catch(err => {
-      console.error("Erreur API :", err);
-      setLoading(false);
-    });
-}, []);
+    // --- MISE À JOUR DE L'URL : /api/vins ---
+    fetch('http://localhost:3001/api/vins')
+      .then(res => {
+        if (!res.ok) throw new Error("Erreur de récupération des produits");
+        return res.json();
+      })
+      .then(data => {
+        setVins(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Erreur API :", err);
+        setLoading(false);
+      });
+  }, []);
 
-  // Fonction pour gérer l'affichage de l'image (BLOB ou URL)
+  // --- VERSION OPTIMISÉE POUR LES IMAGES ---
   const getImageUrl = (cover) => {
     if (!cover) return 'https://via.placeholder.com/150';
     
-    // Si c'est un Buffer (ton cas actuel), on le convertit
-    if (cover.data) {
-      const binary = cover.data.reduce((acc, byte) => acc + String.fromCharCode(byte), '');
-      return `data:image/png;base64,${btoa(binary)}`;
+    // Si c'est un Buffer (MySQL)
+    if (cover.type === 'Buffer' || cover.data) {
+      try {
+        const dataArray = cover.data || cover;
+        const uint8Array = new Uint8Array(dataArray);
+        const blob = new Blob([uint8Array], { type: 'image/jpeg' });
+        return URL.createObjectURL(blob);
+      } catch (e) {
+        console.error("Erreur conversion image", e);
+        return 'https://via.placeholder.com/150';
+      }
     }
     
-    // Si c'est juste le nom du fichier (cas static)
+    // Si c'est juste un chemin vers un fichier statique
     return `http://localhost:3001/uploads/${cover}`;
   };
 
@@ -77,7 +81,6 @@ const Produits = ({ onAjouter }) => {
 
     return (
       <div key={vin.id} className="vin-card" style={{ position: 'relative' }}>
-        {/* BOUTON INFO (i) */}
         <IconButton 
           onClick={() => openModal(vin)}
           sx={{ 
@@ -94,17 +97,16 @@ const Produits = ({ onAjouter }) => {
           <InfoIcon sx={{ color: '#4a0404', fontSize: '1.1rem' }} />
         </IconButton>
 
-        {/* IMAGE (Cliquable aussi) */}
         <img 
           src={getImageUrl(vin.cover)} 
           alt={vin.name} 
           className="vin-image" 
-          onClick={() => openModal(vin)} // <--- Clic sur photo activé
+          onClick={() => openModal(vin)}
           style={{ 
             width: '100%', 
             height: '200px', 
             objectFit: 'contain', 
-            cursor: 'pointer' // Pointeur pour indiquer que c'est cliquable
+            cursor: 'pointer' 
           }}
           onError={(e) => {
               e.target.src = 'https://via.placeholder.com/150';
@@ -112,8 +114,8 @@ const Produits = ({ onAjouter }) => {
         />
         
         <h3 style={{ cursor: 'pointer' }} onClick={() => openModal(vin)}>{vin.name}</h3>
-        <p className="vin-price">{vin.price}€</p>
-        
+        <p className="vin-price">{formatPrice(vin.price)}</p>   
+             
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center', mt: 1 }}>
           <Button 
             variant="contained" 
@@ -137,32 +139,23 @@ const Produits = ({ onAjouter }) => {
     );
   };
 
-  if (loading) return <p>Chargement des produits...</p>;
+  if (loading) return <p style={{ textAlign: 'center', marginTop: '50px' }}>Chargement des produits...</p>;
 
   return (
     <>
       <section className="produits-tout">
-        <h1>Produits</h1>
+        <h1>Nos Vins</h1>
         
-        <p>Rouges</p>
-        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          {vins.filter(v => v.category === 'rouge').map(renderWineCard)}
-        </div>
-
-        <p>Blancs</p>
-        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          {vins.filter(v => v.category === 'blanc').map(renderWineCard)}
-        </div>
-
-        <p>Champagnes</p>
-        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          {vins.filter(v => v.category === 'champagne').map(renderWineCard)}
-        </div>
-        
-        <p>Rosés</p>
-        <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-          {vins.filter(v => v.category === 'rosé').map(renderWineCard)}
-        </div>
+        {['rouge', 'blanc', 'champagne', 'rosé'].map(cat => (
+          <div key={cat} style={{ marginBottom: '40px' }}>
+            <h2 style={{ textTransform: 'capitalize', borderBottom: '2px solid #4a0404', display: 'inline-block', paddingBottom: '5px' }}>
+                {cat === 'rosé' ? 'Rosés' : cat + 's'}
+            </h2>
+            <div className="produits-container-horizontal" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', marginTop: '15px' }}>
+              {vins.filter(v => v.category === cat).map(renderWineCard)}
+            </div>
+          </div>
+        ))}
       </section>
 
       {/* Modale Détails du Vin */}

@@ -14,33 +14,38 @@ import UserPage from './pages/Utilisateur';
 import Administrateur from './pages/Administrateur';
 import RecapPanier from './pages/RecapPanier';
 
+
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { CurrencyProvider } from './context/CurrencyContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Ici, on définit quelle page afficher selon l'URL */}
-            <Route path="/" element={<Home />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/produits" element={<Produit />} />
-            <Route path="/APropos" element={<APropos />} />
-            <Route path="/Preferences" element={<Preferences />} />
-            <Route path="/connexion" element={<Connexion />} />
-            <Route path="/inscription" element={<Inscription />} />
-            <Route path="/Utilisateur" element={<UserPage />} />
-            <Route path="/Administrateur" element={<Administrateur />} />
-            <Route path="/RecapPanier" element={<RecapPanier />} />
+      <CurrencyProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Ici, on définit quelle page afficher selon l'URL */}
+              <Route path="/" element={<Home />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/produits" element={<Produit />} />
+              <Route path="/APropos" element={<APropos />} />
+              <Route path="/Preferences" element={<Preferences />} />
+              <Route path="/connexion" element={<Connexion />} />
+              <Route path="/inscription" element={<Inscription />} />
+              <Route path="/Utilisateur" element={<UserPage />} />
+              <Route path="/Administrateur" element={<Administrateur />} />
+              <Route path="/RecapPanier" element={<RecapPanier />} />
             
+              
 
-            <Route path="*" element={<Error />} />
-          </Routes>
-        </BrowserRouter>
-      </CartProvider>
+              <Route path="*" element={<Error />} />
+            </Routes>
+          </BrowserRouter>
+        </CartProvider>
+      </CurrencyProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

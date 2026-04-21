@@ -6,20 +6,25 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import CloseIcon from '@mui/icons-material/Close'; 
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { CurrencyContext } from '../context/CurrencyContext';
 
 const Panier = ({ items, onRetirer, onToutRetirer }) => {
   const navigate = useNavigate();
+  const { formatPrice } = useContext(CurrencyContext);
   
   // Calcul du prix total
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // Fonction pour envoyer le panier en BDD
+  // Fonction pour envoyer le panier en BDD (Transaction)
   const handlePaiement = async () => {
     if (items.length === 0) return;
 
     const storedUserId = localStorage.getItem('userId');
+    const token = localStorage.getItem('token'); // On récupère le token
 
-    if (!storedUserId) {
+    if (!storedUserId || !token) {
+      alert("Veuillez vous connecter pour finaliser votre commande.");
       navigate('/connexion');
       return;
     }
@@ -35,30 +40,32 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
     };
 
     try {
-      const response = await fetch('http://localhost:3001/api/commandes', {
+      // MISE À JOUR DE L'URL : /api/orders
+      const response = await fetch('http://localhost:3001/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // AJOUT DU TOKEN
         },
         body: JSON.stringify(commande),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log('Succès:', data);
+        console.log('Commande enregistrée avec succès:', data);
         
-        // --- CETTE LIGNE CI-DESSOUS EST SUPPRIMÉE POUR GARDER LE PANIER ---
+        // On ne vide pas forcément le panier ici si on veut le voir sur RecapPanier
         // onToutRetirer(null); 
         
-        // On navigue simplement vers la page récapitulative
         navigate('/RecapPanier');
       } else {
-        console.error('Erreur lors de l\'enregistrement');
-        alert("Une erreur est survenue lors de la validation du panier.");
+        const errorData = await response.json();
+        console.error('Erreur backend:', errorData.message);
+        alert("Erreur : " + errorData.message);
       }
     } catch (error) {
       console.error('Erreur réseau:', error);
-      alert("Impossible de contacter le serveur.");
+      alert("Impossible de contacter le serveur. Vérifiez votre connexion.");
     }
   };
 
@@ -112,8 +119,8 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
 
                   <div className="panier-item-info">
                     <h4>{item.name}</h4>
-                    <p className="panier-item-price">{item.price}€ x {item.quantity}</p>
-                    <p className="panier-item-total">{(item.price * item.quantity).toFixed(2)}€</p>
+                    <p className="panier-item-price">{formatPrice(item.price)} x {item.quantity}</p>
+                    <p className="panier-item-total">{formatPrice(item.price * item.quantity)}</p>
                   </div>
 
                   <Button
@@ -136,7 +143,7 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
             </div>
 
             <div className="panier-total">
-              <h3>Total: {total.toFixed(2)}€</h3>
+              <h3>Total: {formatPrice(total)}</h3>
             </div>
 
             <Button
@@ -149,7 +156,7 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
                 marginTop: '15px',
                 '&:hover': { backgroundColor: '#eee' }
               }}
-              onClick={handlePaiement} // Changement ici : on appelle handlePaiement
+              onClick={handlePaiement}
             >
               Payer maintenant
             </Button>

@@ -1,64 +1,93 @@
-/* --- Base de la page --- */
 .preferences-page {
-    padding: 20px;
     min-height: 80vh;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
 }
 
-/* --- Thèmes --- */
-.preferences-page.light {
-    background-color: white;
-    color: black;
+.preferences-card {
+    background: var(--card-bg, #fff);
+    color: var(--text-color);
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
 }
 
-.preferences-page.dark {
-    background-color: #121212;
-    color: white;
-}
-
-/* --- Titres --- */
-.preferences-page h1 {
-    /* Utilise la couleur actuelle du thème */
-    color: inherit; 
-}
-
-/* --- Label --- */
-.preferences-page label {
-    display: block;
+.preferences-card h1 {
+    color: var(--primary-color);
     margin-bottom: 10px;
+}
+
+.pref-list {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Style d'une ligne de préférence */
+.pref-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 12px;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+
+.pref-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.pref-icon {
+    color: var(--primary-color);
+}
+
+/* Style des menus déroulants */
+.pref-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background-color: white;
+    font-family: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.pref-select:focus {
+    border-color: var(--primary-color);
+}
+
+/* Switch pour le mode sombre */
+.toggle-switch {
+    display: flex;
+    align-items: center;
+}
+
+.switch-label {
+    font-size: 0.9rem;
+    color: #666;
     cursor: pointer;
 }
 
-/* --- Checkbox (Style global) --- */
-.preferences-page input[type="checkbox"] {
-    appearance: none;
-    width: 20px;
-    height: 20px;
-    border: 2px solid currentColor; /* S'adapte à la couleur du texte */
-    border-radius: 5px;
-    cursor: pointer;
-    vertical-align: middle;
-    margin-right: 10px;
-    position: relative;
-    transition: all 0.2s;
+/* Mode sombre spécifique */
+.dark .pref-item {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.1);
 }
 
-/* --- Checkbox (État coché) --- */
-.preferences-page input[type="checkbox"]:checked {
-    background-color: currentColor; /* Devient noir en clair, blanc en sombre */
-}
-
-.preferences-page input[type="checkbox"]:checked::after {
-    content: '✓';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    /* Couleur inversée par rapport au fond de la case */
-    color: var(--checked-icon-color, #fff); 
-}
-
-/* Ajustement spécifique pour le mode sombre de la coche */
-.preferences-page.dark input[type="checkbox"]:checked::after {
-    color: #000; /* La coche devient noire sur fond blanc */
+.dark .pref-select {
+    background-color: #333;
+    color: white;
+    border-color: #444;
 }

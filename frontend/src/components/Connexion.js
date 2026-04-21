@@ -13,7 +13,7 @@ function Connexion() {
         e.preventDefault();
         
         try {
-            const response = await fetch('http://localhost:3001/api/login', {
+            const response = await fetch('http://localhost:3001/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ login, motDePasse: password }),
@@ -23,19 +23,29 @@ function Connexion() {
 
             if (response.ok) {
                 // 1. Stockage des infos de session
-                localStorage.setItem('userId', data.user.numUtilisateur);
+                // Attention : vérifie si ta BDD utilise 'numUtilisateur' ou 'id_utilisateur'
+                const userId = data.user.id_utilisateur || data.user.numUtilisateur;
+                
+                localStorage.setItem('userId', userId);
                 localStorage.setItem('user', JSON.stringify(data.user));
                 localStorage.setItem('role', data.user.role);
                 localStorage.setItem('token', data.token);
 
                 // 2. RÉCUPÉRATION DU PANIER ENREGISTRÉ
-                // On utilise l'ID qui vient d'arriver dans 'data'
                 try {
-                    const cartResponse = await fetch(`http://localhost:3001/api/panier-recuperer/${data.user.numUtilisateur}`);
+                    // On ajoute le header Authorization pour passer le verifyToken
+                    const cartResponse = await fetch(`http://localhost:3001/api/orders/recuperer/${userId}`, {
+                        method: 'GET',
+                        headers: { 
+                            'Authorization': `Bearer ${data.token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
                     if (cartResponse.ok) {
                         const savedItems = await cartResponse.json();
                         if (savedItems.length > 0) {
-                            setPanierItems(savedItems); // On remplit le panier local
+                            setPanierItems(savedItems);
                         }
                     }
                 } catch (cartError) {
