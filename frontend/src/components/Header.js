@@ -13,7 +13,6 @@ import CloseIcon from '@mui/icons-material/Close';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SettingsIcon from '@mui/icons-material/Settings';
 
-
 const CartBadge = styled(Badge)`
   & .${badgeClasses.badge} {
     top: -12px;
@@ -27,25 +26,27 @@ const Header = ({ onTogglePanier }) => {
   const totalQuantity = panierItems.reduce((sum, item) => sum + item.quantity, 0);
 
   const [user, setUser] = useState(null);
+  const [role, setRole] = useState(null);
   
   useEffect(() => {
       const savedUser = localStorage.getItem('user');
       const token = localStorage.getItem('token');
       
-      // On ne considère l'utilisateur connecté que s'il a les DEUX
       if (savedUser && token) {
-          setUser(JSON.parse(savedUser));
+          const userObj = JSON.parse(savedUser);
+          setUser(userObj);
+          // On récupère le rôle soit de l'objet user, soit du localStorage
+          setRole(userObj.role || localStorage.getItem('role'));
       } else {
           setUser(null);
+          setRole(null);
       }
   }, []);
 
   const handleCartClick = () => {
     if (onTogglePanier) {
-      // Page Produit : toggle le panier latéral
       onTogglePanier();
     } else {
-      // Autres pages : toggle la modale
       setIsOpen(!isOpen);
     }
   };
@@ -58,24 +59,33 @@ const Header = ({ onTogglePanier }) => {
     <>
       <header className="navbar">
           <div className="logo">
-              <a href="/">
+              <Link to="/">
                 <img src={logoSommelier} className="logo-image" alt="Logo" />
-              </a>
+              </Link>
           </div>
           
           <div className="header-content"> 
               <h1>Vigne à Domicile</h1>
               <nav>
-              <ul className="nav-links">
-                  <li><a href="/">Accueil</a></li>
-                  <li><a href="/produits">Produits</a></li>
-                  <li><a href="/APropos">A propos</a></li>
-                  <li><a href="/contact">Contact</a></li>
-                  <li><a href='/Preferences'>Preferences</a></li>
-                  
-              </ul>
+                <ul className="nav-links">
+                    <li><Link to="/">Accueil</Link></li>
+                    <li><Link to="/produits">Produits</Link></li>
+                    <li><Link to="/APropos">A propos</Link></li>
+                    <li><Link to="/contact">Contact</Link></li>
+                    <li><Link to="/Preferences">Preferences</Link></li>
+                    
+                    {/* AFFICHAGE CONDITIONNEL : Menu Admin */}
+                    {role === 'admin' && (
+                      <li>
+                        <Link to="/administrateur">
+                          admin
+                        </Link>
+                      </li>
+                    )}
+                </ul>
               </nav>
           </div>
+
           <div className="header-panier">
               <IconButton onClick={handleCartClick}>
                 <ShoppingCartIcon 
@@ -88,12 +98,13 @@ const Header = ({ onTogglePanier }) => {
                     overlap="circular" 
                 />
               </IconButton>
+
               {user ? (
                 <Link to="/Utilisateur">
                   <IconButton>
                     <SettingsIcon 
                       fontSize="large" 
-                      sx={{ color: 'var(--primary-color)' }} // 'blue' en anglais ou un code hexadécimal
+                      sx={{ color: 'var(--primary-color)' }}
                     />
                   </IconButton>
                 </Link>
@@ -110,7 +121,6 @@ const Header = ({ onTogglePanier }) => {
           </div>
       </header>
 
-      {/* Modale Panier Fullscreen - visible sur les autres pages */}
       {isOpen && !onTogglePanier && (
         <div className="panier-modal-overlay" onClick={closePanier}>
           <div className="panier-modal" onClick={(e) => e.stopPropagation()}>

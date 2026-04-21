@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const CartContext = createContext();
 
@@ -11,17 +11,21 @@ export const useCart = () => {
 };
 
 export const CartProvider = ({ children }) => {
-  const [panierItems, setPanierItems] = useState([]);
+  const [panierItems, setPanierItems] = useState(() => {
+    const savedCart = localStorage.getItem('panierItems');
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('panierItems', JSON.stringify(panierItems));
+  }, [panierItems]);
 
   const handleAjouterAuPanier = (vin, quantity) => {
     setPanierItems((prevItems) => {
       const existingItem = prevItems.find(item => item.id === vin.id);
-      
       if (existingItem) {
         return prevItems.map(item =>
-          item.id === vin.id
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
+          item.id === vin.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       } else {
         return [...prevItems, { ...vin, quantity: quantity }];
@@ -32,12 +36,9 @@ export const CartProvider = ({ children }) => {
   const handleRetirer = (id) => {
     setPanierItems((prevItems) => {
       const item = prevItems.find(item => item.id === id);
-      
-      if (item.quantity > 1) {
+      if (item && item.quantity > 1) {
         return prevItems.map(item =>
-          item.id === id
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         );
       } else {
         return prevItems.filter(item => item.id !== id);
@@ -56,6 +57,7 @@ export const CartProvider = ({ children }) => {
   return (
     <CartContext.Provider value={{
       panierItems,
+      setPanierItems, // Ajouté ici pour permettre la mise à jour globale
       handleAjouterAuPanier,
       handleRetirer,
       handleToutRetirer

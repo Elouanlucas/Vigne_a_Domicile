@@ -1,14 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import pour la redirection
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext'; // 1. Vérifie bien cet import !
 import '../styles/Utilisateur.css';
 
 function UserPage() {
     const [userData, setUserData] = useState(null);
     const navigate = useNavigate();
+    
+    // 2. APPEL DU HOOK ICI (au début du composant, pas dans le useEffect)
+    const { handleToutRetirer } = useCart(); 
 
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
-        const token = localStorage.getItem('token'); // Récupère le token
+        const token = localStorage.getItem('token');
 
         if (!savedUser || !token) {
             navigate('/connexion');
@@ -18,24 +22,30 @@ function UserPage() {
         fetch(`http://localhost:3001/api/user/${savedUser.login}`, {
             method: 'GET',
             headers: {
-                'Authorization': `Bearer ${token}`, // <--- ENVOI DU TOKEN
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
         .then(res => {
             if (res.status === 401 || res.status === 403) {
-                handleLogout(); // Déconnexion si le token est expiré
+                handleLogout(); 
             }
             return res.json();
         })
         .then(data => setUserData(data))
         .catch(err => console.error("Erreur:", err));
-    }, [navigate]);
+        
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [navigate]); 
 
-    // Dans handleLogout, pense à supprimer le token aussi :
     const handleLogout = () => {
+        // 3. Maintenant handleToutRetirer est bien accessible ici
+        handleToutRetirer(null);
+        
         localStorage.removeItem('user');
-        localStorage.removeItem('token'); // <--- NETTOYAGE
+        localStorage.removeItem('token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('role');
         navigate('/connexion');
     };
 
@@ -55,11 +65,10 @@ function UserPage() {
                     <p><strong>Rôle :</strong> {userData.role}</p>
                 </div>
                 
-                {/* Bouton de déconnexion */}
                 <button 
                     onClick={handleLogout} 
                     className="submit-btn" 
-                    style={{ marginTop: '20px', backgroundColor: 'var(--primary-color)' }}
+                    style={{ marginTop: '20px', backgroundColor: '#4a0404' }}
                 >
                     Se déconnecter
                 </button>

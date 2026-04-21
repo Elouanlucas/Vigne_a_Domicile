@@ -12,7 +12,7 @@ INSERT INTO
         role
     )
 VALUES (
-        'elouan_dev',
+        'dev',
         '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
         'Martin',
         'Elouan',

@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Importer le hook
-import '../styles/Connexion.css'; // Assuming we'll create this CSS file
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext'; // Import du hook panier
+import '../styles/Connexion.css';
 
 function Connexion() {
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
+    const { setPanierItems } = useCart(); // Récupération de la fonction de mise à jour
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -14,14 +16,32 @@ function Connexion() {
             const response = await fetch('http://localhost:3001/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ login, motDePasse: password }), // On envoie login + password
+                body: JSON.stringify({ login, motDePasse: password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
+                // 1. Stockage des infos de session
+                localStorage.setItem('userId', data.user.numUtilisateur);
                 localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('role', data.user.role);
                 localStorage.setItem('token', data.token);
+
+                // 2. RÉCUPÉRATION DU PANIER ENREGISTRÉ
+                // On utilise l'ID qui vient d'arriver dans 'data'
+                try {
+                    const cartResponse = await fetch(`http://localhost:3001/api/panier-recuperer/${data.user.numUtilisateur}`);
+                    if (cartResponse.ok) {
+                        const savedItems = await cartResponse.json();
+                        if (savedItems.length > 0) {
+                            setPanierItems(savedItems); // On remplit le panier local
+                        }
+                    }
+                } catch (cartError) {
+                    console.error("Erreur lors de la récupération du panier:", cartError);
+                }
+
                 navigate('/');
             } else {
                 alert("Erreur : " + data.message);

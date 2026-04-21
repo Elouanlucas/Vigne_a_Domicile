@@ -11,6 +11,8 @@ import Preferences from './pages/Preferences';
 import Connexion from './pages/Connexion';
 import Inscription from './pages/Inscription';
 import UserPage from './pages/Utilisateur';
+import Administrateur from './pages/Administrateur';
+import RecapPanier from './pages/RecapPanier';
 
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -31,6 +33,9 @@ root.render(
             <Route path="/connexion" element={<Connexion />} />
             <Route path="/inscription" element={<Inscription />} />
             <Route path="/Utilisateur" element={<UserPage />} />
+            <Route path="/Administrateur" element={<Administrateur />} />
+            <Route path="/RecapPanier" element={<RecapPanier />} />
+            
 
             <Route path="*" element={<Error />} />
           </Routes>

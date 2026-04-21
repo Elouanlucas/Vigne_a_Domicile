@@ -177,6 +177,114 @@ app.get('/api/user/:login', verifyToken, (req, res) => {
     });
 });
 
+app.post('/api/commandes', (req, res) => {
+    const { numUtilisateur, total_price, items } = req.body;
+
+    // Vérification de sécurité rapide
+    if (!numUtilisateur || !items || items.length === 0) {
+        return res.status(400).json({ message: "Données de commande incomplètes" });
+    }
+
+    // Utilisation du 'pool' (et non 'db')
+    pool.getConnection(async (err, connection) => {
+        if (err) {
+            console.error("❌ Erreur de pool :", err);
+            return res.status(500).json({ message: "Erreur de connexion BDD" });
+        }
+
+        try {
+            const promiseConn = connection.promise();
+            await promiseConn.beginTransaction();
+
+            // 1. Insertion dans panier_utilisateur
+            const [orderResult] = await promiseConn.execute(
+                'INSERT INTO panier_utilisateur (numUtilisateur, total_price, status) VALUES (?, ?, ?)',
+                [numUtilisateur, total_price, 'en_attente']
+            );
+            
+            const orderId = orderResult.insertId;
+
+            // 2. Insertion des items
+            // On utilise une boucle for...of pour que les await s'exécutent correctement
+            for (const item of items) {
+                await promiseConn.execute(
+                    'INSERT INTO panier_items (order_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
+                    [orderId, item.id_vin, item.quantity, item.unit_price]
+                );
+            }
+
+            await promiseConn.commit();
+            console.log(`✅ Commande #${orderId} enregistrée pour l'utilisateur ${numUtilisateur}`);
+            res.status(201).json({ message: "Commande créée", orderId });
+
+        } catch (error) {
+            await connection.promise().rollback();
+            console.error("❌ Erreur SQL détaillée :", error);
+            res.status(500).json({ message: "Erreur lors de l'enregistrement", details: error.message });
+        } finally {
+            connection.release(); // On libère la connexion
+        }
+    });
+});
+
+// Route pour récupérer le panier depuis la BDD
+app.get('/api/panier-recuperer/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    // 1. On récupère le dernier panier en attente de l'utilisateur
+    const sqlPanier = `
+        SELECT id FROM panier_utilisateur 
+        WHERE numUtilisateur = ? AND status = 'en_attente'
+        ORDER BY created_at DESC
+        LIMIT 1
+    `;
+
+    pool.query(sqlPanier, [userId], (err, resultsPanier) => {
+        if (err) {
+            console.error("❌ Erreur récupération panier:", err);
+            return res.status(500).json({ message: "Erreur serveur" });
+        }
+
+        // Si pas de panier, retourner liste vide
+        if (resultsPanier.length === 0) {
+            return res.status(200).json([]);
+        }
+
+        const panierId = resultsPanier[0].id;
+
+        // 2. On récupère les items du panier avec les infos des vins
+        const sqlItems = `
+            SELECT 
+                vi.id,
+                vi.name,
+                vi.price,
+                vi.category,
+                pi.quantity
+            FROM panier_items pi
+            JOIN vins vi ON pi.id_vin = vi.id
+            WHERE pi.order_id = ?
+        `;
+
+        pool.query(sqlItems, [panierId], (err, itemsResults) => {
+            if (err) {
+                console.error("❌ Erreur récupération items:", err);
+                return res.status(500).json({ message: "Erreur serveur" });
+            }
+
+            // Formatter les items pour qu'ils correspondent au format du CartContext
+            const formattedItems = itemsResults.map(item => ({
+                id: item.id,
+                name: item.name,
+                price: parseFloat(item.price),
+                category: item.category,
+                quantity: item.quantity
+            }));
+
+            res.status(200).json(formattedItems);
+        });
+    });
+});
+
 // --- 3. GESTION 404 ---
 app.use((req, res) => {
     res.status(404).json([]);

@@ -1,0 +1,71 @@
+.recap-main {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+  min-height: 70vh;
+}
+
+.recap-content {
+  display: grid;
+  grid-template-columns: 1fr 350px; /* Liste à gauche, résumé à droite */
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.recap-item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.recap-item-controls {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.qty-selector {
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+.recap-summary {
+  background: #f9f9f9;
+  padding: 25px;
+  border-radius: 12px;
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin: 15px 0;
+}
+
+.summary-line.total {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #4a0404;
+}
+
+.free-shipping {
+  color: green;
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .recap-content {
+    grid-template-columns: 1fr;
+  }
+}
