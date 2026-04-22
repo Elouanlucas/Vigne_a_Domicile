@@ -14,6 +14,7 @@ const app = express();
 // --- MIDDLEWARES GLOBAUX ---
 app.use(cors()); // Autorise les requêtes provenant du Front (React)
 app.use(express.json()); // Permet de lire le corps des requêtes en JSON
+app.use(express.urlencoded({ extended: true })); // Permet de lire les données des formulaires (pour Multer)
 
 // --- FICHIERS STATIQUES ---
 // Rend le dossier 'uploads' accessible via une URL (ex: http://localhost:3001/uploads/image.jpg)

@@ -1,67 +1,70 @@
-/* Le titre et le texte */
-.produits-tout {
-  padding: 20px;
-  width: 100%;
-  color: var(--text-color);
-}
-
-/* Le conteneur qui défile */
-.produits-container-horizontal {
-  display: flex;
-  overflow-x: auto;
-  gap: 20px;
-  padding: 20px 10px;
-  scroll-behavior: smooth;
-  scrollbar-width: thin;
-}
-
-/* Barre de défilement */
-.produits-container-horizontal::-webkit-scrollbar {
-  height: 8px;
-}
-.produits-container-horizontal::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 10px;
-}
-
-/* La carte de chaque vin */
-.vin-card {
-  flex: 0 0 250px;
-  background: var(--card-bg); /* S'adapte au mode sombre */
-  border: 1px solid var(--border-color, #eee);
-  border-radius: 12px;
-  padding: 15px;
+/* --- Style du Titre Principal --- */
+.produits-tout h1 {
+  color: #4a0404;
+  font-size: 2.5rem;
+  font-weight: 800;
   text-align: center;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-  transition: transform 0.2s, background-color 0.3s;
+  margin-bottom: 30px;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 2px;
 }
 
-.vin-card:hover {
-  transform: translateY(-5px);
+/* Petit trait décoratif sous le H1 */
+.produits-tout h1::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 4px;
+  background-color: #4a0404;
+  margin: 10px auto 0;
+  border-radius: 2px;
 }
 
-.vin-image {
+/* --- Section de Recherche --- */
+.search-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f8f9fa; /* Gris très léger */
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 40px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+/* On cible l'input Material UI via les classes générées si besoin, 
+   mais voici comment styliser le conteneur de recherche */
+.search-container {
   width: 100%;
-  height: 200px;
-  object-fit: contain;
-  margin-bottom: 10px;
+  max-width: 600px;
+  display: flex;
+  gap: 10px;
 }
 
-.vin-price {
-  font-weight: bold;
-  color: var(--primary-color); /* Bordeaux dynamique */
+/* --- Style des Titres de Catégories (H2) --- */
+.produits-tout h2 {
+  color: #4a0404;
+  font-size: 1.8rem;
+  border-bottom: 2px solid #4a0404;
+  display: inline-block;
+  padding-bottom: 5px;
+  margin-bottom: 20px;
+  font-family: 'Playfair Display', serif; /* Si tu as une police élégante */
 }
 
-.btn-add {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: opacity 0.3s;
+/* --- Sidebar des Filtres --- */
+.filter-sidebar {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.btn-add:hover {
-  opacity: 0.8;
+.filter-sidebar h3 {
+  border-bottom: 1px solid #4a0404;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
 }

@@ -1,6 +1,6 @@
 import Footer from '../components/Footer';
 import Header from '../components/Header';
-import Utilisateur from '../components/Utilisateur';
+import Utilisateur from '../components/pageUtilisateur/Utilisateur';
 
 function UtilisateurPage() {
     return (

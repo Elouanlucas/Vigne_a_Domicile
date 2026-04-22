@@ -13,6 +13,8 @@ import Inscription from './pages/Inscription';
 import UserPage from './pages/Utilisateur';
 import Administrateur from './pages/Administrateur';
 import RecapPanier from './pages/RecapPanier';
+import Paier from './pages/Paier';
+import 'leaflet/dist/leaflet.css';
 
 
 import { CartProvider } from './context/CartContext';
@@ -38,6 +40,7 @@ root.render(
               <Route path="/Utilisateur" element={<UserPage />} />
               <Route path="/Administrateur" element={<Administrateur />} />
               <Route path="/RecapPanier" element={<RecapPanier />} />
+              <Route path="/paiement" element={<Paier />} />
             
               
 

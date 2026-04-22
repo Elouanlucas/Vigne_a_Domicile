@@ -31,49 +31,55 @@ function GestionVin() {
 
   const fetchVins = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/vins/all', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await response.json();
-      setVins(Array.isArray(data) ? data : []);
-    } catch (error) {
-      console.error("Erreur chargement vins:", error);
-    }
-  };
-
-  const handleAddVin = async () => {
-    if (!newVin.name || !newVin.price || !newVin.category) {
-      alert("Veuillez remplir au moins: Nom, Prix et Catégorie");
-      return;
-    }
-
-    try {
-      const method = isEditing ? 'PUT' : 'POST';
-      const url = isEditing 
-        ? `http://localhost:3001/api/vins/update/${selectedVin.id}`
-        : 'http://localhost:3001/api/vins/add';
-
-      const response = await fetch(url, {
-        method: method,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` 
-        },
-        body: JSON.stringify(newVin)
-      });
-
-      if (response.ok) {
-        setOpenDialog(false);
-        setIsEditing(false);
-        setNewVin({ name: '', cover: '', price: '', category: '', description: '' });
-        fetchVins();
-      } else {
-        const err = await response.json();
-        alert("Erreur : " + err.message);
+        const response = await fetch('http://localhost:3001/api/vins/all', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        setVins(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Erreur chargement vins:", error);
       }
-    } catch (error) {
-      console.error("Erreur:", error);
-    }
+    };
+
+    const handleAddVin = async () => {
+      if (!newVin.name || !newVin.price || !newVin.category) {
+          alert("Veuillez remplir les champs obligatoires");
+          return;
+      }
+
+      // Utilisation de FormData au lieu de JSON
+      const formData = new FormData();
+      formData.append('name', newVin.name);
+      formData.append('price', newVin.price);
+      formData.append('category', newVin.category);
+      formData.append('description', newVin.description);
+      
+      // Si cover est un fichier (nouvel upload), on l'ajoute
+      if (newVin.cover instanceof File) {
+          formData.append('cover', newVin.cover);
+      }
+
+      try {
+          const url = isEditing 
+              ? `http://localhost:3001/api/vins/update/${selectedVin.id}`
+              : 'http://localhost:3001/api/vins/add';
+
+          const response = await fetch(url, {
+              method: isEditing ? 'PUT' : 'POST',
+              headers: { 
+                  'Authorization': `Bearer ${token}` 
+                  // SURTOUT PAS de 'Content-Type': 'application/json' ici !
+              },
+              body: formData // On envoie le formData
+          });
+
+          if (response.ok) {
+              setOpenDialog(false);
+              fetchVins();
+          }
+      } catch (error) {
+          console.error("Erreur:", error);
+      }
   };
 
   const handleEdit = (vin) => {
@@ -147,7 +153,19 @@ function GestionVin() {
           <TableBody>
             {filteredVins.map((v) => (
               <TableRow key={v.id} hover>
-                <TableCell>{v.name}</TableCell>
+                {/* Colonne NOM avec IMAGE miniature */}
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <img 
+                      src={`http://localhost:3001/uploads/${v.cover}`} 
+                      alt={v.name} 
+                      style={{ width: 40, height: 40, borderRadius: 4, objectFit: 'cover' }} 
+                      onError={(e) => e.target.src = 'https://via.placeholder.com/40'} 
+                    />
+                    {v.name}
+                  </Box>
+                </TableCell>
+                
                 <TableCell>{v.category}</TableCell>
                 <TableCell>{v.price}€</TableCell>
                 <TableCell>{v.description ? v.description.substring(0, 50) + '...' : 'N/A'}</TableCell>
@@ -177,7 +195,15 @@ function GestionVin() {
             />
             <TextField label="Catégorie" required value={newVin.category} onChange={(e) => setNewVin({...newVin, category: e.target.value})} />
             <TextField label="Prix (€)" type="number" required value={newVin.price} onChange={(e) => setNewVin({...newVin, price: e.target.value})} />
-            <TextField label="Image (URL/Nom)" value={newVin.cover} onChange={(e) => setNewVin({...newVin, cover: e.target.value})} />
+            <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }}>
+              {newVin.cover instanceof File ? newVin.cover.name : "Télécharger l'image"}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) => setNewVin({ ...newVin, cover: e.target.files[0] })}
+              />
+            </Button>
             <TextField 
               label="Description" 
               multiline 

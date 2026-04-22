@@ -11,7 +11,9 @@ exports.getAllVins = async (req, res) => {
 };
 
 exports.addVin = async (req, res) => {
-    const { name, cover, price, category, description } = req.body;
+    // Les textes sont dans req.body, le fichier est dans req.file
+    const { name, price, category, description } = req.body;
+    const cover = req.file ? req.file.filename : null; // On récupère le nom généré par Multer
 
     if (!name || !price || !category) {
         return res.status(400).json({ message: "Nom, prix et catégorie requis" });
@@ -20,28 +22,30 @@ exports.addVin = async (req, res) => {
     try {
         const result = await db.query(
             'INSERT INTO vins (name, cover, price, category, description) VALUES (?, ?, ?, ?, ?)',
-            [name, cover || null, price, category, description || null]
+            [name, cover, price, category, description || null]
         );
-        res.status(201).json({ message: "Vin ajouté avec succès!", id: result[0].insertId });
+        res.status(201).json({ message: "Vin ajouté!", id: result[0].insertId });
     } catch (err) {
-        console.error("Erreur ajout vin:", err);
-        res.status(500).json({ message: "Erreur lors de l'ajout du vin" });
+        res.status(500).json({ message: "Erreur lors de l'ajout" });
     }
 };
 
 exports.updateVin = async (req, res) => {
     const { id } = req.params;
-    const { name, cover, price, category, description } = req.body;
-
+    const { name, price, category, description } = req.body;
+    
     try {
+        // On récupère l'ancienne image pour ne pas l'écraser si on n'en télécharge pas de nouvelle
+        const [oldVin] = await db.query('SELECT cover FROM vins WHERE id = ?', [id]);
+        const cover = req.file ? req.file.filename : oldVin[0].cover;
+
         await db.query(
             'UPDATE vins SET name = ?, cover = ?, price = ?, category = ?, description = ? WHERE id = ?',
-            [name, cover || null, price, category, description || null, id]
+            [name, cover, price, category, description || null, id]
         );
-        res.json({ message: "Vin modifié avec succès!" });
+        res.json({ message: "Vin modifié!" });
     } catch (err) {
-        console.error("Erreur modification vin:", err);
-        res.status(500).json({ message: "Erreur lors de la modification du vin" });
+        res.status(500).json({ message: "Erreur modification" });
     }
 };
 

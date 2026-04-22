@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'; 
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
-import '../styles/Utilisateur.css';
+import { useCart } from '../../context/CartContext';
+import '../../styles/MaPage.css';
 
-function UserPage() {
+function MaPage() {
     const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({
@@ -85,6 +85,48 @@ function UserPage() {
         }
     };
 
+    const handlePhotoChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('photo', file); // 'photo' doit correspondre à upload.single('photo')
+        formData.append('login', userData.login);
+
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`http://localhost:3001/api/user/update-photo`, {
+                method: 'POST',
+                headers: { 
+                    'Authorization': `Bearer ${token}` 
+                    // NE PAS METTRE de 'Content-Type' ici !
+                },
+                body: formData
+            });
+
+            // On vérifie d'abord si la réponse est du JSON
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                const data = await response.json();
+                if (response.ok) {
+                    fetchUserInfo();
+                    window.dispatchEvent(new Event("storage"));
+                } else {
+                    alert("Erreur : " + (data.message || "Erreur serveur"));
+                }
+            } else {
+                // Si ce n'est pas du JSON, c'est que le serveur a crashé violemment (renvoi HTML)
+                const textError = await response.text();
+                console.error("Le serveur a renvoyé du HTML au lieu de JSON :", textError);
+                alert("Erreur critique du serveur (500). Vérifie ton terminal backend.");
+            }
+        } catch (error) {
+            console.error("Erreur réseau ou parsing :", error);
+            alert("Impossible de contacter le serveur.");
+        }
+    };
+
     if (!userData) return <div className="loading-screen">Chargement...</div>;
 
     return (
@@ -105,7 +147,13 @@ function UserPage() {
                             className="main-profile-img" 
                         />
                         <label htmlFor="upload-photo" className="upload-badge">Changer la photo</label>
-                        <input type="file" id="upload-photo" hidden accept="image/*" />
+                        <input 
+                            type="file" 
+                            id="upload-photo" 
+                            hidden 
+                            accept="image/*" 
+                            onChange={handlePhotoChange} 
+                        />
                         <h3>{userData.prenom} {userData.nom}</h3>
                         <p className="role-text">{userData.role}</p>
                     </div>
@@ -169,4 +217,4 @@ function UserPage() {
     );
 }
 
-export default UserPage;
+export default MaPage;

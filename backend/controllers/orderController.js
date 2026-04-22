@@ -1,7 +1,51 @@
 const db = require('../config/db');
 
+// --- VALIDER LA COMMANDE FINALE (Après clic sur Payer) ---
+exports.validateFinalOrder = async (req, res) => {
+    const { numUtilisateur, total_price, items } = req.body;
+
+    const connection = await db.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        // 1. Insertion dans la table 'commandes' (Définitif)
+        const [orderResult] = await connection.execute(
+            'INSERT INTO commandes (numUtilisateur, total_price, status) VALUES (?, ?, ?)',
+            [numUtilisateur, total_price, 'en_attente']
+        );
+        
+        const commandeId = orderResult.insertId;
+
+        // 2. Insertion des produits dans 'commande_items'
+        const itemPromises = items.map(item => {
+            return connection.execute(
+                'INSERT INTO commande_items (commande_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
+                [commandeId, item.id_vin, item.quantity, item.unit_price]
+            );
+        });
+        await Promise.all(itemPromises);
+
+        // 3. OPTIONNEL : Nettoyer le panier temporaire de l'utilisateur
+        // On supprime les items du panier maintenant que la commande est passée
+        await connection.execute(
+            'DELETE FROM panier_items WHERE order_id = (SELECT id FROM panier_utilisateur WHERE numUtilisateur = ? AND status = "en_attente" LIMIT 1)',
+            [numUtilisateur]
+        );
+
+        await connection.commit();
+        res.status(201).json({ message: "Paiement réussi, commande enregistrée !", commandeId });
+
+    } catch (error) {
+        await connection.rollback();
+        console.error("❌ Erreur validation commande :", error);
+        res.status(500).json({ message: "Erreur lors du paiement" });
+    } finally {
+        connection.release();
+    }
+};
+
 // --- CRÉER UNE COMMANDE (PANIER) ---
-exports.createOrder = async (req, res) => {
+exports.createOrderPanier = async (req, res) => {
     const { numUtilisateur, total_price, items } = req.body;
 
     if (!numUtilisateur || !items || items.length === 0) {
@@ -85,6 +129,62 @@ exports.getPendingCart = async (req, res) => {
 
     } catch (error) {
         console.error("❌ Erreur récupération panier :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+// --- RÉCUPÉRER LES COMMANDES ACTIVES (SUIVI) ---
+// --- DANS orderController.js ---
+exports.getActiveOrders = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const sql = `
+            SELECT 
+                c.id, 
+                c.total_price, 
+                c.status, 
+                c.created_at,
+                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+            FROM commandes c
+            JOIN commande_items ci ON c.id = ci.commande_id
+            JOIN vins v ON ci.id_vin = v.id
+            WHERE c.numUtilisateur = ? AND c.status IN ('en_attente', 'en_cours')
+            GROUP BY c.id
+            ORDER BY c.created_at DESC
+        `;
+        const [orders] = await db.query(sql, [userId]);
+        res.json(orders);
+    } catch (error) {
+        console.error("❌ Erreur récupération suivi détaillé :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+
+// --- RÉCUPÉRER L'HISTORIQUE (Commandes terminées) ---
+exports.getCompletedOrders = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const sql = `
+            SELECT 
+                c.id, 
+                c.total_price, 
+                c.status, 
+                c.created_at,
+                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+            FROM commandes c
+            JOIN commande_items ci ON c.id = ci.commande_id
+            JOIN vins v ON ci.id_vin = v.id
+            WHERE c.numUtilisateur = ? AND c.status = 'terminee'
+            GROUP BY c.id
+            ORDER BY c.created_at DESC
+        `;
+        const [orders] = await db.query(sql, [userId]);
+        res.json(orders);
+    } catch (error) {
+        console.error("❌ Erreur historique détaillé :", error);
         res.status(500).json({ message: "Erreur serveur" });
     }
 };

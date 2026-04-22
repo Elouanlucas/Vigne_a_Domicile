@@ -34,30 +34,31 @@ exports.getUserInfos = async (req, res) => {
 exports.updatePhoto = async (req, res) => {
     const { login } = req.body;
     
+    // Si Multer n'a pas trouvé de fichier
     if (!req.file) {
-        return res.status(400).json({ message: "Aucun fichier reçu par le serveur" });
+        return res.status(400).json({ message: "Aucun fichier reçu" });
     }
 
     const filePath = req.file.path;
 
+    // Si le login est manquant (problème de urlencoded dans app.js)
+    if (!login) {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        return res.status(400).json({ message: "Login manquant dans la requête" });
+    }
+
     try {
-        // Lecture du fichier image temporaire en binaire
         const imageBinaire = fs.readFileSync(filePath);
-        
         const sql = "UPDATE Utilisateur SET photo = ? WHERE login = ?";
         await db.query(sql, [imageBinaire, login]);
 
-        // Nettoyage : on supprime le fichier du dossier /uploads après l'avoir mis en BDD
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath); 
-        }
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath); 
         
         res.json({ message: "Photo enregistrée avec succès !" });
     } catch (error) {
         console.error("❌ Erreur SQL Photo:", error);
-        // On nettoie quand même le fichier en cas d'erreur
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-        res.status(500).json({ error: "Erreur BDD lors de l'enregistrement de l'image" });
+        res.status(500).json({ message: "Erreur BDD : " + error.message });
     }
 };
 

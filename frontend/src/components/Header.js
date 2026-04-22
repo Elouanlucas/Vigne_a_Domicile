@@ -51,19 +51,21 @@ const Header = ({ onTogglePanier }) => {
         const userObj = JSON.parse(savedUser);
         setUser(userObj);
         setRole(userObj.role);
-        if (userObj.photo) {
-          setPhotoUrl(renderHeaderPhoto(userObj.photo));
-        } else {
-          setPhotoUrl(null);
-        }
+        // On utilise le binaire stocké dans le user du localStorage
+        setPhotoUrl(userObj.photo ? renderHeaderPhoto(userObj.photo) : null);
       } else {
         setUser(null);
         setRole(null);
         setPhotoUrl(null);
       }
     };
+
     updateUserData();
-  }, [location.pathname]);
+
+    // Écoute les changements du localStorage
+    window.addEventListener('storage', updateUserData);
+    return () => window.removeEventListener('storage', updateUserData);
+  }, [location.pathname]); // Garde location pour le changement de page
 
   const renderHeaderPhoto = (photoData) => {
     try {

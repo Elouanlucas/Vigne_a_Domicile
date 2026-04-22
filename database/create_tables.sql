@@ -8,6 +8,10 @@ DROP TABLE IF EXISTS vins;
 
 DROP TABLE IF EXISTS Utilisateur;
 
+DROP TABLE IF EXISTS commandes;
+
+DROP TABLE IF EXISTS commande_items;
+
 -- 3. Table des utilisateurs
 CREATE TABLE Utilisateur (
     numUtilisateur INT NOT NULL AUTO_INCREMENT,
@@ -49,9 +53,36 @@ CREATE TABLE panier_utilisateur (
 CREATE TABLE panier_items (
     id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
-    id_vin INT NOT NULL, 
+    id_vin INT NOT NULL,
     quantity INT NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT fk_items_order FOREIGN KEY (order_id) REFERENCES panier_utilisateur (id) ON DELETE CASCADE,
     CONSTRAINT fk_items_vin FOREIGN KEY (id_vin) REFERENCES vins (id) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+-- Table pour les commandes
+CREATE TABLE commandes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numUtilisateur INT NOT NULL,
+    total_price DECIMAL(10, 2) NOT NULL,
+    -- Correction de la syntaxe ENUM ici
+    status ENUM(
+        'en_attente',
+        'en_cours',
+        'terminee',
+        'annulee'
+    ) DEFAULT 'en_attente',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_commandes_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+-- Table pour les produit dans les comandes
+CREATE TABLE commande_items (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    commande_id INT NOT NULL,
+    id_vin INT NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10, 2) NOT NULL, -- Super important : on garde le prix au moment de l'achat !
+    CONSTRAINT fk_commande_items_commande FOREIGN KEY (commande_id) REFERENCES commandes (id) ON DELETE CASCADE,
+    CONSTRAINT fk_commande_items_vin FOREIGN KEY (id_vin) REFERENCES vins (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;

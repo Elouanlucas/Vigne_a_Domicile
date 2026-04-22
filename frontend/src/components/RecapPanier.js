@@ -41,7 +41,7 @@ function RecapPanierPage() {
     };
 
     try {
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch('http://localhost:3001/api/orders/panier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -51,11 +51,7 @@ function RecapPanierPage() {
       });
 
       if (response.ok) {
-        alert("Paiement validé ! Merci de votre commande.");
-        // Une fois payé, on vide le panier localement
-        setPanierItems([]); 
-        // On redirige vers l'accueil ou une page de succès
-        navigate('/');
+        navigate('/paiement');
       } else {
         const errorData = await response.json();
         alert("Erreur lors du paiement : " + errorData.message);
@@ -65,6 +61,8 @@ function RecapPanierPage() {
       alert("Impossible de contacter le serveur de paiement.");
     }
   };
+
+  
 
   return (
     <div className="page-container">

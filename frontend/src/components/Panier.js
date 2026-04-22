@@ -40,8 +40,8 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
     };
 
     try {
-      // MISE À JOUR DE L'URL : /api/orders
-      const response = await fetch('http://localhost:3001/api/orders', {
+      // MISE À JOUR DE L'URL : /api/orders/panier
+      const response = await fetch('http://localhost:3001/api/orders/panier', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,100 +70,83 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
   };
 
   return (
-    <aside className="panier-tout">
-      <div className="panier">
-        <div className="panier-header">
-          <div className="panier-title">
-            <h1>Panier</h1>
-          </div>
-          
-          <div className="panier-actions">
-            <Button
-              variant="contained"
-              size="small"
-              sx={{ 
-                backgroundColor: '#4a0404', 
-                color: '#fff',
-                fontWeight: 'bold',
-                textTransform: 'none',
-                '&:hover': { backgroundColor: '#630606' }
-              }}
-              onClick={() => onToutRetirer(null)}
-              startIcon={<DeleteSweepIcon />}
-            >
-              Vider
-            </Button>
-          </div>
-        </div>       
+  <aside className="panier-tout">
+    <div className="panier-header">
+      <h1>Mon Panier</h1>
+      <Button
+        variant="text"
+        size="small"
+        sx={{ color: 'rgba(255,255,255,0.7)', textTransform: 'none', '&:hover': { color: '#fff' } }}
+        onClick={() => onToutRetirer(null)}
+        startIcon={<DeleteSweepIcon />}
+      >
+        Vider
+      </Button>
+    </div>
 
-        {items.length === 0 ? (
-          <p className="panier-vide">Votre panier est vide.</p>
-        ) : (
-          <>
-            <div className="panier-items">
-              {items.map((item) => (
-                <div key={item.id} className="panier-item">
-                  
-                  <IconButton
-                    aria-label="tout retirer"
-                    size="small"
-                    onClick={() => onToutRetirer(item.id)}
-                    className="panier-item-remove-all"
-                    sx={{ 
-                        color: 'rgba(255, 255, 255, 0.6)',
-                        '&:hover': { color: '#fff', backgroundColor: 'rgba(255,255,255,0.1)' } 
-                    }}
-                  >
-                    <CloseIcon fontSize="small" />
-                  </IconButton>
+    {items.length === 0 ? (
+      <p className="panier-vide">Votre panier est vide.</p>
+    ) : (
+      <>
+        <div className="panier-items">
+          {items.map((item) => (
+            <div key={item.id} className="panier-item">
+              {/* Bouton de suppression totale */}
+              <IconButton
+                size="small"
+                onClick={() => onToutRetirer(item.id)}
+                className="btn-supprimer-tout"
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
 
-                  <div className="panier-item-info">
-                    <h4>{item.name}</h4>
-                    <p className="panier-item-price">{formatPrice(item.price)} x {item.quantity}</p>
-                    <p className="panier-item-total">{formatPrice(item.price * item.quantity)}</p>
+              <div className="panier-item-content">
+                <h4>{item.name}</h4>
+                
+                <div className="panier-item-details">
+                  <div className="qty-zone">
+                    <span>{item.quantity} x {formatPrice(item.price)}</span>
+                    <Button
+                      size="small"
+                      onClick={() => onRetirer(item.id)}
+                      sx={{ 
+                        minWidth: 'auto', 
+                        ml: 1, 
+                        color: '#4a0404', 
+                        bgcolor: '#fff',
+                        fontSize: '0.7rem',
+                        px: 1,
+                        '&:hover': { bgcolor: '#eee' }
+                      }}
+                    >
+                      - 1
+                    </Button>
                   </div>
-
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={() => onRetirer(item.id)}
-                    startIcon={<DeleteIcon />}
-                    sx={{ 
-                        color: '#fff', 
-                        borderColor: 'rgba(255,255,255,0.5)',
-                        textTransform: 'none',
-                        marginTop: '10px',
-                        '&:hover': { borderColor: '#fff', backgroundColor: 'rgba(255,255,255,0.1)'}
-                    }}
-                  >
-                    Retirer 1
-                  </Button>
+                  <span className="item-total-ligne">{formatPrice(item.price * item.quantity)}</span>
                 </div>
-              ))}
+              </div>
             </div>
+          ))}
+        </div>
 
-            <div className="panier-total">
-              <h3>Total: {formatPrice(total)}</h3>
-            </div>
+        <div className="panier-footer">
+          <div className="panier-total-section">
+            <span>Total</span>
+            <strong>{formatPrice(total)}</strong>
+          </div>
 
-            <Button
-              variant="contained"
-              fullWidth
-              sx={{ 
-                backgroundColor: '#fff', 
-                color: '#4a0404', 
-                fontWeight: 'bold', 
-                marginTop: '15px',
-                '&:hover': { backgroundColor: '#eee' }
-              }}
-              onClick={handlePaiement}
-            >
-              Payer maintenant
-            </Button>
-          </>
-        )}
-      </div>
-    </aside>
+          <Button
+            variant="contained"
+            fullWidth
+            className="btn-paiement"
+            onClick={handlePaiement}
+          >
+            Valider la commande
+          </Button>
+        </div>
+      </>
+    )}
+  </aside>
   );
 };
 

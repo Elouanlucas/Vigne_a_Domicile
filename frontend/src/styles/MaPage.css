@@ -1,0 +1,253 @@
+/* --- VARIABLES --- */
+:root {
+    --bordeaux-fonce: #4a0404;
+    --bordeaux-clair: #630606;
+    --gris-fond: #f9f9f9;
+    --profile-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --profile-border-radius: 16px;
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* --- CONTAINER GLOBAL --- */
+.profile-page-container {
+    max-width: 1000px;
+    margin: 20px auto; /* Réduit pour mieux s'intégrer sous la navbar */
+    padding: 0 25px;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    color: #333;
+}
+
+/* --- HEADER (Fixation du bouton Déconnexion) --- */
+.header-top-row {
+    display: flex;
+    justify-content: space-between; /* Pousse le titre à gauche et le bouton à droite */
+    align-items: center;            /* Aligne les deux verticalement au centre */
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+}
+
+.header-top-row h1 {
+    font-size: 1.8rem;
+    color: var(--bordeaux-fonce);
+    margin: 0;
+}
+
+.btn-logout-top {
+    /* Suppression du position: absolute qui posait problème */
+    background: transparent;
+    border: 1.5px solid #ddd;
+    color: #666;
+    padding: 8px 18px;
+    border-radius: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-logout-top:hover {
+    border-color: var(--bordeaux-fonce);
+    color: var(--bordeaux-fonce);
+    background: rgba(74, 4, 4, 0.05);
+}
+
+/* --- LAYOUT GRID --- */
+.profile-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+/* --- SIDEBAR (Photo & Profil) --- */
+.photo-card {
+    background: white;
+    padding: 30px;
+    border-radius: var(--profile-border-radius);
+    box-shadow: var(--profile-shadow);
+    text-align: center;
+}
+
+.main-profile-img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    background: #f8f8f8;
+    border: 1px solid #eee;
+}
+
+.upload-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    margin-bottom: 20px;
+}
+
+.upload-badge:hover {
+    background: var(--bordeaux-fonce);
+    color: white;
+}
+
+.photo-card h3 {
+    margin: 10px 0 5px;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.role-text {
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+/* --- CONTENT AREA --- */
+.profile-main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.info-group {
+    background: white;
+    padding: 30px;
+    border-radius: var(--profile-border-radius);
+    box-shadow: var(--profile-shadow);
+}
+
+.info-group h3 {
+    font-size: 1rem;
+    color: var(--bordeaux-fonce);
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-left: 4px solid var(--bordeaux-fonce);
+    padding-left: 15px;
+}
+
+/* Grille d'infos */
+.info-item {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    padding: 15px 0;
+    border-bottom: 1px solid #f5f5f5;
+    align-items: center;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-item label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #999;
+}
+
+.info-item p {
+    margin: 0;
+    font-weight: 500;
+    color: #444;
+}
+
+/* Champs de saisie Edition */
+.edit-input, .edit-textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1.5px solid #eee;
+    border-radius: 8px;
+    background: #fcfcfc;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.edit-input:focus, .edit-textarea:focus {
+    outline: none;
+    border-color: var(--bordeaux-fonce);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(74, 4, 4, 0.1);
+}
+
+.edit-textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* --- ACTIONS (Boutons du bas) --- */
+.profile-actions-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.btn-action-edit, .btn-save-confirm {
+    flex: 2;
+    background: var(--bordeaux-fonce);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-action-edit:hover, .btn-save-confirm:hover {
+    background: var(--bordeaux-clair);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(74, 4, 4, 0.2);
+}
+
+.btn-action-delete {
+    flex: 1;
+    background: #fff;
+    color: #eb4d4b;
+    border: 1.5px solid #ffdada;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+}
+
+.btn-action-delete:hover {
+    background: #fff5f5;
+    border-color: #eb4d4b;
+}
+
+.btn-cancel-edit {
+    flex: 1;
+    background: #eee;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 850px) {
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-item {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .header-top-row {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+}
