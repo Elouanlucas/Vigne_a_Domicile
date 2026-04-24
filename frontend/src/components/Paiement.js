@@ -4,7 +4,6 @@ import { CurrencyContext } from '../context/CurrencyContext';
 import { useCart } from '../context/CartContext'; 
 import '../styles/paiement.css';
 
-// Leaflet
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -12,7 +11,6 @@ import 'leaflet/dist/leaflet.css';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 
-// Material UI
 import { 
     Accordion, AccordionSummary, AccordionDetails, 
     Typography, Button, TextField, Box, CircularProgress,

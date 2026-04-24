@@ -4,41 +4,44 @@ const db = require('../config/db');
 exports.validateFinalOrder = async (req, res) => {
     const { numUtilisateur, total_price, items } = req.body;
 
+    // On commence une TRANSACTION pour s'assurer que tout se passe bien
+    // ou que rien ne change en cas d'erreur
     const connection = await db.getConnection();
-    try {
-        await connection.beginTransaction();
+    await connection.beginTransaction();
 
-        // 1. Insertion dans la table 'commandes' (Définitif)
-        const [orderResult] = await connection.execute(
+    try {
+        // 1. Créer la commande
+        const [orderResult] = await connection.query(
             'INSERT INTO commandes (numUtilisateur, total_price, status) VALUES (?, ?, ?)',
             [numUtilisateur, total_price, 'en_attente']
         );
-        
         const commandeId = orderResult.insertId;
 
-        // 2. Insertion des produits dans 'commande_items'
-        const itemPromises = items.map(item => {
-            return connection.execute(
+        // 2. Parcourir les articles pour les insérer ET mettre à jour le stock
+        for (const item of items) {
+            // Insertion dans commande_items
+            await connection.query(
                 'INSERT INTO commande_items (commande_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
                 [commandeId, item.id_vin, item.quantity, item.unit_price]
             );
-        });
-        await Promise.all(itemPromises);
 
-        // 3. OPTIONNEL : Nettoyer le panier temporaire de l'utilisateur
-        // On supprime les items du panier maintenant que la commande est passée
-        await connection.execute(
-            'DELETE FROM panier_items WHERE order_id = (SELECT id FROM panier_utilisateur WHERE numUtilisateur = ? AND status = "en_attente" LIMIT 1)',
-            [numUtilisateur]
-        );
+            // --- MISE À JOUR DU STOCK ---
+            // On retire la quantité achetée de la colonne 'quantity' de la table 'vins'
+            await connection.query(
+                'UPDATE vins SET quantity = quantity - ? WHERE id = ?',
+                [item.quantity, item.id_vin]
+            );
+        }
 
+        // Si tout est OK, on valide les changements
         await connection.commit();
-        res.status(201).json({ message: "Paiement réussi, commande enregistrée !", commandeId });
+        res.status(201).json({ message: "Commande validée et stock mis à jour !" });
 
     } catch (error) {
+        // En cas d'erreur, on annule tout (le stock n'est pas déduit)
         await connection.rollback();
-        console.error("❌ Erreur validation commande :", error);
-        res.status(500).json({ message: "Erreur lors du paiement" });
+        console.error("Erreur commande:", error);
+        res.status(500).json({ message: "Erreur lors de la validation", error: error.message });
     } finally {
         connection.release();
     }
@@ -186,5 +189,49 @@ exports.getCompletedOrders = async (req, res) => {
     } catch (error) {
         console.error("❌ Erreur historique détaillé :", error);
         res.status(500).json({ message: "Erreur serveur" });
+    }
+};
+
+// --- ADMIN : RÉCUPÉRER TOUTES LES COMMANDES ---
+exports.getAllOrdersAdmin = async (req, res) => {
+    try {
+        const sql = `
+            SELECT 
+                c.id, 
+                c.total_price, 
+                c.status, 
+                c.created_at, 
+                u.nom, 
+                u.prenom,
+                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+            FROM commandes c
+            -- Correction : Nom de table 'Utilisateur' et clé 'numUtilisateur'
+            JOIN Utilisateur u ON c.numUtilisateur = u.numUtilisateur
+            -- Jointures pour les articles
+            JOIN commande_items ci ON c.id = ci.commande_id
+            JOIN vins v ON ci.id_vin = v.id
+            GROUP BY c.id
+            ORDER BY c.created_at DESC
+        `;
+        
+        const [orders] = await db.query(sql);
+        res.json(orders);
+    } catch (error) {
+        console.error("❌ Erreur SQL détaillée :", error.message);
+        res.status(500).json({ 
+            message: "Erreur lors de la récupération des commandes", 
+            error: error.message 
+        });
+    }
+};
+
+// --- ADMIN : MODIFIER LE STATUT ---
+exports.updateOrderStatus = async (req, res) => {
+    const { orderId, newStatus } = req.body;
+    try {
+        await db.query('UPDATE commandes SET status = ? WHERE id = ?', [newStatus, orderId]);
+        res.json({ message: "Statut mis à jour" });
+    } catch (error) {
+        res.status(500).json({ message: "Erreur mise à jour" });
     }
 };

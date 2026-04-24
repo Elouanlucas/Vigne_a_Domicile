@@ -13,6 +13,7 @@ import Inscription from './pages/Inscription';
 import UserPage from './pages/Utilisateur';
 import Administrateur from './pages/Administrateur';
 import RecapPanier from './pages/RecapPanier';
+import Prestations from './pages/Prestations';
 import Paier from './pages/Paier';
 import 'leaflet/dist/leaflet.css';
 
@@ -41,7 +42,7 @@ root.render(
               <Route path="/Administrateur" element={<Administrateur />} />
               <Route path="/RecapPanier" element={<RecapPanier />} />
               <Route path="/paiement" element={<Paier />} />
-            
+              <Route path="/prestations" element={<Prestations />} />
               
 
               <Route path="*" element={<Error />} />

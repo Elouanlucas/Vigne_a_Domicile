@@ -9,5 +9,7 @@ router.get('/all', verifyToken, vinController.getAllVins);
 router.post('/add', verifyToken, upload.single('cover'), vinController.addVin);
 router.put('/update/:id', verifyToken, upload.single('cover'), vinController.updateVin);
 router.delete('/delete/:id', verifyToken, vinController.deleteVin);
+router.put('/update-stock/:id', verifyToken, vinController.updateStock);
+
 
 module.exports = router;

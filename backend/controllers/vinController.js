@@ -12,17 +12,17 @@ exports.getAllVins = async (req, res) => {
 
 exports.addVin = async (req, res) => {
     // Les textes sont dans req.body, le fichier est dans req.file
-    const { name, price, category, description } = req.body;
+    const { name, price, quantity, category, description } = req.body;
     const cover = req.file ? req.file.filename : null; // On récupère le nom généré par Multer
 
-    if (!name || !price || !category) {
-        return res.status(400).json({ message: "Nom, prix et catégorie requis" });
+    if (!name || !price || !quantity || !category) {
+        return res.status(400).json({ message: "Nom, prix, quantité et catégorie requis" });
     }
 
     try {
         const result = await db.query(
-            'INSERT INTO vins (name, cover, price, category, description) VALUES (?, ?, ?, ?, ?)',
-            [name, cover, price, category, description || null]
+            'INSERT INTO vins (name, cover, price, quantity, category, description) VALUES (?, ?, ?, ?, ?, ?)',
+            [name, cover, price, quantity, category, description || null]
         );
         res.status(201).json({ message: "Vin ajouté!", id: result[0].insertId });
     } catch (err) {
@@ -32,19 +32,22 @@ exports.addVin = async (req, res) => {
 
 exports.updateVin = async (req, res) => {
     const { id } = req.params;
-    const { name, price, category, description } = req.body;
+    const { name, price, quantity, category, description } = req.body;
     
     try {
-        // On récupère l'ancienne image pour ne pas l'écraser si on n'en télécharge pas de nouvelle
         const [oldVin] = await db.query('SELECT cover FROM vins WHERE id = ?', [id]);
+        if (oldVin.length === 0) return res.status(404).json({ message: "Vin non trouvé" });
+
         const cover = req.file ? req.file.filename : oldVin[0].cover;
 
         await db.query(
-            'UPDATE vins SET name = ?, cover = ?, price = ?, category = ?, description = ? WHERE id = ?',
-            [name, cover, price, category, description || null, id]
+            // Ajout de quantity = ? dans le UPDATE
+            'UPDATE vins SET name = ?, cover = ?, price = ?, quantity = ?, category = ?, description = ? WHERE id = ?',
+            [name, cover, price, quantity, category, description || null, id]
         );
         res.json({ message: "Vin modifié!" });
     } catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Erreur modification" });
     }
 };
@@ -58,5 +61,19 @@ exports.deleteVin = async (req, res) => {
     } catch (err) {
         console.error("Erreur suppression vin:", err);
         res.status(500).json({ message: "Erreur lors de la suppression du vin" });
+    }
+};
+
+
+// Route pour mettre à jour le stock
+exports.updateStock = async (req, res) => {
+    const { id } = req.params;
+    const { quantity } = req.body;
+
+    try {
+        await db.query('UPDATE vins SET quantity = ? WHERE id = ?', [quantity, id]);
+        res.json();
+    } catch (error) {
+        res.status(500).json({ error: "Erreur lors de la mise à jour du stock" });
     }
 };

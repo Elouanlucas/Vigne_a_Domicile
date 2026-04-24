@@ -57,6 +57,7 @@ INSERT INTO
         name,
         cover,
         price,
+        quantity,
         category,
         description
     )
@@ -64,6 +65,7 @@ VALUES (
         'Château Margaux',
         'Château_Margaux.png',
         1500,
+        1000,
         'rouge',
         'Un grand cru de Bordeaux, élégant et complexe avec des arômes de fruits noirs et de cèdre.'
     ),
@@ -71,6 +73,7 @@ VALUES (
         'Champagne Dom Pérignon',
         'Dom_Perignon.jpg',
         220,
+        1000,
         'champagne',
         'Le prestige à bulles. Un champagne équilibré entre fraîcheur et notes grillées.'
     ),
@@ -78,6 +81,7 @@ VALUES (
         'Meursault 1er Cru',
         'Meursault.png',
         95,
+        1000,
         'blanc',
         'Un grand blanc de Bourgogne, onctueux avec des notes de noisette et de beurre.'
     ),
@@ -85,6 +89,7 @@ VALUES (
         'Côte-Rôtie \'La Mouline\'',
         'Cote_Rotie.jpg',
         450,
+        1000,
         'rouge',
         'Un nectar de la Vallée du Rhône, floral, puissant et d\'une élégance rare.'
     ),
@@ -92,6 +97,7 @@ VALUES (
         'Petrus 2015',
         'Petrus.jpg',
         3000,
+        1000,
         'rouge',
         'Un vin mythique de Pomerol, riche et velouté avec des arômes de truffe et de fruits noirs.'
     ),
@@ -99,6 +105,7 @@ VALUES (
         'Sancerre Blanc',
         'sancerre-barbotaine.png',
         25,
+        1000,
         'blanc',
         'Un vin frais et vif de la Loire, avec des notes d\'agrumes et de pierre à fusil.'
     ),
@@ -106,6 +113,7 @@ VALUES (
         'Rosé de Provence',
         'rosé_de_provence.png',
         18,
+        1000,
         'rosé',
         'Un rosé léger et fruité, parfait pour l\'été avec des arômes de fraise et de melon.'
     ),
@@ -113,6 +121,259 @@ VALUES (
         'Château d\'Yquem',
         'Château_Yquem.jpg',
         500,
+        1000,
         'blanc',
         'Le roi des liquoreux de Sauternes, sucré mais équilibré avec des notes de miel et d\'abricot.'
+    ),
+    (
+        'Gevrey-Chambertin',
+        'gevrey_chambertin.png',
+        75.00,
+        1000,
+        'rouge',
+        'Un Bourgogne puissant, aux arômes de cerise et de réglisse.'
+    ),
+    (
+        'Chablis Grand Cru',
+        'chablis_gc.jpg',
+        65.00,
+        1000,
+        'blanc',
+        'Un blanc minéral et pur, l’expression parfaite du Chardonnay sur calcaire.'
+    ),
+    (
+        'Pauillac Baron Philippe',
+        'pauillac.png',
+        110.00,
+        1000,
+        'rouge',
+        'Un classique bordelais, structuré avec des tanins soyeux et des notes de cassis.'
+    ),
+    (
+        'Champagne Krug Grande Cuvée',
+        'krug.jpg',
+        250.00,
+        1000,
+        'champagne',
+        'Un champagne d’exception, d’une complexité rare avec des notes de pain grillé.'
+    ),
+    (
+        'Condrieu "L’Eclat"',
+        'condrieu.png',
+        58.00,
+        1000,
+        'blanc',
+        'Le fleuron du Viognier : nez intense de pêche blanche et d’abricot.'
+    ),
+    (
+        'Châteauneuf-du-Pape',
+        'chateauneuf.jpg',
+        48.00,
+        1000,
+        'rouge',
+        'Un vin généreux et épicé, mélange parfait de Grenache et Syrah.'
+    ),
+    (
+        'Garrus Rosé',
+        'garrus.png',
+        120.00,
+        1000,
+        'rosé',
+        'L’un des rosés les plus prestigieux au monde, élevé en fûts de chêne.'
+    ),
+    (
+        'Saint-Émilion Grand Cru',
+        'saint_emilion.jpg',
+        55.00,
+        1000,
+        'rouge',
+        'Dominante Merlot pour un vin souple aux notes de prune et de vanille.'
+    ),
+    (
+        'Pouilly-Fumé',
+        'pouilly_fume.png',
+        28.00,
+        1000,
+        'blanc',
+        'Un Sauvignon blanc très aromatique avec une touche fumée caractéristique.'
+    ),
+    (
+        'Hermitage Rouge',
+        'hermitage.jpg',
+        85.00,
+        1000,
+        'rouge',
+        'Une Syrah monumentale, sombre et profonde, aux notes de poivre noir.'
+    ),
+    (
+        'Bollinger Special Cuvée',
+        'bollinger.png',
+        60.00,
+        1000,
+        'champagne',
+        'Un champagne vineux et structuré, favori des amateurs de caractère.'
+    ),
+    (
+        'Pessac-Léognan Blanc',
+        'pessac_blanc.jpg',
+        42.00,
+        1000,
+        'blanc',
+        'Un assemblage sémillon-sauvignon élégant avec une belle fraîcheur boisée.'
+    ),
+    (
+        'Bandol Rosé',
+        'bandol.png',
+        24.00,
+        1000,
+        'rosé',
+        'Un rosé de caractère, structuré et épicé, parfait pour la gastronomie.'
+    ),
+    (
+        'Gigondas Vieilles Vignes',
+        'gigondas.jpg',
+        32.00,
+        1000,
+        'rouge',
+        'Un vin solaire de la Vallée du Rhône, puissant et gorgé de fruits rouges.'
+    ),
+    (
+        'Puligny-Montrachet',
+        'puligny.png',
+        90.00,
+        1000,
+        'blanc',
+        'L’élégance absolue de la Bourgogne, entre finesse florale et tension.'
+    ),
+    (
+        'Cahors Malbec Prestige',
+        'cahors.jpg',
+        22.00,
+        1000,
+        'rouge',
+        'Un vin noir, intense et robuste, aux arômes de mûre et de violette.'
+    ),
+    (
+        'Coteaux d’Aix-en-Provence',
+        'aix_rose.png',
+        15.00,
+        1000,
+        'rosé',
+        'Un rosé plaisir, frais et désaltérant pour l’apéritif.'
+    ),
+    (
+        'Ruinart Blanc de Blancs',
+        'ruinart.jpg',
+        95.00,
+        1000,
+        'champagne',
+        'Le fleuron de la maison Ruinart, une pureté de Chardonnay incomparable.'
+    ),
+    (
+        'Cornas "Terres Brûlées"',
+        'cornas.png',
+        62.00,
+        1000,
+        'rouge',
+        'Une Syrah sauvage et minérale, issue des coteaux granitiques du Rhône.'
+    ),
+    (
+        'Sauternes Château Suduiraut',
+        'sauternes.jpg',
+        75.00,
+        1000,
+        'blanc',
+        'Un vin d’or aux saveurs d’écorce d’orange confite et d’épices douces.'
+    );
+
+-- Remplissage de la table prestations
+INSERT INTO
+    cave (
+        nom,
+        adresse,
+        quantite,
+        description
+    )
+VALUES (
+        'Cave de Paris',
+        '10 Rue des Vins, 75000 Paris',
+        1000,
+        'Une cave historique au cœur de Paris, offrant une sélection exceptionnelle de vins français.'
+    ),
+    (
+        'Cave de Lyon',
+        '20 Avenue des Crus, 69000 Lyon',
+        1000,
+        'Une cave réputée à Lyon, spécialisée dans les vins du Rhône et de Bourgogne.'
+    ),
+    (
+        'Cave de Bordeaux',
+        '30 Boulevard des Châteaux, 33000 Bordeaux',
+        1000,
+        'Une cave emblématique à Bordeaux, proposant une large gamme de grands crus et de vins locaux.'
+    ),
+    (
+        'Cave de Marseille',
+        '40 Rue des Vignerons, 13000 Marseille',
+        1000,
+        'Une cave dynamique à Marseille, mettant en avant les vins du Sud de la France et de la Méditerranée.'
+    );
+
+INSERT INTO
+    prestations (
+        nom,
+        type,
+        cover,
+        description,
+        id_cave,
+        adresse_fixe,
+        prix
+    )
+VALUES
+    -- Prestations liées aux caves (Visites sur place)
+    (
+        'Visite Historique & Dégustation',
+        'cave',
+        'paris_cave.jpg',
+        'Découvrez les secrets de notre cave historique parisienne suivis d’une dégustation de 3 crus.',
+        1, -- ID de la Cave de Paris
+        NULL,
+        45.00
+    ),
+    (
+        'Atelier Initiation Rhône & Bourgogne',
+        'cave',
+        'lyon_atelier.jpg',
+        'Un cours œnologique focalisé sur les terroirs locaux dans notre cave lyonnaise.',
+        2, -- ID de la Cave de Lyon
+        NULL,
+        55.00
+    ),
+    (
+        'Grand Cru Experience',
+        'cave',
+        'bordeaux_prestige.jpg',
+        'Une immersion exclusive dans le monde des grands crus classés au cœur de Bordeaux.',
+        3, -- ID de la Cave de Bordeaux
+        NULL,
+        89.00
+    ),
+    (
+        'Vins du Sud & Tapas',
+        'cave',
+        'marseille_soleil.jpg',
+        'Une dégustation décontractée face au vieux port, mettant à l’honneur les rosés et blancs du Sud.',
+        4, -- ID de la Cave de Marseille
+        NULL,
+        35.00
+    ),
+    -- Prestation à domicile (Indépendante)
+    (
+        'Sommelier Privé à Domicile',
+        'domicile',
+        'tonneau_de_vin.jpg',
+        'Un expert se déplace chez vous avec 5 bouteilles d’exception pour une soirée inoubliable.',
+        NULL, -- Pas de cave
+        NULL, -- L'adresse sera saisie par le client lors de la commande
+        150.00
     );

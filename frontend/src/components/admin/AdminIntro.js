@@ -45,7 +45,7 @@ function AdminIntro({ user }) {
           Tableau de bord
         </Typography>
         <Typography variant="h5" sx={{ color: '#555' }}>
-          Bonjour, {user?.prenom || 'Administrateur'} ! 🍷
+          Bonjour, {user?.prenom || 'Administrateur'} ! 
         </Typography>
         <Typography variant="body1" sx={{ mt: 1, fontStyle: 'italic', color: '#888' }}>
           Voici un aperçu de l'activité de "Vigne à Domicile".

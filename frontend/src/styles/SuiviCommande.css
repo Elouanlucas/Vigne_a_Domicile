@@ -178,3 +178,60 @@
         transform: translateY(0); 
     }
 }
+
+.admin-orders-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.filters-bar {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.filter-input, .filter-select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    flex: 1;
+}
+
+.admin-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #eee;
+}
+
+.status-updater {
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: 1px solid #4a0404;
+    color: #4a0404;
+}
+
+.status-tag {
+    margin-left: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+}
+
+.status-tag.en_attente { background: #f1c40f; color: white; }
+.status-tag.en_cours { background: #3498db; color: white; }
+.status-tag.terminee { background: #27ae60; color: white; }
+
+.total-admin {
+    margin-top: 10px;
+    font-weight: bold;
+    text-align: right;
+    color: #4a0404;
+}

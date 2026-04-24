@@ -15,10 +15,12 @@ function GestionVin() {
   const [openDialog, setOpenDialog] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
+  // --- AJOUT DE QUANTITY DANS L'ÉTAT INITIAL ---
   const [newVin, setNewVin] = useState({
     name: '',
     cover: '',
     price: '',
+    quantity: '', // Nouveau champ
     category: '',
     description: ''
   });
@@ -42,19 +44,19 @@ function GestionVin() {
     };
 
     const handleAddVin = async () => {
-      if (!newVin.name || !newVin.price || !newVin.category) {
-          alert("Veuillez remplir les champs obligatoires");
+      // --- AJOUT DE QUANTITY DANS LA VÉRIFICATION ---
+      if (!newVin.name || !newVin.price || !newVin.category || newVin.quantity === '') {
+          alert("Veuillez remplir les champs obligatoires (incluant le stock)");
           return;
       }
 
-      // Utilisation de FormData au lieu de JSON
       const formData = new FormData();
       formData.append('name', newVin.name);
       formData.append('price', newVin.price);
+      formData.append('quantity', newVin.quantity); // --- ENVOI AU BACKEND ---
       formData.append('category', newVin.category);
       formData.append('description', newVin.description);
       
-      // Si cover est un fichier (nouvel upload), on l'ajoute
       if (newVin.cover instanceof File) {
           formData.append('cover', newVin.cover);
       }
@@ -66,11 +68,8 @@ function GestionVin() {
 
           const response = await fetch(url, {
               method: isEditing ? 'PUT' : 'POST',
-              headers: { 
-                  'Authorization': `Bearer ${token}` 
-                  // SURTOUT PAS de 'Content-Type': 'application/json' ici !
-              },
-              body: formData // On envoie le formData
+              headers: { 'Authorization': `Bearer ${token}` },
+              body: formData
           });
 
           if (response.ok) {
@@ -88,6 +87,7 @@ function GestionVin() {
       name: vin.name,
       cover: vin.cover || '',
       price: vin.price,
+      quantity: vin.quantity, // --- RÉCUPÉRATION POUR MODIF ---
       category: vin.category,
       description: vin.description || ''
     });
@@ -114,7 +114,8 @@ function GestionVin() {
   const handleOpenDialog = () => {
     setIsEditing(false);
     setSelectedVin(null);
-    setNewVin({ name: '', cover: '', price: '', category: '', description: '' });
+    // RESET AVEC QUANTITY
+    setNewVin({ name: '', cover: '', price: '', quantity: '', category: '', description: '' });
     setOpenDialog(true);
   };
 
@@ -146,6 +147,7 @@ function GestionVin() {
               <TableCell><strong>Nom</strong></TableCell>
               <TableCell><strong>Catégorie</strong></TableCell>
               <TableCell><strong>Prix</strong></TableCell>
+              <TableCell><strong>Stock</strong></TableCell> {/* --- NOUVELLE COLONNE --- */}
               <TableCell><strong>Description</strong></TableCell>
               <TableCell align="center"><strong>Actions</strong></TableCell>
             </TableRow>
@@ -153,7 +155,6 @@ function GestionVin() {
           <TableBody>
             {filteredVins.map((v) => (
               <TableRow key={v.id} hover>
-                {/* Colonne NOM avec IMAGE miniature */}
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                     <img 
@@ -165,9 +166,12 @@ function GestionVin() {
                     {v.name}
                   </Box>
                 </TableCell>
-                
                 <TableCell>{v.category}</TableCell>
                 <TableCell>{v.price}€</TableCell>
+                {/* --- AFFICHAGE DU STOCK AVEC COULEUR SI BAS --- */}
+                <TableCell sx={{ color: v.quantity <= 5 ? 'red' : 'inherit', fontWeight: v.quantity <= 5 ? 'bold' : 'normal' }}>
+                    {v.quantity}
+                </TableCell>
                 <TableCell>{v.description ? v.description.substring(0, 50) + '...' : 'N/A'}</TableCell>
                 <TableCell align="center">
                   <IconButton color="info" onClick={() => handleEdit(v)}><EditIcon /></IconButton>
@@ -179,7 +183,6 @@ function GestionVin() {
         </Table>
       </TableContainer>
 
-      {/* --- MODALE D'AJOUT/MODIFICATION --- */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
         <DialogTitle sx={{ backgroundColor: '#4a0404', color: '#fff' }}>
           {isEditing ? 'Modifier le vin' : 'Ajouter un nouveau vin'}
@@ -195,15 +198,21 @@ function GestionVin() {
             />
             <TextField label="Catégorie" required value={newVin.category} onChange={(e) => setNewVin({...newVin, category: e.target.value})} />
             <TextField label="Prix (€)" type="number" required value={newVin.price} onChange={(e) => setNewVin({...newVin, price: e.target.value})} />
-            <Button variant="outlined" component="label" fullWidth sx={{ mt: 1 }}>
+            
+            {/* --- NOUVEAU CHAMP STOCK DANS LA MODALE --- */}
+            <TextField 
+                label="Stock (Quantité)" 
+                type="number" 
+                required 
+                value={newVin.quantity} 
+                onChange={(e) => setNewVin({...newVin, quantity: e.target.value})} 
+            />
+
+            <Button variant="outlined" component="label" fullWidth sx={{ alignSelf: 'center' }}>
               {newVin.cover instanceof File ? newVin.cover.name : "Télécharger l'image"}
-              <input
-                type="file"
-                hidden
-                accept="image/*"
-                onChange={(e) => setNewVin({ ...newVin, cover: e.target.files[0] })}
-              />
+              <input type="file" hidden accept="image/*" onChange={(e) => setNewVin({ ...newVin, cover: e.target.files[0] })} />
             </Button>
+
             <TextField 
               label="Description" 
               multiline 

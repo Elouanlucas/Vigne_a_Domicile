@@ -105,6 +105,8 @@ const Header = ({ onTogglePanier }) => {
             <ul className="nav-links">
               <li><Link to="/">Accueil</Link></li>
               <li><Link to="/produits">Produits</Link></li>
+              <li><Link to="/prestations">Prestations</Link></li>
+
 
               <li 
                 onMouseEnter={handleOpenInfo} 

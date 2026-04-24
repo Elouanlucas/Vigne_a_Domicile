@@ -1,37 +1,172 @@
+/* --- STRUCTURE GLOBALE --- */
 .admin-layout {
     display: flex;
-    min-height: 85vh; /* vh = viewport height. 85% de la hauteur de l'écran */
+    min-height: 90vh; /* Un peu plus grand pour l'immersion */
+    background-color: #f8f9fa; /* Gris très clair pour faire ressortir les cartes */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* --- SIDEBAR (Menu latéral) --- */
 .admin-sidebar {
-    width: 250px;
-    background-color: #4a0404;
+    width: 280px; /* Un peu plus large pour respirer */
+    background-color: #4a0404; /* Ton bordeaux signature */
     color: white;
-    padding: 20px;
-}
-
-.admin-sidebar {
-    width: 250px;
-    background-color: #4a0404;
-    color: white;
-    padding: 20px;
-    /* Ajoute ceci : */
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+}
+
+.admin-sidebar h3 {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: rgba(255, 255, 255, 0.5); /* Titres de section discrets */
+    margin: 25px 0 10px 10px;
+}
+
+.admin-sidebar h3:first-child {
+    margin-top: 0;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .admin-sidebar li {
-    padding: 10px;
+    padding: 12px 15px;
+    margin-bottom: 5px;
     cursor: pointer;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-.admin-sidebar li:hover, .admin-sidebar li.active {
-    background-color: #630606;
-}
-
-.page-container {
+    border-radius: 8px; /* Coins arrondis pour les boutons */
+    transition: all 0.3s ease;
     display: flex;
-    flex-direction: column;
-    min-height: 100vh;
+    align-items: center;
+    font-weight: 500;
 }
+
+/* Hover et État Actif */
+.admin-sidebar li:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px); /* Petit effet de glissement */
+}
+
+.admin-sidebar li.active {
+    background-color: #ffffff; /* Fond blanc pour l'actif */
+    color: #4a0404; /* Texte bordeaux */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- ZONE DE CONTENU PRINCIPALE --- */
+.admin-content {
+    flex: 1;
+    padding: 40px;
+    overflow-y: auto;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Animation d'entrée pour le contenu */
+.admin-content > div {
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- ADAPTATION MOBILE (Optionnel) --- */
+@media (max-width: 768px) {
+    .admin-layout {
+        flex-direction: column;
+    }
+    .admin-sidebar {
+        width: 100%;
+        padding: 15px;
+    }
+    .admin-sidebar h3 {
+        display: none; /* Cache les titres sur mobile pour gagner de la place */
+    }
+    .admin-sidebar ul {
+        display: flex;
+        overflow-x: auto; /* Menu horizontal sur mobile */
+        gap: 10px;
+    }
+    .admin-sidebar li {
+        white-space: nowrap;
+    }
+}
+
+/* Le conteneur qui englobe titre + tableau */
+.stocks-container {
+    display: flex;
+    flex-direction: column; /* Force l'empilement vertical */
+    align-items: flex-start; /* Aligne à gauche, change en 'center' si tu veux centrer le tout */
+    width: 100%;
+    gap: 20px; /* Espace entre le titre et le tableau */
+    padding: 20px;
+}
+
+/* Style spécifique pour le titre */
+.stocks-title {
+    color: #4a0404;
+    font-weight: bold !important;
+    margin-bottom: 10px !important;
+    /* Optionnel : ajoute une petite barre en dessous pour le style */
+    border-bottom: 2px solid #4a0404;
+    padding-bottom: 5px;
+}
+
+/* On s'assure que le papier du tableau prend bien la largeur */
+.stocks-table-paper {
+    width: 100%;
+    max-width: 1000px; /* Ou la largeur que tu souhaites */
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
+}
+
+/* Ajustement de l'admin-layout si nécessaire */
+.admin-layout {
+    display: flex;
+    justify-content: center; /* Centre le bloc stocks-container dans la page */
+    width: 100%;
+}
+.stat-title {
+    color: #4a0404;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 800;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 30px;
+    padding: 20px;
+}
+
+.stat-card {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #eee;
+}
+
+.stat-card h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    border-left: 4px solid #4a0404;
+    padding-left: 10px;
+}
+
+/* Responsive pour mobiles */
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+

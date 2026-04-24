@@ -1,16 +1,27 @@
-/* --- Style du Titre Principal --- */
+/* --- Mise en page globale --- */
+.produits-tout {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.produits-layout {
+  display: flex;
+  gap: 20px;
+  padding-top: 20px;
+}
+
+/* --- Titre Principal --- */
 .produits-tout h1 {
   color: #4a0404;
   font-size: 2.5rem;
   font-weight: 800;
   text-align: center;
   margin-bottom: 30px;
-  position: relative;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
-/* Petit trait décoratif sous le H1 */
 .produits-tout h1::after {
   content: "";
   display: block;
@@ -21,50 +32,109 @@
   border-radius: 2px;
 }
 
-/* --- Section de Recherche --- */
+/* --- Barre de Recherche --- */
 .search-section {
   display: flex;
   justify-content: center;
-  align-items: center;
-  background-color: #f8f9fa; /* Gris très léger */
+  background-color: #f8f9fa;
   padding: 30px;
   border-radius: 12px;
   margin-bottom: 40px;
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
   border: 1px solid #eee;
 }
 
-/* On cible l'input Material UI via les classes générées si besoin, 
-   mais voici comment styliser le conteneur de recherche */
 .search-container {
   width: 100%;
   max-width: 600px;
-  display: flex;
-  gap: 10px;
 }
 
-/* --- Style des Titres de Catégories (H2) --- */
-.produits-tout h2 {
+/* --- Sidebar des Filtres (STICKY) --- */
+.filter-sidebar {
+  min-width: 220px;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  height: fit-content;
+  position: sticky; /* Reste fixe au scroll */
+  top: 100px;
+  align-self: flex-start;
+}
+
+.filter-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
   color: #4a0404;
-  font-size: 1.8rem;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.filter-group {
+  margin-bottom: 30px;
+}
+
+.filter-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.filter-checkbox {
+  margin-right: 8px;
+  cursor: pointer;
+  width: 18px;
+  height: 18px;
+}
+
+/* --- Grille de Produits --- */
+.products-grid-container {
+  flex: 1;
+}
+
+.category-title {
+  text-transform: capitalize;
+  color: #4a0404;
   border-bottom: 2px solid #4a0404;
   display: inline-block;
   padding-bottom: 5px;
   margin-bottom: 20px;
-  font-family: 'Playfair Display', serif; /* Si tu as une police élégante */
 }
 
-/* --- Sidebar des Filtres --- */
-.filter-sidebar {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+.wine-cards-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 15px;
+  margin-bottom: 40px;
 }
 
-.filter-sidebar h3 {
-  border-bottom: 1px solid #4a0404;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
+/* --- Carte Vin --- */
+.vin-card {
+  position: relative;
+  transition: transform 0.2s;
+}
+
+.vin-card:hover {
+  transform: translateY(-5px);
+}
+
+.vin-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.out-of-stock-banner {
+  position: absolute;
+  top: 20px;
+  left: -10px;
+  background-color: #d32f2f;
+  color: white;
+  padding: 5px 15px;
+  transform: rotate(-15deg);
+  z-index: 3;
+  font-weight: bold;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  border-radius: 4px;
 }

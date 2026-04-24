@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useContext } from 'react'; 
 import '../styles/Selection_Produits.css';
 import Button from '@mui/material/Button';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -10,11 +10,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
-import { CurrencyContext } from '../context/CurrencyContext'; // Importe le contexte
-import { useContext } from 'react';
+import Typography from '@mui/material/Typography';
+import { CurrencyContext } from '../context/CurrencyContext';
 
 const Home = ({ onAjouter }) => {
-  const { formatPrice } = useContext(CurrencyContext); // Récupère la fonction
+  const { formatPrice } = useContext(CurrencyContext);
   const [quantities, setQuantities] = useState({});
   const [vins, setVins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,13 +23,11 @@ const Home = ({ onAjouter }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Récupération de l'utilisateur
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
 
-    // Récupération des vins
     fetch('http://localhost:3001/api/vins')
       .then(res => {
         if (!res.ok) throw new Error("Erreur de récupération des produits");
@@ -47,23 +45,16 @@ const Home = ({ onAjouter }) => {
 
   const getImageUrl = (cover) => {
     if (!cover) return 'https://via.placeholder.com/150';
-    if (cover.type === 'Buffer' || cover.data) {
-      try {
-        const dataArray = cover.data || cover;
-        const uint8Array = new Uint8Array(dataArray);
-        const blob = new Blob([uint8Array], { type: 'image/jpeg' });
-        return URL.createObjectURL(blob);
-      } catch (e) {
-        return 'https://via.placeholder.com/150';
-      }
-    }
     return `http://localhost:3001/uploads/${cover}`;
   };
 
-  const handleQtyChange = (id, value) => {
+  const handleQtyChange = (id, value, maxStock) => {
     const numValue = parseInt(value) || 0;
-    if (numValue >= 0 && numValue <= 100) {
+    // On limite la saisie au stock disponible
+    if (numValue >= 0 && numValue <= maxStock) {
       setQuantities({ ...quantities, [id]: numValue });
+    } else if (numValue > maxStock) {
+      setQuantities({ ...quantities, [id]: maxStock });
     }
   };
 
@@ -77,12 +68,36 @@ const Home = ({ onAjouter }) => {
     setSelectedWine(null);
   };
 
-  // --- LA FONCTION RENDERWINECARD EST MAINTENANT PROPRE ---
   const renderWineCard = (vin) => {
-    const qty = quantities[vin.id] || 1;
+    const isOutOfStock = vin.quantity <= 0;
+    const qty = quantities[vin.id] || (isOutOfStock ? 0 : 1);
 
     return (
-      <div key={vin.id} className="vin-card" style={{ position: 'relative' }}>
+      <div key={vin.id} className="vin-card" style={{ 
+        position: 'relative', 
+        opacity: isOutOfStock ? 0.7 : 1, // Légère transparence si rupture
+        filter: isOutOfStock ? 'grayscale(0.5)' : 'none' // Un peu plus gris
+      }}>
+        
+        {/* BANDEAU RUPTURE DE STOCK */}
+        {isOutOfStock && (
+          <Box sx={{
+            position: 'absolute',
+            top: 20,
+            left: -10,
+            backgroundColor: '#d32f2f',
+            color: 'white',
+            padding: '5px 15px',
+            transform: 'rotate(-15deg)',
+            zIndex: 3,
+            fontWeight: 'bold',
+            boxShadow: 3,
+            borderRadius: '4px'
+          }}>
+            RUPTURE
+          </Box>
+        )}
+
         <IconButton 
           onClick={() => openModal(vin)}
           sx={{ 
@@ -108,22 +123,36 @@ const Home = ({ onAjouter }) => {
         <h3 style={{ cursor: 'pointer' }} onClick={() => openModal(vin)}>{vin.name}</h3>
         <p className="vin-price">{formatPrice(vin.price)}</p>
         
+        {/* INDICATEUR DE STOCK SI BAS */}
+        {!isOutOfStock && vin.quantity <= 5 && (
+          <Typography variant="caption" sx={{ color: '#d32f2f', fontWeight: 'bold', display: 'block', mb: 1 }}>
+            Plus que {vin.quantity} en stock !
+          </Typography>
+        )}
+
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center', mt: 1 }}>
           <Button 
             variant="contained" 
             onClick={() => onAjouter(vin, qty)}
+            disabled={isOutOfStock || qty === 0} // Désactivé si rupture
             startIcon={<ShoppingCartIcon />}
-            sx={{ backgroundColor: '#4a0404', textTransform: 'none', minWidth: '120px' }}
+            sx={{ 
+              backgroundColor: isOutOfStock ? '#ccc' : '#4a0404', 
+              textTransform: 'none', 
+              minWidth: '120px',
+              '&:hover': { backgroundColor: '#630606' }
+            }}
           >
-            Ajouter
+            {isOutOfStock ? 'Épuisé' : 'Ajouter'}
           </Button>
 
           <TextField
             type="number"
             size="small"
+            disabled={isOutOfStock}
             value={qty}
-            onChange={(e) => handleQtyChange(vin.id, e.target.value)}
-            inputProps={{ min: 1, max: 100 }}
+            onChange={(e) => handleQtyChange(vin.id, e.target.value, vin.quantity)}
+            inputProps={{ min: isOutOfStock ? 0 : 1, max: vin.quantity }}
             sx={{ width: '80px' }}
           />
         </Box>
@@ -161,7 +190,6 @@ const Home = ({ onAjouter }) => {
         ))}
       </section>
 
-      {/* Modale Détails du Vin */}
       <Dialog open={isModalOpen} onClose={closeModal} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <strong>{selectedWine?.name}</strong>
@@ -172,16 +200,21 @@ const Home = ({ onAjouter }) => {
         <DialogContent sx={{ pt: 3 }}>
           {selectedWine && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: 'center', position: 'relative' }}>
+                {selectedWine.quantity <= 0 && (
+                   <Typography sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%) rotate(-10deg)', backgroundColor: 'rgba(211, 47, 47, 0.9)', color: 'white', px: 4, py: 1, zIndex: 1, fontWeight: 'bold', fontSize: '1.5rem', borderRadius: '4px' }}>
+                     HORS STOCK
+                   </Typography>
+                )}
                 <img 
                   src={getImageUrl(selectedWine.cover)} 
                   alt={selectedWine.name}
-                  style={{ maxWidth: '100%', height: 'auto', maxHeight: '350px', objectFit: 'contain' }}
+                  style={{ maxWidth: '100%', height: 'auto', maxHeight: '350px', objectFit: 'contain', opacity: selectedWine.quantity <= 0 ? 0.4 : 1 }}
                 />
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f0f0f0', pb: 1 }}>
                 <span><strong>Prix :</strong> {selectedWine.price}€</span>
-                <span style={{ textTransform: 'capitalize' }}><strong>Catégorie :</strong> {selectedWine.category}</span>
+                <span><strong>Stock disponible :</strong> {selectedWine.quantity}</span>
               </Box>
               {selectedWine.description && (
                 <Box sx={{ backgroundColor: '#f9f9f9', p: 2, borderRadius: '8px', borderLeft: '4px solid #4a0404' }}>
@@ -190,6 +223,7 @@ const Home = ({ onAjouter }) => {
               )}
               <Button 
                 variant="contained" 
+                disabled={selectedWine.quantity <= 0}
                 onClick={() => {
                   onAjouter(selectedWine, quantities[selectedWine.id] || 1);
                   closeModal();
@@ -198,7 +232,7 @@ const Home = ({ onAjouter }) => {
                 sx={{ backgroundColor: '#4a0404', mt: 2, py: 1.5 }}
                 fullWidth
               >
-                Ajouter au Panier
+                {selectedWine.quantity <= 0 ? 'Indisponible' : 'Ajouter au Panier'}
               </Button>
             </Box>
           )}
