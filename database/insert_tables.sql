@@ -327,7 +327,8 @@ INSERT INTO
         description,
         id_cave,
         adresse_fixe,
-        prix
+        prix,
+        quantity
     )
 VALUES
     -- Prestations liées aux caves (Visites sur place)
@@ -338,7 +339,8 @@ VALUES
         'Découvrez les secrets de notre cave historique parisienne suivis d’une dégustation de 3 crus.',
         1, -- ID de la Cave de Paris
         NULL,
-        45.00
+        45.00,
+        20
     ),
     (
         'Atelier Initiation Rhône & Bourgogne',
@@ -347,7 +349,8 @@ VALUES
         'Un cours œnologique focalisé sur les terroirs locaux dans notre cave lyonnaise.',
         2, -- ID de la Cave de Lyon
         NULL,
-        55.00
+        55.00,
+        15
     ),
     (
         'Grand Cru Experience',
@@ -356,7 +359,8 @@ VALUES
         'Une immersion exclusive dans le monde des grands crus classés au cœur de Bordeaux.',
         3, -- ID de la Cave de Bordeaux
         NULL,
-        89.00
+        89.00,
+        20
     ),
     (
         'Vins du Sud & Tapas',
@@ -365,15 +369,17 @@ VALUES
         'Une dégustation décontractée face au vieux port, mettant à l’honneur les rosés et blancs du Sud.',
         4, -- ID de la Cave de Marseille
         NULL,
-        35.00
+        35.00,
+        25
     ),
     -- Prestation à domicile (Indépendante)
     (
         'Sommelier Privé à Domicile',
         'domicile',
-        'tonneau_de_vin.jpg',
+        'tonneau_de_vin.png',
         'Un expert se déplace chez vous avec 5 bouteilles d’exception pour une soirée inoubliable.',
         NULL, -- Pas de cave
         NULL, -- L'adresse sera saisie par le client lors de la commande
-        150.00
+        150.00,
+        NULL
     );

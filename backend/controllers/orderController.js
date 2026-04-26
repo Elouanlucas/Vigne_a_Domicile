@@ -1,48 +1,87 @@
 const db = require('../config/db');
 
 // --- VALIDER LA COMMANDE FINALE (Après clic sur Payer) ---
+// --- VALIDER LA COMMANDE FINALE (Après clic sur Payer) ---
 exports.validateFinalOrder = async (req, res) => {
     const { numUtilisateur, total_price, items } = req.body;
+    
+    // Sécurité : Vérification des données entrantes
+    if (!numUtilisateur || !items || items.length === 0) {
+        return res.status(400).json({ message: "Données de commande incomplètes" });
+    }
 
-    // On commence une TRANSACTION pour s'assurer que tout se passe bien
-    // ou que rien ne change en cas d'erreur
+    // Fonction de formatage pour MySQL (DD/MM/YYYY -> YYYY-MM-DD)
+    const formatDate = (dateStr) => {
+        if (!dateStr || !dateStr.includes('/')) return dateStr;
+        const [day, month, year] = dateStr.split('/');
+        return `${year}-${month}-${day}`;
+    };
+
     const connection = await db.getConnection();
-    await connection.beginTransaction();
 
     try {
-        // 1. Créer la commande
+        // Début de la transaction : si une seule requête échoue, rien n'est enregistré
+        await connection.beginTransaction();
+
+        // 1. Insertion dans la table principale 'commandes'
         const [orderResult] = await connection.query(
             'INSERT INTO commandes (numUtilisateur, total_price, status) VALUES (?, ?, ?)',
             [numUtilisateur, total_price, 'en_attente']
         );
         const commandeId = orderResult.insertId;
 
-        // 2. Parcourir les articles pour les insérer ET mettre à jour le stock
+        // 2. Boucle sur les items pour dispatcher entre Vins et Prestations
         for (const item of items) {
-            // Insertion dans commande_items
-            await connection.query(
-                'INSERT INTO commande_items (commande_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
-                [commandeId, item.id_vin, item.quantity, item.unit_price]
-            );
+            if (item.isPrestation) {
+                // INSERTION DANS commande_prestations
+                await connection.query(
+                    `INSERT INTO commande_prestations 
+                    (commande_id, prestation_id, quantity, date_prestation, adresse_prestation, unit_price) 
+                    VALUES (?, ?, ?, ?, ?, ?)`,
+                    [
+                        commandeId, 
+                        item.id_prestation, 
+                        item.quantity, 
+                        formatDate(item.date), 
+                        item.address || null, 
+                        item.unit_price
+                    ]
+                );
+            } else {
+                // INSERTION DANS commande_items (pour les VINS)
+                await connection.query(
+                    'INSERT INTO commande_items (commande_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
+                    [commandeId, item.id_vin, item.quantity, item.unit_price]
+                );
 
-            // --- MISE À JOUR DU STOCK ---
-            // On retire la quantité achetée de la colonne 'quantity' de la table 'vins'
-            await connection.query(
-                'UPDATE vins SET quantity = quantity - ? WHERE id = ?',
-                [item.quantity, item.id_vin]
-            );
+                // MISE À JOUR DU STOCK DE VINS
+                // On retire la quantité achetée du stock actuel
+                await connection.query(
+                    'UPDATE vins SET quantity = quantity - ? WHERE id = ?',
+                    [item.quantity, item.id_vin]
+                );
+            }
         }
 
-        // Si tout est OK, on valide les changements
+        // 3. Si tout est OK, on valide définitivement en BDD
         await connection.commit();
-        res.status(201).json({ message: "Commande validée et stock mis à jour !" });
+        
+        res.status(201).json({ 
+            message: "Commande validée avec succès !", 
+            commandeId: commandeId 
+        });
 
     } catch (error) {
-        // En cas d'erreur, on annule tout (le stock n'est pas déduit)
+        // En cas d'erreur (ex: stock insuffisant, erreur format date), on annule TOUT
         await connection.rollback();
-        console.error("Erreur commande:", error);
-        res.status(500).json({ message: "Erreur lors de la validation", error: error.message });
+        console.error("❌ ERREUR VALIDATION COMMANDE :", error);
+        
+        res.status(500).json({ 
+            message: "Erreur lors de la validation de la commande", 
+            error: error.message 
+        });
     } finally {
+        // Libération de la connexion vers le pool
         connection.release();
     }
 };
@@ -55,81 +94,98 @@ exports.createOrderPanier = async (req, res) => {
         return res.status(400).json({ message: "Données de commande incomplètes" });
     }
 
-    // On récupère une connexion spécifique pour gérer la TRANSACTION
+    // Fonction interne pour transformer "DD/MM/YYYY" en "YYYY-MM-DD"
+    const formatDate = (dateStr) => {
+        if (!dateStr || !dateStr.includes('/')) return dateStr;
+        const [day, month, year] = dateStr.split('/');
+        return `${year}-${month}-${day}`;
+    };
+
     const connection = await db.getConnection();
 
     try {
         await connection.beginTransaction();
 
-        // 1. Insertion dans panier_utilisateur
+        // 1. Création du panier global
         const [orderResult] = await connection.execute(
             'INSERT INTO panier_utilisateur (numUtilisateur, total_price, status) VALUES (?, ?, ?)',
             [numUtilisateur, total_price, 'en_attente']
         );
-        
         const orderId = orderResult.insertId;
 
-        // 2. Insertion des items en parallèle
-        const itemPromises = items.map(item => {
-            return connection.execute(
-                'INSERT INTO panier_items (order_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
-                [orderId, item.id_vin, item.quantity, item.unit_price]
-            );
-        });
+        // 2. Dispatch des items
+        for (const item of items) {
+            if (item.isPrestation) {
+                // Correction ici : On utilise formatDate pour éviter l'erreur SQL
+                // Et on vérifie que les noms correspondent à ton schéma (prestation_id, order_id)
+                await connection.execute(
+                    `INSERT INTO panier_prestations 
+                    (order_id, prestation_id, quantity, date_prestation, unit_price) 
+                    VALUES (?, ?, ?, ?, ?)`,
+                    [
+                        orderId, 
+                        item.id_prestation, 
+                        item.quantity, 
+                        formatDate(item.date), 
+                        item.unit_price
+                    ]
+                );
+            } else {
+                await connection.execute(
+                    'INSERT INTO panier_items (order_id, id_vin, quantity, unit_price) VALUES (?, ?, ?, ?)',
+                    [orderId, item.id_vin, item.quantity, item.unit_price]
+                );
+            }
+        }
 
-        await Promise.all(itemPromises);
-
-        // Si tout est OK, on valide
         await connection.commit();
-        
-        res.status(201).json({ message: "Commande créée avec succès", orderId });
+        res.status(201).json({ message: "Panier enregistré avec succès", orderId });
 
     } catch (error) {
-        // En cas d'erreur, on annule tout ce qui a été fait au-dessus
         await connection.rollback();
-        console.error("❌ Erreur Transaction Commande :", error);
-        res.status(500).json({ message: "Erreur lors de l'enregistrement", details: error.message });
+        console.error("❌ ERREUR SQL :", error.message);
+        res.status(500).json({ 
+            message: "Erreur lors de l'enregistrement", 
+            error: error.message 
+        });
     } finally {
-        connection.release(); // Très important : on libère la connexion pour les autres
+        connection.release();
     }
 };
 
 // --- RÉCUPÉRER LE PANIER EN ATTENTE ---
 exports.getPendingCart = async (req, res) => {
     const userId = req.params.userId;
-
     try {
-        // 1. Trouver le dernier panier 'en_attente'
         const sqlPanier = `
             SELECT id FROM panier_utilisateur 
             WHERE numUtilisateur = ? AND status = 'en_attente'
             ORDER BY created_at DESC LIMIT 1
         `;
         const [panier] = await db.query(sqlPanier, [userId]);
-
         if (panier.length === 0) return res.status(200).json([]);
 
         const panierId = panier[0].id;
 
-        // 2. Récupérer les articles avec les détails des vins
+        // UNION pour récupérer Vins ET Prestations
         const sqlItems = `
-            SELECT v.id, v.name, v.price, v.category, pi.quantity
+            SELECT v.id, v.name, v.price, pi.quantity, 'vin' as type
             FROM panier_items pi
             JOIN vins v ON pi.id_vin = v.id
             WHERE pi.order_id = ?
+            UNION ALL
+            SELECT p.id, p.nom as name, p.prix as price, pp.quantity, 'prestation' as type
+            FROM panier_prestations pp
+            JOIN prestations p ON pp.prestation_id = p.id
+            WHERE pp.order_id = ?
         `;
-        const [itemsResults] = await db.query(sqlItems, [panierId]);
+        const [itemsResults] = await db.query(sqlItems, [panierId, panierId]);
 
-        const formattedItems = itemsResults.map(item => ({
-            id: item.id,
-            name: item.name,
+        res.json(itemsResults.map(item => ({
+            ...item,
             price: parseFloat(item.price),
-            category: item.category,
-            quantity: item.quantity
-        }));
-
-        res.json(formattedItems);
-
+            isPrestation: item.type === 'prestation'
+        })));
     } catch (error) {
         console.error("❌ Erreur récupération panier :", error);
         res.status(500).json({ message: "Erreur serveur" });
@@ -148,10 +204,20 @@ exports.getActiveOrders = async (req, res) => {
                 c.total_price, 
                 c.status, 
                 c.created_at,
-                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+                GROUP_CONCAT(
+                    DISTINCT 
+                    CONCAT(
+                        IFNULL(v.name, p.nom), -- Prend le nom du vin, ou sinon celui de la prestation
+                        ' (x', 
+                        IFNULL(ci.quantity, cp.quantity), 
+                        ')'
+                    ) SEPARATOR ', '
+                ) as articles
             FROM commandes c
-            JOIN commande_items ci ON c.id = ci.commande_id
-            JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_items ci ON c.id = ci.commande_id
+            LEFT JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_prestations cp ON c.id = cp.commande_id
+            LEFT JOIN prestations p ON cp.prestation_id = p.id
             WHERE c.numUtilisateur = ? AND c.status IN ('en_attente', 'en_cours')
             GROUP BY c.id
             ORDER BY c.created_at DESC
@@ -176,10 +242,20 @@ exports.getCompletedOrders = async (req, res) => {
                 c.total_price, 
                 c.status, 
                 c.created_at,
-                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+                GROUP_CONCAT(
+                    DISTINCT 
+                    CONCAT(
+                        IFNULL(v.name, p.nom), 
+                        ' (x', 
+                        IFNULL(ci.quantity, cp.quantity), 
+                        ')'
+                    ) SEPARATOR ', '
+                ) as articles
             FROM commandes c
-            JOIN commande_items ci ON c.id = ci.commande_id
-            JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_items ci ON c.id = ci.commande_id
+            LEFT JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_prestations cp ON c.id = cp.commande_id
+            LEFT JOIN prestations p ON cp.prestation_id = p.id
             WHERE c.numUtilisateur = ? AND c.status = 'terminee'
             GROUP BY c.id
             ORDER BY c.created_at DESC
@@ -201,15 +277,23 @@ exports.getAllOrdersAdmin = async (req, res) => {
                 c.total_price, 
                 c.status, 
                 c.created_at, 
-                u.nom, 
-                u.prenom,
-                GROUP_CONCAT(CONCAT(v.name, ' (x', ci.quantity, ')') SEPARATOR ', ') as articles
+                u.nom as user_nom, 
+                u.prenom as user_prenom,
+                GROUP_CONCAT(
+                    DISTINCT 
+                    CONCAT(
+                        IFNULL(v.name, p.nom), 
+                        ' (x', 
+                        IFNULL(ci.quantity, cp.quantity), 
+                        ')'
+                    ) SEPARATOR ', '
+                ) as articles
             FROM commandes c
-            -- Correction : Nom de table 'Utilisateur' et clé 'numUtilisateur'
             JOIN Utilisateur u ON c.numUtilisateur = u.numUtilisateur
-            -- Jointures pour les articles
-            JOIN commande_items ci ON c.id = ci.commande_id
-            JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_items ci ON c.id = ci.commande_id
+            LEFT JOIN vins v ON ci.id_vin = v.id
+            LEFT JOIN commande_prestations cp ON c.id = cp.commande_id
+            LEFT JOIN prestations p ON cp.prestation_id = p.id
             GROUP BY c.id
             ORDER BY c.created_at DESC
         `;
@@ -217,11 +301,8 @@ exports.getAllOrdersAdmin = async (req, res) => {
         const [orders] = await db.query(sql);
         res.json(orders);
     } catch (error) {
-        console.error("❌ Erreur SQL détaillée :", error.message);
-        res.status(500).json({ 
-            message: "Erreur lors de la récupération des commandes", 
-            error: error.message 
-        });
+        console.error("❌ Erreur SQL Admin :", error.message);
+        res.status(500).json({ message: "Erreur récupération admin", error: error.message });
     }
 };
 

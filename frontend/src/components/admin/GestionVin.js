@@ -20,7 +20,7 @@ function GestionVin() {
     name: '',
     cover: '',
     price: '',
-    quantity: '', // Nouveau champ
+    quantity: '', 
     category: '',
     description: ''
   });
@@ -87,7 +87,7 @@ function GestionVin() {
       name: vin.name,
       cover: vin.cover || '',
       price: vin.price,
-      quantity: vin.quantity, // --- RÉCUPÉRATION POUR MODIF ---
+      quantity: vin.quantity, 
       category: vin.category,
       description: vin.description || ''
     });

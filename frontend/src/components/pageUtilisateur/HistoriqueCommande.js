@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import '../../styles/SuiviCommande.css'; // Cohérence visuelle parfaite
+import React, { useState, useEffect, useContext } from 'react';
+import '../../styles/SuiviCommande.css';
+
+// Import du Context pour la devise
+import { CurrencyContext } from '../../context/CurrencyContext';
 
 function HistoriqueCommande({ user }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    // État pour gérer l'affichage du menu déroulant
     const [expandedOrderId, setExpandedOrderId] = useState(null);
+
+    // Récupération de la fonction de formatage
+    const { formatPrice } = useContext(CurrencyContext);
 
     useEffect(() => {
         const idToUse = user?.numUtilisateur || user?.id;
@@ -16,7 +21,6 @@ function HistoriqueCommande({ user }) {
         }
     }, [user]);
 
-    // Fonction pour ouvrir/fermer le menu
     const toggleOrder = (orderId) => {
         setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
     };
@@ -50,7 +54,6 @@ function HistoriqueCommande({ user }) {
                     {orders.map(order => (
                         <div key={order.id} className={`order-card history-card ${expandedOrderId === order.id ? 'expanded' : ''}`}>
                             
-                            {/* Header cliquable pour dérouler */}
                             <div className="order-header" onClick={() => toggleOrder(order.id)} style={{cursor: 'pointer'}}>
                                 <div>
                                     <span>Commande #ID-{order.id}</span>
@@ -71,7 +74,6 @@ function HistoriqueCommande({ user }) {
                                 <p>Reçu le : {new Date(order.created_at).toLocaleDateString()}</p>
                             </div>
 
-                            {/* --- PARTIE DÉROULANTE : DÉTAILS DE LA COMMANDE --- */}
                             {expandedOrderId === order.id && (
                                 <div className="order-details-dropdown">
                                     <h4>Articles achetés :</h4>
@@ -84,7 +86,8 @@ function HistoriqueCommande({ user }) {
                             )}
 
                             <div className="order-footer">
-                                <strong>Montant réglé : {parseFloat(order.total_price).toFixed(2)}€</strong>
+                                {/* Correction : Utilisation de formatPrice pour gérer les devises */}
+                                <strong>Montant réglé : {formatPrice(order.total_price)}</strong>
                                 <button className="btn-toggle" onClick={() => toggleOrder(order.id)}>
                                     {expandedOrderId === order.id ? 'Masquer détails' : 'Détails de la commande'}
                                 </button>

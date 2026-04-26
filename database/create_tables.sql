@@ -1,18 +1,25 @@
 -- 1. On supprime d'abord les tables ENFANTS (celles qui pointent vers les autres)
 -- 1. On supprime les tables ENFANTS d'abord (Liaisons et Items)
 DROP TABLE IF EXISTS panier_items;
+
 DROP TABLE IF EXISTS panier_prestations;
+
 DROP TABLE IF EXISTS commande_items;
+
 DROP TABLE IF EXISTS commande_prestations;
 
 -- 2. On supprime les tables INTERMÉDIAIRES
 DROP TABLE IF EXISTS panier_utilisateur;
+
 DROP TABLE IF EXISTS commandes;
 
 -- 3. On supprime les tables PARENTS (Référentiels)
 DROP TABLE IF EXISTS vins;
+
 DROP TABLE IF EXISTS prestations;
+
 DROP TABLE IF EXISTS Utilisateur;
+
 DROP TABLE IF EXISTS cave;
 
 -- 3. Table des utilisateurs
@@ -91,7 +98,6 @@ CREATE TABLE commande_items (
     CONSTRAINT fk_commande_items_vin FOREIGN KEY (id_vin) REFERENCES vins (id) ON DELETE CASCADE
 ) ENGINE = InnoDB;
 
-
 CREATE TABLE cave (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
@@ -103,12 +109,13 @@ CREATE TABLE cave (
 CREATE TABLE prestations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(255) NOT NULL,
-    type ENUM('cave', 'domicile', 'tiers') NOT NULL, 
+    type ENUM('cave', 'domicile', 'tiers') NOT NULL,
     cover VARCHAR(255),
     description TEXT,
-    id_cave INT NULL, 
+    id_cave INT NULL,
     adresse_fixe VARCHAR(255) NULL, -- Pour un lieu partenaire autre qu'une cave
     prix DECIMAL(10, 2) NOT NULL,
+    quantity INT NULL,
     CONSTRAINT fk_prestations_cave FOREIGN KEY (id_cave) REFERENCES cave (id) ON DELETE SET NULL
 ) ENGINE = InnoDB;
 
@@ -118,6 +125,7 @@ CREATE TABLE panier_prestations (
     prestation_id INT NOT NULL,
     quantity INT NOT NULL,
     date_prestation DATE NOT NULL, -- Date de la prestation
+    heure_prestation ENUM('matin', 'apres_midi', 'soir') NOT NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT fk_panier_prestations_order FOREIGN KEY (order_id) REFERENCES panier_utilisateur (id) ON DELETE CASCADE,
     CONSTRAINT fk_panier_prestations_prestation FOREIGN KEY (prestation_id) REFERENCES prestations (id) ON DELETE CASCADE
@@ -129,6 +137,7 @@ CREATE TABLE commande_prestations (
     prestation_id INT NOT NULL,
     quantity INT NOT NULL,
     date_prestation DATE NOT NULL, -- Date de la prestation
+    heure_prestation ENUM('matin', 'apres_midi', 'soir') NOT NULL,
     adresse_prestation VARCHAR(255) NULL,
     unit_price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT fk_commande_prestations_commande FOREIGN KEY (commande_id) REFERENCES commandes (id) ON DELETE CASCADE,

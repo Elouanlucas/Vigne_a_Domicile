@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import '../../styles/SuiviCommande.css';
+
+// Import du Context
+import { CurrencyContext } from '../../context/CurrencyContext';
 
 function SuiviCommande({ user }) {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
-    // État pour savoir quelle commande est "déroulée" (on stocke son ID)
     const [expandedOrderId, setExpandedOrderId] = useState(null);
+
+    // Récupération de la fonction de formatage
+    const { formatPrice } = useContext(CurrencyContext);
 
     useEffect(() => {
         const idToUse = user?.numUtilisateur || user?.id;
@@ -17,7 +22,6 @@ function SuiviCommande({ user }) {
     }, [user]);
 
     const toggleOrder = (orderId) => {
-        // Si on clique sur la même, on ferme. Sinon, on ouvre la nouvelle.
         setExpandedOrderId(expandedOrderId === orderId ? null : orderId);
     };
 
@@ -61,7 +65,6 @@ function SuiviCommande({ user }) {
                                 <span className="arrow-icon">{expandedOrderId === order.id ? '▲' : '▼'}</span>
                             </div>
                             
-                            {/* Toujours afficher le stepper */}
                             <div className="status-stepper">
                                 <div className="step completed"><div className="circle">1</div><p>Attente</p></div>
                                 <div className={`line ${order.status === 'en_cours' ? 'active' : ''}`}></div>
@@ -70,7 +73,6 @@ function SuiviCommande({ user }) {
                                 <div className="step"><div className="circle">3</div><p>Livré</p></div>
                             </div>
 
-                            {/* CONTENU DÉROULANT (S'affiche seulement si expandedOrderId === order.id) */}
                             {expandedOrderId === order.id && (
                                 <div className="order-details-dropdown">
                                     <h4>Détails des articles :</h4>
@@ -83,7 +85,9 @@ function SuiviCommande({ user }) {
                             )}
 
                             <div className="order-footer">
-                                <strong>Total : {parseFloat(order.total_price).toFixed(2)}€</strong>
+                                {/* Utilisation de formatPrice au lieu de toFixed(2) + '€' */}
+                                <strong>Total : {formatPrice(order.total_price)}</strong>
+                                
                                 <button className="btn-toggle" onClick={() => toggleOrder(order.id)}>
                                     {expandedOrderId === order.id ? 'Masquer détails' : 'Voir détails'}
                                 </button>

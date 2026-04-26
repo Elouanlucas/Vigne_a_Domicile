@@ -4,6 +4,7 @@ import { useCart } from '../../context/CartContext';
 import MaPage from './MaPage';
 import SuiviCommande from './SuiviCommande';
 import HistoriqueCommande from './HistoriqueCommande';
+import GestionPrestation from './GestionPrestation';
 
 import '../../styles/Utilisateur.css';
 
@@ -21,6 +22,8 @@ function Utilisateur() {
             case 'intro': return <MaPage user={user} />;
             case 'commande': return <SuiviCommande user={user} />;
             case 'historique': return <HistoriqueCommande user={user} />;
+            case 'prestation': return <GestionPrestation user={user} />;
+
             default: return <MaPage user={user} />;
         }
     };
@@ -34,8 +37,11 @@ function Utilisateur() {
                         onClick={() => setCurrentPage('intro')}>Vue d'ensemble</li>
                     <li className={currentPage === 'commande' ? 'active' : ''} 
                         onClick={() => setCurrentPage('commande')}>Suivi des commandes</li>
+                    <li className={currentPage === 'prestation' ? 'active' : ''} 
+                        onClick={() => setCurrentPage('prestation')}>Gestion des prestations</li>
                     <li className={currentPage === 'historique' ? 'active' : ''} 
                         onClick={() => setCurrentPage('historique')}>Historique des commandes</li>
+
                 </ul>
             </nav>
 

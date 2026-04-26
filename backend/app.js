@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const vinRoutes = require('./routes/vinRoutes');
+const prestationRoutes = require('./routes/prestationRoutes');
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api/auth', authRoutes);   // Gère /api/auth/login et /api/auth/regist
 app.use('/api/user', userRoutes);   // Gère /api/user/:login, /api/user/update-photo, etc.
 app.use('/api/orders', orderRoutes); // Gère /api/orders/ et /api/orders/recuperer/:userId
 app.use('/api/vins', vinRoutes);     // Gère /api/vins/ et /api/vins/:id
+app.use('/api/prestations', prestationRoutes); // Gère /api/prestations/
 
 // --- GESTION DES ERREURS 404 ---
 app.use((req, res) => {

@@ -15,6 +15,7 @@ import Administrateur from './pages/Administrateur';
 import RecapPanier from './pages/RecapPanier';
 import Prestations from './pages/Prestations';
 import Paier from './pages/Paier';
+import Reservations from './pages/Reservations';
 import 'leaflet/dist/leaflet.css';
 
 
@@ -43,6 +44,7 @@ root.render(
               <Route path="/RecapPanier" element={<RecapPanier />} />
               <Route path="/paiement" element={<Paier />} />
               <Route path="/prestations" element={<Prestations />} />
+              <Route path="/reservation/:id" element={<Reservations />} />
               
 
               <Route path="*" element={<Error />} />

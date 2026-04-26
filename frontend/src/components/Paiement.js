@@ -104,15 +104,30 @@ function Paiement() {
         const commande = {
             numUtilisateur: parseInt(userId),
             total_price: total,
-            items: panierItems.map(item => ({
-                id_vin: item.id,
-                quantity: item.quantity,
-                unit_price: item.price
-            }))
+            items: panierItems.map(item => {
+                if (item.isPrestation) {
+                    return {
+                        // Si c'est une prestation, on extrait l'ID numérique
+                        id_prestation: typeof item.id === 'string' ? item.id.split('-')[1] : item.id,
+                        quantity: item.quantity,
+                        unit_price: item.price,
+                        date: item.details?.date || item.date, // On récupère la date
+                        address: editForm.adresseDeLivraison, // On utilise l'adresse du formulaire de paiement
+                        isPrestation: true
+                    };
+                } else {
+                    return {
+                        id_vin: item.id,
+                        quantity: item.quantity,
+                        unit_price: item.price,
+                        isPrestation: false
+                    };
+                }
+            })
         };
 
         try {
-            const response = await fetch('http://localhost:3001/api/orders/validate', { // Chemin mis à jour
+            const response = await fetch('http://localhost:3001/api/orders/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,16 +137,17 @@ function Paiement() {
             });
 
             if (response.ok) {
-                alert("Merci ! Votre commande a été enregistrée dans la base de données.");
-                setPanierItems([]); 
+                alert("Merci ! Votre commande a été enregistrée avec succès.");
+                setPanierItems([]);
                 navigate('/'); 
             } else {
-                alert("Erreur lors de la validation.");
+                const errorData = await response.json();
+                alert("Erreur lors de la validation : " + (errorData.message || "Erreur inconnue"));
             }
         } catch (error) {
-            console.error(error);
+            console.error("Erreur réseau :", error);
+            alert("Impossible de contacter le serveur.");
         }
-        
     };
 
     if (loading) return (

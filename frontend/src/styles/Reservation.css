@@ -1,0 +1,45 @@
+.reservation-page {
+    padding: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    min-height: 100vh;
+}
+
+/* Personnalisation de l'agenda react-calendar */
+.calendar-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.react-calendar {
+    width: 100% !important;
+    border: none !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border-radius: 12px;
+}
+
+.react-calendar__tile--active {
+    background: #4a0404 !important;
+    color: white !important;
+    border-radius: 6px;
+}
+
+.react-calendar__tile--now {
+    background: #f0e6e6 !important;
+    color: #4a0404 !important;
+    border-radius: 6px;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+    background-color: #f8f9fa;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+    background-color: #f0e6e6;
+    border-radius: 6px;
+    color: #4a0404;
+}

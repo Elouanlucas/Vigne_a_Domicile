@@ -21,51 +21,60 @@ const Panier = ({ items, onRetirer, onToutRetirer }) => {
     if (items.length === 0) return;
 
     const storedUserId = localStorage.getItem('userId');
-    const token = localStorage.getItem('token'); // On récupère le token
+    const token = localStorage.getItem('token');
 
     if (!storedUserId || !token) {
-      alert("Veuillez vous connecter pour finaliser votre commande.");
-      navigate('/connexion');
-      return;
+        alert("Veuillez vous connecter pour finaliser votre commande.");
+        navigate('/connexion');
+        return;
     }
 
+    // ON REGROUPE TOUT DANS UN SEUL TABLEAU "items"
     const commande = {
-      numUtilisateur: parseInt(storedUserId),
-      total_price: total,
-      items: items.map(item => ({
-        id_vin: item.id,
-        quantity: item.quantity,
-        unit_price: item.price
-      }))
+        numUtilisateur: parseInt(storedUserId),
+        total_price: total,
+        items: items.map(item => {
+            if (item.isPrestation) {
+                // Données formatées pour une prestation
+                return {
+                    id_prestation: item.id.split('-')[1], 
+                    quantity: item.quantity,
+                    unit_price: item.price,
+                    date: item.details.date,
+                    slot: item.details.slot,
+                    address: item.details.address,
+                    isPrestation: true
+                };
+            } else {
+                // Données formatées pour un vin
+                return {
+                    id_vin: item.id,
+                    quantity: item.quantity,
+                    unit_price: item.price,
+                    isPrestation: false
+                };
+            }
+        })
     };
 
     try {
-      // MISE À JOUR DE L'URL : /api/orders/panier
-      const response = await fetch('http://localhost:3001/api/orders/panier', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // AJOUT DU TOKEN
-        },
-        body: JSON.stringify(commande),
-      });
+        const response = await fetch('http://localhost:3001/api/orders/panier', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(commande),
+        });
 
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Commande enregistrée avec succès:', data);
-        
-        // On ne vide pas forcément le panier ici si on veut le voir sur RecapPanier
-        // onToutRetirer(null); 
-        
-        navigate('/RecapPanier');
-      } else {
-        const errorData = await response.json();
-        console.error('Erreur backend:', errorData.message);
-        alert("Erreur : " + errorData.message);
-      }
+        if (response.ok) {
+            navigate('/RecapPanier');
+        } else {
+            const errorData = await response.json();
+            alert("Erreur : " + errorData.message);
+        }
     } catch (error) {
-      console.error('Erreur réseau:', error);
-      alert("Impossible de contacter le serveur. Vérifiez votre connexion.");
+        console.error('Erreur réseau:', error);
     }
   };
 

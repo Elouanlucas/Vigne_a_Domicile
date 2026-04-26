@@ -1,140 +1,279 @@
 /* --- Mise en page globale --- */
 .produits-tout {
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    background-color: #ffffff;
+    min-height: 100vh;
 }
 
 .produits-layout {
-  display: flex;
-  gap: 20px;
-  padding-top: 20px;
+    display: flex;
+    gap: 30px;
+    padding-top: 20px;
 }
 
 /* --- Titre Principal --- */
 .produits-tout h1 {
-  color: #4a0404;
-  font-size: 2.5rem;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 30px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
+    color: #4a0404;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .produits-tout h1::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 4px;
-  background-color: #4a0404;
-  margin: 10px auto 0;
-  border-radius: 2px;
+    content: "";
+    display: block;
+    width: 60px;
+    height: 4px;
+    background-color: #4a0404;
+    margin: 10px auto 0;
+    border-radius: 2px;
 }
 
 /* --- Barre de Recherche --- */
+/* --- Barre de Recherche --- */
 .search-section {
-  display: flex;
-  justify-content: center;
-  background-color: #f8f9fa;
-  padding: 30px;
-  border-radius: 12px;
-  margin-bottom: 40px;
-  border: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+    border: 1px solid #eee;
+    width: 100%; /* S'assure que la section prend toute la largeur */
 }
 
 .search-container {
-  width: 100%;
-  max-width: 600px;
+    width: 100%;
+    max-width: 1000px; /* C'est ta limite max */
+    display: flex; 
+}
+
+/* Force le TextField MUI à remplir le container */
+.search-container .MuiFormControl-root {
+    width: 100%;
+    flex: 1;
 }
 
 /* --- Sidebar des Filtres (STICKY) --- */
 .filter-sidebar {
-  min-width: 220px;
-  background-color: #f9f9f9;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  height: fit-content;
-  position: sticky; /* Reste fixe au scroll */
-  top: 100px;
-  align-self: flex-start;
+    min-width: 240px;
+    background-color: #f9f9f9;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    
+    /* Propriétés cruciales pour le "Sticky" */
+    position: sticky;
+    top: 20px;          /* Distance par rapport au haut de l'écran lors du scroll */
+    height: calc(100vh - 40px); /* Prend toute la hauteur de l'écran moins la marge */
+    overflow-y: auto;   /* Permet de scroller à l'intérieur de la sidebar si elle est trop longue */
+    
+    align-self: flex-start; /* Indispensable dans un conteneur Flex */
+    z-index: 10;
 }
 
+/* On s'assure que le conteneur des produits permet le sticky */
+.produits-layout {
+    display: flex;
+    gap: 30px;
+    padding-top: 20px;
+    align-items: flex-start; /* Important pour que le sticky fonctionne */
+    overflow: visible;       /* Un overflow hidden ici casserait le sticky */
+}
+
+
 .filter-sidebar h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  color: #4a0404;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #4a0404;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    font-weight: 800;
 }
 
 .filter-group {
-  margin-bottom: 30px;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
 }
 
+/* --- Sidebar des Filtres --- */
+
+/* ... (conserve le début de la sidebar) ... */
+
 .filter-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer; /* Rend toute la ligne cliquable visuellement */
 }
 
 .filter-checkbox {
-  margin-right: 8px;
-  cursor: pointer;
-  width: 18px;
-  height: 18px;
+    margin-right: 12px;
+    cursor: pointer;
+    width: 20px;   /* Légèrement plus grand pour le style rond */
+    height: 20px;
+    accent-color: #4a0404;
+    
+    /* --- TRANSFORMATION EN CERCLE --- */
+    appearance: none; /* Désactive le look par défaut du navigateur */
+    -webkit-appearance: none;
+    border: 2px solid #4a0404;
+    border-radius: 50%; /* Le cercle parfait */
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+    display: grid;
+    place-content: center;
+}
+
+/* Style de l'état coché (le point au milieu) */
+.filter-checkbox::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: 120ms transform ease-in-out;
+    box-shadow: inset 1em 1em #4a0404; /* Couleur du point central */
+}
+
+.filter-checkbox:checked::before {
+    transform: scale(1);
+}
+
+.filter-checkbox:checked {
+    background-color: #fff; /* Fond blanc pour faire ressortir le point */
+    border: 2px solid #4a0404;
+}
+
+/* Effet au survol */
+.filter-item:hover .filter-checkbox {
+    background-color: #f0e6e6;
 }
 
 /* --- Grille de Produits --- */
 .products-grid-container {
-  flex: 1;
+    flex: 1;
+}
+
+.category-section {
+    margin-bottom: 50px;
 }
 
 .category-title {
-  text-transform: capitalize;
-  color: #4a0404;
-  border-bottom: 2px solid #4a0404;
-  display: inline-block;
-  padding-bottom: 5px;
-  margin-bottom: 20px;
+    text-transform: uppercase;
+    color: #4a0404;
+    font-size: 1.4rem;
+    border-bottom: 2px solid #4a0404;
+    display: inline-block;
+    padding-bottom: 5px;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
 }
 
 .wine-cards-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin-top: 15px;
-  margin-bottom: 40px;
+    display: grid;
+    /* Corrigé : minmax réduit à 200px pour des cartes plus petites et plus nombreuses par ligne */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
 }
 
 /* --- Carte Vin --- */
 .vin-card {
-  position: relative;
-  transition: transform 0.2s;
+    position: relative;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid #eee;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    /* Empêche les cartes de devenir géantes sur les très grands écrans */
+    max-width: 280px;
 }
 
 .vin-card:hover {
-  transform: translateY(-5px);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
 
 .vin-image {
-  width: 100%;
-  height: 200px;
-  object-fit: contain;
-  cursor: pointer;
+    width: 100%;
+    /* Corrigé : hauteur réduite pour compacter la carte */
+    height: 180px; 
+    object-fit: contain;
+    padding: 15px;
+    cursor: pointer;
+    background-color: #fdfdfd;
 }
 
+.vin-card-content {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    border-top: 1px solid #f9f9f9;
+}
+
+.vin-card-content h3 {
+    /* Corrigé : taille de police légèrement réduite */
+    font-size: 0.95rem; 
+    margin: 0 0 8px 0;
+    color: #333;
+    height: 2.4em; 
+    overflow: hidden;
+    line-height: 1.2;
+}
+
+.vin-price {
+    color: #4a0404;
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+
+/* --- Badge Rupture --- */
 .out-of-stock-banner {
-  position: absolute;
-  top: 20px;
-  left: -10px;
-  background-color: #d32f2f;
-  color: white;
-  padding: 5px 15px;
-  transform: rotate(-15deg);
-  z-index: 3;
-  font-weight: bold;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-  border-radius: 4px;
+    position: absolute;
+    top: 15px;
+    left: -10px;
+    background-color: #d32f2f;
+    color: white;
+    padding: 5px 20px;
+    transform: rotate(-15deg);
+    z-index: 3;
+    font-weight: bold;
+    font-size: 0.75rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    border-radius: 4px;
+}
+
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50vh;
+    color: #4a0404;
+    font-weight: bold;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+    .produits-layout {
+        flex-direction: column;
+    }
+    .filter-sidebar {
+        width: 100%;
+        position: static;
+        margin-bottom: 20px;
+    }
+    .search-section {
+        padding: 15px;
+    }
 }

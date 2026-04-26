@@ -1,0 +1,35 @@
+.custom-calendar {
+    border: none !important;
+    font-family: 'Roboto', sans-serif;
+    width: 100% !important;
+}
+
+/* Couleur du jour sélectionné */
+.react-calendar__tile--active {
+    background: #4a0404 !important;
+    color: white !important;
+    border-radius: 8px;
+}
+
+/* Couleur du jour actuel */
+.react-calendar__tile--now {
+    background: #f0e6e6 !important;
+    color: #4a0404 !important;
+    font-weight: bold;
+}
+
+/* Le petit point indicateur sous la date */
+.dot-indicator {
+    height: 6px;
+    width: 6px;
+    background-color: #4a0404;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top: 2px;
+}
+
+.react-calendar__navigation button {
+    color: #4a0404;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
