@@ -47,6 +47,19 @@ html, body, #root {
   overflow-y: auto; /* Pour pouvoir scroller à l'intérieur du panier s'il y a beaucoup d'articles */
 }
 
+.home-content {
+  display: flex; /* Aligne la liste et le panier côte à côte */
+  flex-direction: row;
+}
+
+.Produits_style {
+  flex: 1; /* Prend toute la place restante */
+}
+
+.Panier_style {
+  width: 350px; /* Largeur fixe pour le panier à droite */
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .home-content {

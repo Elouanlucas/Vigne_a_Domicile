@@ -10,6 +10,7 @@ const orderRoutes = require('./routes/orderRoutes');
 const vinRoutes = require('./routes/vinRoutes');
 const prestationRoutes = require('./routes/prestationRoutes');
 const caveRoutes = require('./routes/caveRoutes');
+const promoRoutes = require('./routes/promoRoutes');
 
 const app = express();
 
@@ -30,6 +31,7 @@ app.use('/api/orders', orderRoutes); // Gère /api/orders/ et /api/orders/recupe
 app.use('/api/vins', vinRoutes);     // Gère /api/vins/ et /api/vins/:id
 app.use('/api/prestations', prestationRoutes); // Gère /api/prestations/
 app.use('/api/caves', caveRoutes); // Gère /api/caves/ et /api/caves/:id
+app.use('/api/promo', promoRoutes); // Gère /api/promo/validate et /api/promo/details/:code
 
 // --- GESTION DES ERREURS 404 ---
 app.use((req, res) => {

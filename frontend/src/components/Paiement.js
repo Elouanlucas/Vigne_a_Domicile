@@ -1,29 +1,28 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CurrencyContext } from '../context/CurrencyContext';
-import { useCart } from '../context/CartContext'; 
-import '../styles/paiement.css';
-
+import { useCart } from '../context/CartContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
+// Material UI Imports
+import {
+    Accordion, AccordionSummary, AccordionDetails, Typography,
+    Button, TextField, Box, CircularProgress, Tabs, Tab, InputAdornment
+} from '@mui/material';
+
+// Icons
+import {
+    ExpandMore as ExpandMoreIcon, Edit as EditIcon, Map as MapIcon,
+    Payment as PaymentIcon, CreditCard as CreditCardIcon, Lock as LockIcon
+} from '@mui/icons-material';
+
+import '../styles/paiement.css';
+
+// Configuration Icônes Leaflet pour éviter les bugs d'affichage
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
 import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-import { 
-    Accordion, AccordionSummary, AccordionDetails, 
-    Typography, Button, TextField, Box, CircularProgress,
-    Tabs, Tab, InputAdornment
-} from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import EditIcon from '@mui/icons-material/Edit';
-import MapIcon from '@mui/icons-material/Map';
-import PaymentIcon from '@mui/icons-material/Payment';
-import CreditCardIcon from '@mui/icons-material/CreditCard';
-import LockIcon from '@mui/icons-material/Lock';
-
-// Config icône Leaflet
 let DefaultIcon = L.icon({
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
@@ -32,32 +31,71 @@ let DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
+const PRIMARY_BORDEAUX = "#4a0404";
+
 function Paiement() {
     const navigate = useNavigate();
     const { formatPrice } = useContext(CurrencyContext);
-    const { panierItems, setPanierItems } = useCart(); 
-    
+    const { panierItems, setPanierItems } = useCart();
+
+    // États globaux
+    const [loading, setLoading] = useState(true);
+    const [expanded, setExpanded] = useState('panel1');
+    const [paymentMethod, setPaymentMethod] = useState(0);
+
+    // États Formulaire Profil
     const [userData, setUserData] = useState(null);
     const [editForm, setEditForm] = useState({
         nom: '', prenom: '', email: '', telephone: '', adresseDeLivraison: ''
     });
-    const [expanded, setExpanded] = useState('panel1');
-    const [loading, setLoading] = useState(true);
-    const [paymentMethod, setPaymentMethod] = useState(0);
 
-    const primaryBordeaux = "#4a0404";
+    // États Code Promo
+    const [promoCode, setPromoCode] = useState('');
+    const [promoLoading, setPromoLoading] = useState(false);
+    const [promoError, setPromoError] = useState('');
+    const [promoApplied, setPromoApplied] = useState(null);
+    const [discountPercentage, setDiscountPercentage] = useState(0);
 
-    // --- CALCUL DU TOTAL RÉEL ---
-    const total = panierItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // États Carte Bancaire
+    const [cardInfos, setCardInfos] = useState({
+        number: '', expiry: '', cvv: ''
+    });
 
+    // =====================================================
+    // LOGIQUE DE CALCUL (Optimisée avec useMemo)
+    // =====================================================
+    const getEffectivePrice = (item) => {
+        return (!item.isPrestation && item.promotion_percentage > 0)
+            ? item.price * (1 - item.promotion_percentage / 100)
+            : item.price;
+    };
+
+    const totals = useMemo(() => {
+        const baseTotal = panierItems.reduce((sum, item) => sum + (getEffectivePrice(item) * item.quantity), 0);
+        const discount = baseTotal * (discountPercentage / 100);
+        return {
+            base: baseTotal,
+            discount: discount,
+            final: baseTotal - discount
+        };
+    }, [panierItems, discountPercentage]);
+
+    // =====================================================
+    // APPELS API & HANDLERS
+    // =====================================================
+
+    // Chargement du profil au montage
     useEffect(() => {
         const savedUser = JSON.parse(localStorage.getItem('user'));
         const token = localStorage.getItem('token');
-        if (!savedUser || !token) { navigate('/connexion'); return; }
+
+        if (!savedUser || !token) {
+            navigate('/connexion');
+            return;
+        }
 
         fetch(`http://localhost:3001/api/user/profile/${savedUser.login}`, {
-            method: 'GET',
-            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+            headers: { 'Authorization': `Bearer ${token}` }
         })
         .then(res => res.json())
         .then(data => {
@@ -71,196 +109,177 @@ function Paiement() {
             });
             setLoading(false);
         })
-        .catch(err => {
-            console.error("Erreur profil:", err);
-            setLoading(false);
-        });
+        .catch(() => setLoading(false));
     }, [navigate]);
 
-    const handleUpdateInfo = async () => {
-        const token = localStorage.getItem('token');
+    // Validation Code Promo
+    const handleValidatePromoCode = async () => {
+        if (!promoCode.trim()) return setPromoError('Veuillez entrer un code');
+        setPromoLoading(true);
+        setPromoError('');
+
         try {
-            await fetch(`http://localhost:3001/api/user/update-profile`, {
-                method: 'PUT',
-                headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ login: userData.login, ...editForm })
+            const res = await fetch('http://localhost:3001/api/promo/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: promoCode.trim().toUpperCase() })
             });
-            setExpanded('panel2'); 
-        } catch (error) {
-            console.error("Erreur sauvegarde:", error);
+            const data = await res.json();
+
+            if (res.ok && data.valid) {
+                setPromoApplied(promoCode.trim().toUpperCase());
+                setDiscountPercentage(parseFloat(data.discountPercentage) || 0);
+            } else {
+                setPromoError(data.message || 'Code invalide');
+            }
+        } catch (err) {
+            setPromoError('Erreur de connexion au serveur');
+        } finally {
+            setPromoLoading(false);
         }
     };
 
-    const handleFinaliserCommande = async () => {
-        const userId = localStorage.getItem('userId');
-        const token = localStorage.getItem('token');
-
-        if (!userId || !token) {
-            alert("Session expirée. Veuillez vous reconnecter.");
-            navigate('/connexion');
-            return;
+    // Gestion saisie numérique carte
+    const handleCardInput = (e, field, maxLength) => {
+        const val = e.target.value.replace(/\D/g, ''); // Garde uniquement les chiffres
+        if (val.length <= maxLength) {
+            setCardInfos(prev => ({ ...prev, [field]: val }));
         }
+    };
+
+    // Finalisation
+    const handleFinaliserCommande = async () => {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
 
         const commande = {
             numUtilisateur: parseInt(userId),
-            total_price: total,
-            items: panierItems.map(item => {
-                if (item.isPrestation) {
-                    return {
-                        // Si c'est une prestation, on extrait l'ID numérique
-                        id_prestation: typeof item.id === 'string' ? item.id.split('-')[1] : item.id,
-                        quantity: item.quantity,
-                        unit_price: item.price,
-                        date: item.details?.date || item.date, // On récupère la date
-                        address: editForm.adresseDeLivraison, // On utilise l'adresse du formulaire de paiement
-                        isPrestation: true
-                    };
-                } else {
-                    return {
-                        id_vin: item.id,
-                        quantity: item.quantity,
-                        unit_price: item.price,
-                        isPrestation: false
-                    };
-                }
-            })
+            total_price: totals.final,
+            promo_code: promoApplied,
+            items: panierItems.map(item => ({
+                [item.isPrestation ? 'id_prestation' : 'id_vin']: (item.isPrestation && typeof item.id === 'string') ? item.id.split('-')[1] : item.id,
+                quantity: item.quantity,
+                unit_price: getEffectivePrice(item),
+                isPrestation: !!item.isPrestation,
+                ...(item.isPrestation && { date: item.details?.date || item.date, address: editForm.adresseDeLivraison })
+            }))
         };
 
         try {
             const response = await fetch('http://localhost:3001/api/orders/validate', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(commande),
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify(commande)
             });
 
             if (response.ok) {
-                alert("Merci ! Votre commande a été enregistrée avec succès.");
+                alert("Merci ! Commande validée.");
                 setPanierItems([]);
-                navigate('/'); 
+                navigate('/');
             } else {
-                const errorData = await response.json();
-                alert("Erreur lors de la validation : " + (errorData.message || "Erreur inconnue"));
+                const err = await response.json();
+                alert("Erreur : " + err.message);
             }
-        } catch (error) {
-            console.error("Erreur réseau :", error);
-            alert("Impossible de contacter le serveur.");
+        } catch (err) {
+            alert("Erreur réseau");
         }
     };
 
-    if (loading) return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <CircularProgress sx={{ color: primaryBordeaux }} />
-        </Box>
-    );
+    if (loading) return <Box sx={{ display: 'flex', justifyContent: 'center', mt: 10 }}><CircularProgress sx={{ color: PRIMARY_BORDEAUX }} /></Box>;
 
     return (
         <div className="page-container">
-            <h1>Finaliser ma commande</h1>
+            <Typography variant="h4" sx={{ mb: 4, fontWeight: 'bold', color: PRIMARY_BORDEAUX }}>Finaliser ma commande</Typography>
 
-            {/* 1. INFORMATIONS */}
-            <Accordion expanded={expanded === 'panel1'} onChange={() => setExpanded(expanded === 'panel1' ? false : 'panel1')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: primaryBordeaux }} />}>
-                    <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                        <EditIcon sx={{ mr: 1, color: primaryBordeaux }} /> 1. Vos Informations
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, gap: 2 }}>
-                        <TextField label="Prénom" value={editForm.prenom} onChange={(e) => setEditForm({...editForm, prenom: e.target.value})} />
-                        <TextField label="Nom" value={editForm.nom} onChange={(e) => setEditForm({...editForm, nom: e.target.value})} />
-                        <TextField label="Email" fullWidth sx={{ gridColumn: { sm: 'span 2' } }} value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})} />
-                        <Button variant="contained" sx={{ gridColumn: { sm: 'span 2' }, mt: 2, bgcolor: primaryBordeaux }} onClick={handleUpdateInfo}>Confirmer et continuer</Button>
+            {/* RÉCAPITULATIF RAPIDE */}
+            <Box sx={{ mb: 3, p: 2, bgcolor: '#fff', borderRadius: '12px', border: '1px solid #ddd' }}>
+                <Typography variant="h6" sx={{ mb: 1, fontWeight: 'bold' }}>Votre Panier</Typography>
+                {panierItems.map(item => (
+                    <Box key={item.id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                        <Typography variant="body2">{item.name} x{item.quantity}</Typography>
+                        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{formatPrice(getEffectivePrice(item) * item.quantity)}</Typography>
                     </Box>
-                </AccordionDetails>
-            </Accordion>
+                ))}
+            </Box>
 
-            {/* 2. ADRESSE */}
-            <Accordion expanded={expanded === 'panel2'} onChange={() => setExpanded(expanded === 'panel2' ? false : 'panel2')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: primaryBordeaux }} />}>
-                    <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                        <MapIcon sx={{ mr: 1, color: primaryBordeaux }} /> 2. Adresse de livraison
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <TextField fullWidth label="Adresse" multiline rows={2} value={editForm.adresseDeLivraison} onChange={(e) => setEditForm({...editForm, adresseDeLivraison: e.target.value})} sx={{ mb: 3 }} />
-                    <Box sx={{ height: '250px', width: '100%', mb: 3, borderRadius: '12px', overflow: 'hidden', border: '1px solid #ddd' }}>
-                        <MapContainer center={[48.8566, 2.3522]} zoom={13} style={{ height: '100%', width: '100%' }}>
-                            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                            <Marker position={[48.8566, 2.3522]}><Popup>Livraison ici</Popup></Marker>
-                        </MapContainer>
-                    </Box>
-                    <Button variant="contained" fullWidth sx={{ bgcolor: primaryBordeaux }} onClick={() => setExpanded('panel3')}>Valider l'adresse</Button>
-                </AccordionDetails>
-            </Accordion>
+            {/* ACCORDÉONS DE COMMANDE */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                
+                {/* 1. INFORMATIONS */}
+                <Accordion expanded={expanded === 'panel1'} onChange={() => setExpanded(expanded === 'panel1' ? '' : 'panel1')}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}><EditIcon sx={{ mr: 1 }} /> Vos Coordonnées</AccordionSummary>
+                    <AccordionDetails>
+                        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                            <TextField label="Prénom" value={editForm.prenom} onChange={(e) => setEditForm({...editForm, prenom: e.target.value})} />
+                            <TextField label="Nom" value={editForm.nom} onChange={(e) => setEditForm({...editForm, nom: e.target.value})} />
+                            <TextField label="Email" fullWidth sx={{ gridColumn: 'span 2' }} value={editForm.email} disabled />
+                            <Button variant="contained" fullWidth sx={{ gridColumn: 'span 2', bgcolor: PRIMARY_BORDEAUX }} onClick={() => setExpanded('panel2')}>Continuer</Button>
+                        </Box>
+                    </AccordionDetails>
+                </Accordion>
 
-            {/* 3. PAIEMENT RÉEL */}
-            <Accordion expanded={expanded === 'panel3'} onChange={() => setExpanded(expanded === 'panel3' ? false : 'panel3')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon sx={{ color: primaryBordeaux }} />}>
-                    <Typography sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center' }}>
-                        <PaymentIcon sx={{ mr: 1, color: primaryBordeaux }} /> 3. Paiement Sécurisé
-                    </Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                    <Box sx={{ width: '100%', mb: 3 }}>
-                        <Tabs 
-                            value={paymentMethod} 
-                            onChange={(e, v) => setPaymentMethod(v)} 
-                            centered 
-                            TabIndicatorProps={{ style: { background: primaryBordeaux } }}
-                        >
-                            <Tab icon={<CreditCardIcon />} label="Carte" />
-                            <Tab label={<span style={{ fontWeight: 'bold', color: '#003087' }}>PayPal</span>} />
+                {/* 2. ADRESSE & MAP */}
+                <Accordion expanded={expanded === 'panel2'} onChange={() => setExpanded(expanded === 'panel2' ? '' : 'panel2')}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}><MapIcon sx={{ mr: 1 }} /> Livraison</AccordionSummary>
+                    <AccordionDetails>
+                        <TextField fullWidth multiline rows={2} label="Adresse" value={editForm.adresseDeLivraison} onChange={(e) => setEditForm({...editForm, adresseDeLivraison: e.target.value})} sx={{ mb: 2 }} />
+                        <Box sx={{ height: '200px', mb: 2, borderRadius: '8px', overflow: 'hidden' }}>
+                            <MapContainer center={[48.8566, 2.3522]} zoom={12} style={{ height: '100%' }}>
+                                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                                <Marker position={[48.8566, 2.3522]} />
+                            </MapContainer>
+                        </Box>
+                        <Button variant="contained" fullWidth sx={{ bgcolor: PRIMARY_BORDEAUX }} onClick={() => setExpanded('panel3')}>Valider l'adresse</Button>
+                    </AccordionDetails>
+                </Accordion>
+
+                {/* 3. CODE PROMO */}
+                <Accordion expanded={expanded === 'panel3'} onChange={() => setExpanded(expanded === 'panel3' ? '' : 'panel3')}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}><PaymentIcon sx={{ mr: 1 }} /> Code Promo</AccordionSummary>
+                    <AccordionDetails>
+                        <Box sx={{ display: 'flex', gap: 2 }}>
+                            <TextField label="Code" fullWidth value={promoCode} disabled={!!promoApplied} onChange={(e) => setPromoCode(e.target.value.toUpperCase())} />
+                            <Button variant="outlined" onClick={promoApplied ? () => {setPromoApplied(null); setDiscountPercentage(0)} : handleValidatePromoCode}>
+                                {promoLoading ? <CircularProgress size={20} /> : (promoApplied ? "Retirer" : "Appliquer")}
+                            </Button>
+                        </Box>
+                        {promoError && <Typography color="error" variant="caption">{promoError}</Typography>}
+                        {promoApplied && <Typography color="success.main" variant="caption">✓ Code appliqué !</Typography>}
+                        <Button variant="contained" fullWidth sx={{ mt: 2, bgcolor: PRIMARY_BORDEAUX }} onClick={() => setExpanded('panel4')}>Aller au paiement</Button>
+                    </AccordionDetails>
+                </Accordion>
+
+                {/* 4. PAIEMENT FINAL */}
+                <Accordion expanded={expanded === 'panel4'} onChange={() => setExpanded(expanded === 'panel4' ? '' : 'panel4')}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}><LockIcon sx={{ mr: 1 }} /> Paiement</AccordionSummary>
+                    <AccordionDetails>
+                        <Tabs value={paymentMethod} onChange={(e, v) => setPaymentMethod(v)} centered sx={{ mb: 2 }}>
+                            <Tab label="Carte Bancaire" />
+                            <Tab label="PayPal" />
                         </Tabs>
-                    </Box>
 
-                    {paymentMethod === 0 ? (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                            <TextField fullWidth label="Numéro de carte" placeholder="0000 0000 0000 0000" InputProps={{ startAdornment: <InputAdornment position="start"><CreditCardIcon /></InputAdornment> }} />
-                            <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                                <TextField label="MM/AA" />
-                                <TextField label="CVV" type="password" />
+                        {paymentMethod === 0 && (
+                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mb: 2 }}>
+                                <TextField label="Numéro de carte" value={cardInfos.number} onChange={(e) => handleCardInput(e, 'number', 16)} inputProps={{ inputMode: 'numeric' }} />
+                                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+                                    <TextField label="MM/AA" value={cardInfos.expiry} onChange={(e) => handleCardInput(e, 'expiry', 4)} />
+                                    <TextField label="CVV" type="password" value={cardInfos.cvv} onChange={(e) => handleCardInput(e, 'cvv', 3)} />
+                                </Box>
                             </Box>
+                        )}
+
+                        <Box sx={{ p: 2, bgcolor: '#f9f9f9', borderRadius: '8px', mb: 2 }}>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}><Typography>Sous-total</Typography><Typography>{formatPrice(totals.base)}</Typography></Box>
+                            {discountPercentage > 0 && <Box sx={{ display: 'flex', justifyContent: 'space-between', color: 'orange' }}><Typography>Réduction</Typography><Typography>-{formatPrice(totals.discount)}</Typography></Box>}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1, pt: 1, borderTop: '1px solid #ddd' }}><Typography variant="h6">Total</Typography><Typography variant="h6" color={PRIMARY_BORDEAUX}>{formatPrice(totals.final)}</Typography></Box>
                         </Box>
-                    ) : (
-                        <Box sx={{ textAlign: 'center', py: 3, bgcolor: '#f9f9f9', borderRadius: '8px' }}>
-                            <Button variant="contained" sx={{ bgcolor: '#FFB113', color: '#003087' }}>Payer avec PayPal</Button>
-                        </Box>
-                    )}
-                    
-                    <Box sx={{ mt: 4, p: 3, borderTop: '2px solid #eee' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography color="textSecondary">Sous-total :</Typography>
-                            <Typography>{formatPrice(total)}</Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                            <Typography color="textSecondary">Frais de livraison :</Typography>
-                            <Typography sx={{ color: 'green' }}>Gratuit</Typography>
-                        </Box>
-                        
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-                             <Typography variant="h6" sx={{ fontWeight: 'bold' }}>Total à régler :</Typography>
-                             <Typography variant="h5" sx={{ fontWeight: 'bold', color: primaryBordeaux }}>
-                                {formatPrice(total)}
-                            </Typography>
-                        </Box>
-                        
-                        <Button 
-                            variant="contained" 
-                            fullWidth 
-                            size="large"
-                            startIcon={<LockIcon />}
-                            sx={{ py: 1.5, fontSize: '1.1rem', backgroundColor: primaryBordeaux }}
-                            onClick={handleFinaliserCommande}
-                            disabled={panierItems.length === 0}
-                        >
-                            Payer en toute sécurité
+
+                        <Button variant="contained" fullWidth size="large" onClick={handleFinaliserCommande} disabled={paymentMethod === 0 && cardInfos.number.length < 16} sx={{ bgcolor: PRIMARY_BORDEAUX }}>
+                            Payer {formatPrice(totals.final)}
                         </Button>
-                    </Box>
-                </AccordionDetails>
-            </Accordion>
+                    </AccordionDetails>
+                </Accordion>
+            </Box>
         </div>
     );
 }

@@ -1,0 +1,74 @@
+/* Home.css */
+
+.home-container {
+    height: 85vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fdfcfb; /* Fond crème léger style papier */
+    overflow: hidden;
+}
+
+.hero-content {
+    text-align: center;
+    padding: 20px;
+    max-width: 900px;
+    animation: fadeIn 1.2s ease-out;
+}
+
+.home-title {
+    color: #333;
+    font-weight: 800 !important;
+    letter-spacing: -1px;
+    margin-bottom: 24px !important;
+}
+
+.brand-name, .user-name {
+    color: #4a0404; /* Couleur Bordeaux */
+}
+
+.home-subtitle {
+    color: #666;
+    font-style: italic;
+    line-height: 1.6 !important;
+    font-weight: 300 !important;
+    margin-bottom: 40px !important;
+}
+
+.divider {
+    width: 80px;
+    height: 3px;
+    background-color: #4a0404;
+    margin: 0 auto 30px auto;
+    border-radius: 2px;
+}
+
+.home-scroll-hint {
+    color: #888;
+    text-transform: uppercase;
+    font-size: 0.8rem !important;
+    letter-spacing: 2px;
+    margin-top: 20px;
+}
+
+/* Animation d'entrée douce */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Adaptabilité Mobile */
+@media (max-width: 600px) {
+    .home-title {
+        font-size: 2rem !important;
+    }
+    .home-subtitle {
+        font-size: 1.1rem !important;
+    }
+}

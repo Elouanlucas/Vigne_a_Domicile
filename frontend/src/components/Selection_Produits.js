@@ -3,11 +3,12 @@ import '../styles/Selection_Produits.css';
 import { 
     Button, TextField, Box, Dialog, DialogContent, 
     DialogTitle, IconButton, Slider, Typography, 
-    Radio, RadioGroup, FormControlLabel 
+    Radio, RadioGroup, FormControlLabel, Switch
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
+import StarIcon from '@mui/icons-material/Star'; // Icône pour le favori
 import { CurrencyContext } from '../context/CurrencyContext';
 
 const Produits = ({ onAjouter }) => {
@@ -25,6 +26,10 @@ const Produits = ({ onAjouter }) => {
     rouge: true, blanc: true, champagne: true, rosé: true
   });
   const [priceRange, setPriceRange] = useState([0, 3000]);
+  
+  // NOUVEAUX ÉTATS DE FILTRE
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [onlyPromos, setOnlyPromos] = useState(false);
 
   // --- CHARGEMENT DES DONNÉES ---
   useEffect(() => {
@@ -40,37 +45,71 @@ const Produits = ({ onAjouter }) => {
       });
   }, []);
 
-  // --- ACTIONS ---
+  // Ajoute cette fonction qui manque :
   const handleQtyChange = (id, value, maxStock) => {
     const numValue = parseInt(value) || 0;
-    setQuantities({ ...quantities, [id]: Math.min(Math.max(0, numValue), maxStock) });
+    setQuantities({ 
+      ...quantities, 
+      [id]: Math.min(Math.max(0, numValue), maxStock) 
+    });
   };
 
+  // --- ACTIONS ---
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedCategories({ rouge: true, blanc: true, champagne: true, rosé: true });
     setPriceRange([0, 3000]);
     setSortBy('asc');
+    setOnlyFavorites(false);
+    setOnlyPromos(false);
   };
 
   const getFilteredVins = () => {
     return vins
-      .filter(vin => 
-        vin.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        selectedCategories[vin.category] &&
-        vin.price >= priceRange[0] && vin.price <= priceRange[1]
-      )
+      .filter(vin => {
+        const matchesSearch = vin.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategories[vin.category];
+        const matchesPrice = vin.price >= priceRange[0] && vin.price <= priceRange[1];
+        
+        // Logique additionnelle pour Favoris et Promos
+        const matchesFavorite = onlyFavorites ? vin.recommandations === 1 : true;        
+        const matchesPromo = onlyPromos ? (vin.promotion_percentage > 0) : true;
+
+        return matchesSearch && matchesCategory && matchesPrice && matchesFavorite && matchesPromo;
+      })
       .sort((a, b) => sortBy === 'asc' ? a.price - b.price : b.price - a.price);
   };
 
   // --- RENDU D'UNE CARTE VIN ---
   const renderWineCard = (vin) => {
     const isOutOfStock = vin.quantity <= 0;
+    const hasPromo = vin.promotion_percentage && vin.promotion_percentage > 0;
+    const isFavorite = vin.is_favorite === 1;
+    const discountedPrice = hasPromo ? vin.price * (1 - vin.promotion_percentage / 100) : vin.price;
     const qty = quantities[vin.id] || (isOutOfStock ? 0 : 1);
 
     return (
       <div key={vin.id} className="vin-card" style={{ opacity: isOutOfStock ? 0.8 : 1 }}>
+        {/* Bandeau de Rupture */}
         {isOutOfStock && <div className="out-of-stock-banner">RUPTURE</div>}
+        
+        {/* NOUVEAU : Bandeau de Promotion (style similaire à rupture) */}
+        {hasPromo && !isOutOfStock && (
+          <div className="promo-banner" style={{
+            position: 'absolute',
+            top: '10px',
+            left: '-5px',
+            backgroundColor: '#4a0404',
+            color: 'white',
+            padding: '5px 15px',
+            fontWeight: 'bold',
+            zIndex: 1,
+            boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
+            fontSize: '0.85rem'
+          }}>
+            -{vin.promotion_percentage}%
+          </div>
+        )}
 
         <IconButton 
           onClick={() => { setSelectedWine(vin); setIsModalOpen(true); }}
@@ -92,7 +131,22 @@ const Produits = ({ onAjouter }) => {
         
         <div className="vin-card-content">
             <h3>{vin.name}</h3>
-            <p className="vin-price">{formatPrice(vin.price)}</p>
+            
+            {/* Zone de Prix mise à jour */}
+            <Box sx={{ mb: 1 }}>
+              {hasPromo ? (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Typography sx={{ color: '#4a0404', fontWeight: 'bold', fontSize: '1.2rem' }}>
+                    {formatPrice(discountedPrice)}
+                  </Typography>
+                  <Typography sx={{ textDecoration: 'line-through', color: '#888', fontSize: '0.9rem' }}>
+                    {formatPrice(vin.price)}
+                  </Typography>
+                </Box>
+              ) : (
+                <p className="vin-price">{formatPrice(vin.price)}</p>
+              )}
+            </Box>
 
             <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', mt: 'auto' }}>
                 <TextField
@@ -164,6 +218,18 @@ const Produits = ({ onAjouter }) => {
               Réinitialiser
             </Button>
           </Box>
+
+          <div className="filter-group">
+            <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Sélection</Typography>
+            <FormControlLabel
+                control={<Switch checked={onlyFavorites} onChange={(e) => setOnlyFavorites(e.target.checked)} color="warning" />}
+                label={<Typography variant="body2">⭐ Favoris de l'oenologue</Typography>}
+            />
+            <FormControlLabel
+                control={<Switch checked={onlyPromos} onChange={(e) => setOnlyPromos(e.target.checked)} sx={{ '& .MuiSwitch-switchBase.Mui-checked': { color: '#4a0404' }, '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: '#4a0404' } }} />}
+                label={<Typography variant="body2">🏷️ En promotion</Typography>}
+            />
+          </div>
           
           {/* Catégories */}
           <div className="filter-group">

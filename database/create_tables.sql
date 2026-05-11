@@ -47,7 +47,7 @@ CREATE TABLE vins (
     quantity INT NOT NULL,
     category VARCHAR(50),
     description TEXT,
-    promotion_price DECIMAL(10, 2) DEFAULT NULL,
+    promotion_percentage DECIMAL(5,2) DEFAULT NULL,
     recommandations BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB;
@@ -144,4 +144,13 @@ CREATE TABLE commande_prestations (
     unit_price DECIMAL(10, 2) NOT NULL,
     CONSTRAINT fk_commande_prestations_commande FOREIGN KEY (commande_id) REFERENCES commandes (id) ON DELETE CASCADE,
     CONSTRAINT fk_commande_prestations_prestation FOREIGN KEY (prestation_id) REFERENCES prestations (id) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE code_promo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code VARCHAR(50) UNIQUE NOT NULL,
+    description TEXT,
+    discount_percentage DECIMAL(5, 2) NOT NULL,
+    valid_from DATE NOT NULL,
+    valid_to DATE NOT NULL
 ) ENGINE = InnoDB;

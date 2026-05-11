@@ -60,7 +60,7 @@ INSERT INTO
         quantity,
         category,
         description,
-        promotion_price,
+        promotion_percentage,
         recommandations
     )
 VALUES (
@@ -441,3 +441,21 @@ VALUES
         150.00,
         NULL
     );
+
+INSERT INTO
+    code_promo (
+        code,
+        description,
+        discount_percentage,
+        valid_from,
+        valid_to
+    )
+VALUES
+    (
+        'BIENVENUE10',
+        '10% de réduction sur votre première commande pour découvrir notre sélection de vins et prestations.',
+        10.00,
+        '2024-01-01',
+        '2034-12-31'
+    );
+  

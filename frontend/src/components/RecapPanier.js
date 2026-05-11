@@ -8,6 +8,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import '../styles/RecapPanier.css';
 
 function RecapPanierPage() {
@@ -15,6 +17,14 @@ function RecapPanierPage() {
     const navigate = useNavigate();
     const { formatPrice } = useContext(CurrencyContext);
     const [stockErrors, setStockErrors] = useState([]);
+
+    // --- LOGIQUE DE CALCUL DU PRIX RÉEL (PROMO) ---
+    const getEffectivePrice = (item) => {
+        if (!item.isPrestation && item.promotion_percentage > 0) {
+            return item.price * (1 - item.promotion_percentage / 100);
+        }
+        return item.price;
+    };
 
     // Vérification des stocks en temps réel
     useEffect(() => {
@@ -38,7 +48,8 @@ function RecapPanierPage() {
         if (panierItems.length > 0) verifierStock();
     }, [panierItems]);
 
-    const total = panierItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    // Calcul du total basé sur les prix remisés
+    const total = panierItems.reduce((sum, item) => sum + getEffectivePrice(item) * item.quantity, 0);
     const hasStockIssue = stockErrors.length > 0;
 
     const handleFinaliserPaiement = async () => {
@@ -51,7 +62,7 @@ function RecapPanierPage() {
             return;
         }
 
-        // Préparation des données pour l'API
+        // Préparation des données pour l'API avec les prix unitaires remisés
         const commande = {
             numUtilisateur: parseInt(userId),
             total_price: total,
@@ -59,7 +70,7 @@ function RecapPanierPage() {
                 id_vin: item.isPrestation ? null : item.id,
                 id_prestation: item.isPrestation ? item.id.split('-')[1] : null,
                 quantity: item.quantity,
-                unit_price: item.price,
+                unit_price: getEffectivePrice(item), // ON ENVOIE LE PRIX RÉEL PAYÉ
                 date: item.details?.date,
                 address: item.details?.address,
                 isPrestation: !!item.isPrestation
@@ -90,37 +101,101 @@ function RecapPanierPage() {
     return (
         <div className="page-container">
             <main className="recap-main">
-                <h1>Mon Panier</h1>
-                {hasStockIssue && <Alert severity="error" sx={{ mb: 2 }}>Stock insuffisant pour certains articles.</Alert>}
+                <h1>Récapitulatif de ma commande</h1>
+                {hasStockIssue && (
+                    <Alert severity="error" sx={{ mb: 2 }}>
+                        Attention : Certains articles ne sont plus disponibles en quantité suffisante.
+                    </Alert>
+                )}
 
                 {panierItems.length === 0 ? (
-                    <p>Votre panier est vide.</p>
+                    <Box sx={{ textAlign: 'center', py: 5 }}>
+                        <p>Votre panier est actuellement vide.</p>
+                        <Button onClick={() => navigate('/produits')} sx={{ color: '#4a0404' }}>
+                            Retourner à la boutique
+                        </Button>
+                    </Box>
                 ) : (
                     <div className="recap-content">
                         <div className="recap-items-list">
                             {panierItems.map((item) => {
                                 const error = stockErrors.find(e => e.id === item.id);
+                                const effectivePrice = getEffectivePrice(item);
+                                const hasPromo = !item.isPrestation && item.promotion_percentage > 0;
+
                                 return (
-                                    <div key={item.id} className="recap-item-card">
-                                        <h3>{item.name}</h3>
-                                        <p>{formatPrice(item.price)} x {item.quantity}</p>
-                                        {error && <p style={{color: 'red'}}>Max disponible : {error.dispo}</p>}
-                                        <IconButton onClick={() => handleRetirer(item.id)}><RemoveIcon /></IconButton>
-                                        <IconButton onClick={() => handleAjouterAuPanier(item, 1)}><AddIcon /></IconButton>
-                                        <IconButton onClick={() => handleToutRetirer(item.id)}><DeleteIcon /></IconButton>
+                                    <div key={item.id} className="recap-item-card" style={{ borderLeft: hasPromo ? '4px solid #e67e22' : '1px solid #ddd' }}>
+                                        <div className="recap-item-info">
+                                            <h3>{item.name}</h3>
+                                            
+                                            {/* Affichage du prix remisé */}
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                                                <Typography sx={{ fontWeight: 'bold', color: hasPromo ? '#e67e22' : 'inherit' }}>
+                                                    {formatPrice(effectivePrice)}
+                                                </Typography>
+                                                {hasPromo && (
+                                                    <Typography sx={{ textDecoration: 'line-through', color: '#999', fontSize: '0.85rem' }}>
+                                                        {formatPrice(item.price)}
+                                                    </Typography>
+                                                )}
+                                                <Typography variant="body2">x {item.quantity}</Typography>
+                                            </Box>
+
+                                            {error && <Typography color="error" variant="caption">Max disponible : {error.dispo}</Typography>}
+                                        </div>
+
+                                        <div className="recap-item-actions">
+                                            <IconButton onClick={() => handleRetirer(item.id)} color="primary"><RemoveIcon /></IconButton>
+                                            <span className="qty-display">{item.quantity}</span>
+                                            <IconButton 
+                                                onClick={() => handleAjouterAuPanier(item, 1)} 
+                                                disabled={error} // Bloque l'ajout si le stock est atteint
+                                                color="primary"
+                                            >
+                                                <AddIcon />
+                                            </IconButton>
+                                            <IconButton onClick={() => handleToutRetirer(item.id)} sx={{ ml: 2, color: '#888' }}><DeleteIcon /></IconButton>
+                                        </div>
+                                        
+                                        <div className="recap-item-subtotal">
+                                            <Typography sx={{ fontWeight: 'bold' }}>
+                                                {formatPrice(effectivePrice * item.quantity)}
+                                            </Typography>
+                                        </div>
                                     </div>
                                 );
                             })}
                         </div>
+
                         <aside className="recap-summary">
-                            <h2>Total : {formatPrice(total)}</h2>
+                            <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>Résumé</Typography>
+                            <div className="summary-row">
+                                <span>Sous-total</span>
+                                <span>{formatPrice(total)}</span>
+                            </div>
+                            <div className="summary-row">
+                                <span>Livraison</span>
+                                <span style={{ color: 'green' }}>Gratuite</span>
+                            </div>
+                            <hr />
+                            <div className="summary-row total">
+                                <strong>Total TTC</strong>
+                                <strong>{formatPrice(total)}</strong>
+                            </div>
+
                             <Button 
                                 variant="contained" 
+                                fullWidth
                                 disabled={hasStockIssue} 
                                 onClick={handleFinaliserPaiement}
-                                sx={{ backgroundColor: '#4a0404' }}
+                                sx={{ 
+                                    backgroundColor: '#4a0404', 
+                                    mt: 3, 
+                                    py: 1.5,
+                                    '&:hover': { backgroundColor: '#7a0606' } 
+                                }}
                             >
-                                Passer au paiement
+                                Valider et Payer
                             </Button>
                         </aside>
                     </div>
