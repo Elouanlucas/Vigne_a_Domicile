@@ -59,7 +59,9 @@ INSERT INTO
         price,
         quantity,
         category,
-        description
+        description,
+        promotion_price,
+        recommandations
     )
 VALUES (
         'Château Margaux',
@@ -67,7 +69,9 @@ VALUES (
         1500,
         1000,
         'rouge',
-        'Un grand cru de Bordeaux, élégant et complexe avec des arômes de fruits noirs et de cèdre.'
+        'Un grand cru de Bordeaux, élégant et complexe avec des arômes de fruits noirs et de cèdre.',
+        30,
+        TRUE
     ),
     (
         'Champagne Dom Pérignon',
@@ -75,7 +79,9 @@ VALUES (
         220,
         1000,
         'champagne',
-        'Le prestige à bulles. Un champagne équilibré entre fraîcheur et notes grillées.'
+        'Le prestige à bulles. Un champagne équilibré entre fraîcheur et notes grillées.',
+        NULL,
+        FALSE
     ),
     (
         'Meursault 1er Cru',
@@ -83,7 +89,9 @@ VALUES (
         95,
         1000,
         'blanc',
-        'Un grand blanc de Bourgogne, onctueux avec des notes de noisette et de beurre.'
+        'Un grand blanc de Bourgogne, onctueux avec des notes de noisette et de beurre.',
+        10,
+        FALSE
     ),
     (
         'Côte-Rôtie \'La Mouline\'',
@@ -91,7 +99,9 @@ VALUES (
         450,
         1000,
         'rouge',
-        'Un nectar de la Vallée du Rhône, floral, puissant et d\'une élégance rare.'
+        'Un nectar de la Vallée du Rhône, floral, puissant et d\'une élégance rare.',
+        NULL,
+        FALSE
     ),
     (
         'Petrus 2015',
@@ -99,7 +109,9 @@ VALUES (
         3000,
         1000,
         'rouge',
-        'Un vin mythique de Pomerol, riche et velouté avec des arômes de truffe et de fruits noirs.'
+        'Un vin mythique de Pomerol, riche et velouté avec des arômes de truffe et de fruits noirs.',
+        NULL,
+        FALSE
     ),
     (
         'Sancerre Blanc',
@@ -107,7 +119,9 @@ VALUES (
         25,
         1000,
         'blanc',
-        'Un vin frais et vif de la Loire, avec des notes d\'agrumes et de pierre à fusil.'
+        'Un vin frais et vif de la Loire, avec des notes d\'agrumes et de pierre à fusil.',
+        NULL,
+        FALSE
     ),
     (
         'Rosé de Provence',
@@ -115,7 +129,9 @@ VALUES (
         18,
         1000,
         'rosé',
-        'Un rosé léger et fruité, parfait pour l\'été avec des arômes de fraise et de melon.'
+        'Un rosé léger et fruité, parfait pour l\'été avec des arômes de fraise et de melon.',
+        NULL,
+        FALSE
     ),
     (
         'Château d\'Yquem',
@@ -123,7 +139,9 @@ VALUES (
         500,
         1000,
         'blanc',
-        'Le roi des liquoreux de Sauternes, sucré mais équilibré avec des notes de miel et d\'abricot.'
+        'Le roi des liquoreux de Sauternes, sucré mais équilibré avec des notes de miel et d\'abricot.',
+        50,
+        TRUE
     ),
     (
         'Gevrey-Chambertin',
@@ -131,7 +149,9 @@ VALUES (
         75.00,
         1000,
         'rouge',
-        'Un Bourgogne puissant, aux arômes de cerise et de réglisse.'
+        'Un Bourgogne puissant, aux arômes de cerise et de réglisse.',
+        NULL,
+        FALSE
     ),
     (
         'Chablis Grand Cru',
@@ -139,7 +159,9 @@ VALUES (
         65.00,
         1000,
         'blanc',
-        'Un blanc minéral et pur, l’expression parfaite du Chardonnay sur calcaire.'
+        'Un blanc minéral et pur, l’expression parfaite du Chardonnay sur calcaire.',
+        NULL,
+        FALSE
     ),
     (
         'Pauillac Baron Philippe',
@@ -147,7 +169,9 @@ VALUES (
         110.00,
         1000,
         'rouge',
-        'Un classique bordelais, structuré avec des tanins soyeux et des notes de cassis.'
+        'Un classique bordelais, structuré avec des tanins soyeux et des notes de cassis.',
+        NULL,
+        FALSE
     ),
     (
         'Champagne Krug Grande Cuvée',
@@ -155,7 +179,9 @@ VALUES (
         250.00,
         1000,
         'champagne',
-        'Un champagne d’exception, d’une complexité rare avec des notes de pain grillé.'
+        'Un champagne d’exception, d’une complexité rare avec des notes de pain grillé.',
+        NULL,
+        TRUE
     ),
     (
         'Condrieu "L’Eclat"',
@@ -163,7 +189,9 @@ VALUES (
         58.00,
         1000,
         'blanc',
-        'Le fleuron du Viognier : nez intense de pêche blanche et d’abricot.'
+        'Le fleuron du Viognier : nez intense de pêche blanche et d’abricot.',
+        20,
+        FALSE
     ),
     (
         'Châteauneuf-du-Pape',
@@ -171,7 +199,9 @@ VALUES (
         48.00,
         1000,
         'rouge',
-        'Un vin généreux et épicé, mélange parfait de Grenache et Syrah.'
+        'Un vin généreux et épicé, mélange parfait de Grenache et Syrah.',
+        NULL,
+        FALSE
     ),
     (
         'Garrus Rosé',
@@ -179,7 +209,9 @@ VALUES (
         120.00,
         1000,
         'rosé',
-        'L’un des rosés les plus prestigieux au monde, élevé en fûts de chêne.'
+        'L’un des rosés les plus prestigieux au monde, élevé en fûts de chêne.',
+        NULL,
+        FALSE
     ),
     (
         'Saint-Émilion Grand Cru',
@@ -187,7 +219,9 @@ VALUES (
         55.00,
         1000,
         'rouge',
-        'Dominante Merlot pour un vin souple aux notes de prune et de vanille.'
+        'Dominante Merlot pour un vin souple aux notes de prune et de vanille.',
+        NULL,
+        FALSE
     ),
     (
         'Pouilly-Fumé',
@@ -195,7 +229,9 @@ VALUES (
         28.00,
         1000,
         'blanc',
-        'Un Sauvignon blanc très aromatique avec une touche fumée caractéristique.'
+        'Un Sauvignon blanc très aromatique avec une touche fumée caractéristique.',
+        10,
+        TRUE
     ),
     (
         'Hermitage Rouge',
@@ -203,7 +239,9 @@ VALUES (
         85.00,
         1000,
         'rouge',
-        'Une Syrah monumentale, sombre et profonde, aux notes de poivre noir.'
+        'Une Syrah monumentale, sombre et profonde, aux notes de poivre noir.',
+        NULL,
+        FALSE
     ),
     (
         'Bollinger Special Cuvée',
@@ -211,7 +249,9 @@ VALUES (
         60.00,
         1000,
         'champagne',
-        'Un champagne vineux et structuré, favori des amateurs de caractère.'
+        'Un champagne vineux et structuré, favori des amateurs de caractère.',
+        NULL,
+        FALSE
     ),
     (
         'Pessac-Léognan Blanc',
@@ -219,7 +259,9 @@ VALUES (
         42.00,
         1000,
         'blanc',
-        'Un assemblage sémillon-sauvignon élégant avec une belle fraîcheur boisée.'
+        'Un assemblage sémillon-sauvignon élégant avec une belle fraîcheur boisée.',
+        60,
+        FALSE
     ),
     (
         'Bandol Rosé',
@@ -227,7 +269,9 @@ VALUES (
         24.00,
         1000,
         'rosé',
-        'Un rosé de caractère, structuré et épicé, parfait pour la gastronomie.'
+        'Un rosé de caractère, structuré et épicé, parfait pour la gastronomie.',
+        NULL,
+        TRUE
     ),
     (
         'Gigondas Vieilles Vignes',
@@ -235,7 +279,9 @@ VALUES (
         32.00,
         1000,
         'rouge',
-        'Un vin solaire de la Vallée du Rhône, puissant et gorgé de fruits rouges.'
+        'Un vin solaire de la Vallée du Rhône, puissant et gorgé de fruits rouges.',
+        NULL,
+        FALSE
     ),
     (
         'Puligny-Montrachet',
@@ -243,7 +289,9 @@ VALUES (
         90.00,
         1000,
         'blanc',
-        'L’élégance absolue de la Bourgogne, entre finesse florale et tension.'
+        'L’élégance absolue de la Bourgogne, entre finesse florale et tension.',
+        NULL,
+        FALSE
     ),
     (
         'Cahors Malbec Prestige',
@@ -251,7 +299,9 @@ VALUES (
         22.00,
         1000,
         'rouge',
-        'Un vin noir, intense et robuste, aux arômes de mûre et de violette.'
+        'Un vin noir, intense et robuste, aux arômes de mûre et de violette.',
+        NULL,
+        TRUE
     ),
     (
         'Coteaux d’Aix-en-Provence',
@@ -259,7 +309,9 @@ VALUES (
         15.00,
         1000,
         'rosé',
-        'Un rosé plaisir, frais et désaltérant pour l’apéritif.'
+        'Un rosé plaisir, frais et désaltérant pour l’apéritif.',
+        NULL,
+        FALSE
     ),
     (
         'Ruinart Blanc de Blancs',
@@ -267,7 +319,9 @@ VALUES (
         95.00,
         1000,
         'champagne',
-        'Le fleuron de la maison Ruinart, une pureté de Chardonnay incomparable.'
+        'Le fleuron de la maison Ruinart, une pureté de Chardonnay incomparable.',
+        NULL,
+        FALSE
     ),
     (
         'Cornas "Terres Brûlées"',
@@ -275,7 +329,9 @@ VALUES (
         62.00,
         1000,
         'rouge',
-        'Une Syrah sauvage et minérale, issue des coteaux granitiques du Rhône.'
+        'Une Syrah sauvage et minérale, issue des coteaux granitiques du Rhône.',
+        25,
+        FALSE
     ),
     (
         'Sauternes Château Suduiraut',
@@ -283,7 +339,9 @@ VALUES (
         75.00,
         1000,
         'blanc',
-        'Un vin d’or aux saveurs d’écorce d’orange confite et d’épices douces.'
+        'Un vin d’or aux saveurs d’écorce d’orange confite et d’épices douces.',
+        NULL,
+        FALSE
     );
 
 -- Remplissage de la table prestations

@@ -5,6 +5,8 @@ import GestionVin from './GestionVin';
 import Commande from './Commande';
 import Stoke from './Stocks';
 import Statistique from './Statistique';
+import Prestation from './Prestation';
+import Agenda from './Agenda';
 import '../../styles/Administrateur.css';
 
 function Administrateur() {
@@ -24,6 +26,8 @@ function Administrateur() {
             case 'commande': return <Commande user={user} />;
             case 'stoke': return <Stoke user={user} />;
             case 'statistique': return <Statistique user={user} />;
+            case 'prestation': return <Prestation user={user} />;
+            case 'agenda': return <Agenda user={user} />;
             default: return <AdminIntro user={user} />;
         }
     };
@@ -36,17 +40,21 @@ function Administrateur() {
                     <li className={currentPage === 'intro' ? 'active' : ''} 
                         onClick={() => setCurrentPage('intro')}>Vue d'ensemble</li>
                 </ul>
-                <h3>Gestion des Utilisateurs/Vins</h3>
+                <h3>Gestion des Utilisateurs/Vins/Prestations</h3>
                 <ul>
                     <li className={currentPage === 'comptes' ? 'active' : ''} 
                         onClick={() => setCurrentPage('comptes')}>Utilisateurs</li>
                     <li className={currentPage === 'vins' ? 'active' : ''} 
                         onClick={() => setCurrentPage('vins')}>Vins</li>
+                    <li className={currentPage === 'prestation' ? 'active' : ''} 
+                        onClick={() => setCurrentPage('prestation')}>Prestations</li>
                 </ul>
                 <h3>Commande</h3>
                 <ul>
                     <li className={currentPage === 'commande' ? 'active' : ''} 
                         onClick={() => setCurrentPage('commande')}>Commandes</li>
+                    <li className={currentPage === 'agenda' ? 'active' : ''} 
+                        onClick={() => setCurrentPage('agenda')}>Agenda</li>
                 </ul>
                 <h3>Stock</h3>
                 <ul>

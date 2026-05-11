@@ -47,6 +47,8 @@ CREATE TABLE vins (
     quantity INT NOT NULL,
     category VARCHAR(50),
     description TEXT,
+    promotion_price DECIMAL(10, 2) DEFAULT NULL,
+    recommandations BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB;
 

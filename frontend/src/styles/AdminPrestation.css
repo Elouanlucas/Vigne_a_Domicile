@@ -1,0 +1,101 @@
+/* Conteneur et titres */
+.admin-container {
+    padding: 24px;
+}
+
+.admin-main-title {
+    margin-bottom: 24px;
+    color: #4a0404;
+    font-weight: bold;
+}
+
+/* Barre d'actions */
+.admin-top-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    gap: 16px;
+}
+
+.btn-cave-outline {
+    color: #4a0404 !important;
+    border-color: #4a0404 !important;
+}
+
+.btn-add-primary {
+    background-color: #4a0404 !important;
+}
+
+/* Tableaux */
+.table-head-grey {
+    background-color: #f5f5f5;
+}
+
+.img-preview-table {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+/* Modales */
+.dialog-title-dark {
+    background-color: #4a0404;
+    color: white;
+}
+
+.form-grid-spacing {
+    margin-top: 8px;
+}
+
+.upload-btn-height {
+    height: 56px;
+}
+
+.tab-edit-label {
+    color: #1976d2 !important;
+    font-weight: bold;
+}
+
+.admin-large-calendar {
+    width: 100% !important;
+    border: none !important;
+    font-family: 'Roboto', sans-serif;
+    height: 500px; /* Taille augmentée */
+}
+
+.admin-large-calendar .react-calendar__tile {
+    height: 80px; /* Case plus grande */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+.dot-indicator-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.dot-indicator {
+    height: 8px;
+    width: 8px;
+    background-color: #4a0404;
+    border-radius: 50%;
+}
+
+.event-count {
+    font-size: 0.7rem;
+    color: #4a0404;
+    font-weight: bold;
+}
+
+/* Mise en évidence du jour sélectionné */
+.react-calendar__tile--active {
+    background: #4a0404 !important;
+    color: white !important;
+    border-radius: 8px;
+}

@@ -9,6 +9,7 @@ const userRoutes = require('./routes/userRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const vinRoutes = require('./routes/vinRoutes');
 const prestationRoutes = require('./routes/prestationRoutes');
+const caveRoutes = require('./routes/caveRoutes');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/user', userRoutes);   // Gère /api/user/:login, /api/user/update-
 app.use('/api/orders', orderRoutes); // Gère /api/orders/ et /api/orders/recuperer/:userId
 app.use('/api/vins', vinRoutes);     // Gère /api/vins/ et /api/vins/:id
 app.use('/api/prestations', prestationRoutes); // Gère /api/prestations/
+app.use('/api/caves', caveRoutes); // Gère /api/caves/ et /api/caves/:id
 
 // --- GESTION DES ERREURS 404 ---
 app.use((req, res) => {
