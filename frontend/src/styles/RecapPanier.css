@@ -5,6 +5,15 @@
   min-height: 70vh;
 }
 
+/* Titre */
+.recap-title {
+  color: #4a0404;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
 .recap-content {
   display: grid;
   grid-template-columns: 1fr 350px; /* Liste à gauche, résumé à droite */
@@ -12,6 +21,7 @@
   margin-top: 20px;
 }
 
+/* Carte article */
 .recap-item-card {
   display: flex;
   justify-content: space-between;
@@ -21,6 +31,44 @@
   background: #fff;
   margin-bottom: 10px;
   border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.recap-item-card:hover {
+  background-color: #f9f9f9;
+}
+
+.recap-item-image {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-right: 16px;
+}
+
+.recap-item-info {
+  flex: 1;
+}
+
+.recap-item-name {
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.recap-item-price {
+  color: #4a0404;
+  font-weight: bold;
+}
+
+.recap-item-price-original {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 8px;
+}
+
+.recap-item-price-discount {
+  color: #ff9800;
+  font-weight: bold;
 }
 
 .recap-item-controls {
@@ -29,14 +77,49 @@
   gap: 20px;
 }
 
+/* Sélecteur quantité */
 .qty-selector {
   display: flex;
   align-items: center;
   border: 1px solid #ccc;
   border-radius: 20px;
   padding: 2px 8px;
+  gap: 8px;
 }
 
+.qty-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4a0404;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 0 4px;
+}
+
+.qty-btn:hover {
+  color: #630606;
+}
+
+.qty-input {
+  width: 40px;
+  text-align: center;
+  border: none;
+  background: transparent;
+  font-weight: bold;
+}
+
+/* Bouton supprimer */
+.recap-btn-delete {
+  color: #d32f2f !important;
+  min-width: auto !important;
+}
+
+.recap-btn-delete:hover {
+  background-color: rgba(211, 47, 47, 0.1) !important;
+}
+
+/* Résumé commande */
 .recap-summary {
   background: #f9f9f9;
   padding: 25px;
@@ -44,32 +127,93 @@
   height: fit-content;
   position: sticky;
   top: 100px;
+  border: 1px solid #eee;
+}
+
+.recap-summary-title {
+  font-weight: bold;
+  color: #4a0404;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
 }
 
 .summary-line {
   display: flex;
   justify-content: space-between;
   margin: 15px 0;
+  font-size: 0.95rem;
+}
+
+.summary-line-label {
+  color: #666;
+}
+
+.summary-line-value {
+  font-weight: bold;
+  color: #333;
 }
 
 .summary-line.total {
   font-weight: bold;
   font-size: 1.2rem;
   color: #4a0404;
+  border-top: 2px solid #ddd;
+  padding-top: 12px;
+  margin-top: 12px;
+}
+
+.summary-discount {
+  color: #ff9800 !important;
 }
 
 .free-shipping {
-  color: green;
+  color: #4caf50;
   font-weight: bold;
 }
 
-/* Responsive */
-@media (max-width: 900px) {
-  .recap-content {
-    grid-template-columns: 1fr;
-  }
+.summary-btn-checkout {
+  background-color: #4a0404 !important;
+  width: 100%;
+  margin-top: 16px !important;
+  padding: 12px !important;
 }
 
+.summary-btn-checkout:hover {
+  background-color: #630606 !important;
+}
+
+.summary-btn-continue {
+  background-color: transparent !important;
+  border: 1.5px solid #4a0404 !important;
+  color: #4a0404 !important;
+  width: 100%;
+  margin-top: 8px !important;
+  padding: 12px !important;
+}
+
+.summary-btn-continue:hover {
+  background-color: #f0e6e6 !important;
+}
+
+/* Message vide panier */
+.recap-empty {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+}
+
+.recap-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  color: #ddd;
+}
+
+.recap-empty-text {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+}
+
+/* Erreurs et avertissements */
 .item-error {
     border: 2px solid #d32f2f !important;
     background-color: #fff8f8;
@@ -80,4 +224,40 @@
     font-size: 0.85rem;
     font-weight: bold;
     margin-top: 5px;
+}
+
+.promo-applied {
+  background-color: #e8f5e9;
+  padding: 8px;
+  border-radius: 4px;
+  color: #388e3c;
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .recap-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .recap-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 600px) {
+  .recap-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .recap-item-controls {
+    width: 100%;
+    margin-top: 12px;
+  }
+  
+  .qty-selector {
+    flex: 1;
+  }
 }

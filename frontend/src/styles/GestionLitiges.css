@@ -1,0 +1,327 @@
+/* === GESTION LITIGES ADMIN - STYLES COMPLETS === */
+
+/* Conteneur principal */
+.litiges-container {
+  padding: 32px;
+}
+
+/* Titre et sous-titre */
+.litiges-title {
+  margin-bottom: 8px !important;
+  color: #4a0404;
+  font-weight: bold !important;
+}
+
+.litiges-subtitle {
+  margin-bottom: 32px !important;
+}
+
+/* Barre de recherche et filtres */
+.litiges-filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.litiges-search-field {
+  flex-grow: 1;
+  max-width: 400px;
+}
+
+.litiges-sort-select {
+  min-width: 200px;
+}
+
+/* Messages d'alerte */
+.litiges-alert {
+  margin-bottom: 24px !important;
+}
+
+/* Spinner de chargement */
+.litiges-loading-box {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.litiges-spinner {
+  color: #4a0404 !important;
+}
+
+/* === TABLEAU === */
+
+/* Conteneur tableau */
+.litiges-table-container {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* En-tête tableau */
+.litiges-table-head {
+  background-color: #4a0404;
+}
+
+.litiges-table-th {
+  font-weight: bold;
+  color: white !important;
+  padding: 16px !important;
+}
+
+.litiges-table-th-status {
+  font-weight: bold;
+  color: white !important;
+  padding: 16px !important;
+  text-align: right;
+}
+
+/* Lignes tableau */
+.litiges-row {
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.litiges-row:hover {
+  background-color: #f5f5f5;
+}
+
+/* Cellule client */
+.litiges-client-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.litiges-client-name {
+  font-weight: bold;
+}
+
+/* Motif texte */
+.litiges-motif-text {
+  font-weight: 600;
+}
+
+/* Boîte liens */
+.litiges-links-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.litiges-link-cmd {
+  font-size: 0.75rem;
+  background-color: #e3f2fd;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.litiges-link-prest {
+  font-size: 0.75rem;
+  background-color: #f3e5f5;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+/* Cellule description */
+.litiges-description-cell {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Date */
+.litiges-date-text {
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* Cellule vide */
+.litiges-empty-cell {
+  padding: 32px !important;
+  color: #999;
+  font-style: italic;
+}
+
+/* === MODALES ET DIALOGUES === */
+
+.litiges-dialog-title {
+  background-color: #4a0404 !important;
+  color: white !important;
+}
+
+.litiges-dialog-content {
+  padding: 24px !important;
+}
+
+.litiges-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.litiges-form-fullwidth {
+  grid-column: 1 / -1 !important;
+}
+
+/* === CHIPS DE STATUT === */
+
+.litiges-chip-ouvert {
+  background-color: #e3f2fd !important;
+  color: #1976d2 !important;
+}
+
+.litiges-chip-en-cours {
+  background-color: #fff3e0 !important;
+  color: #f57c00 !important;
+}
+
+.litiges-chip-resolu {
+  background-color: #e8f5e9 !important;
+  color: #388e3c !important;
+}
+
+.litiges-chip-rejete {
+  background-color: #ffebee !important;
+  color: #d32f2f !important;
+}
+
+/* === RESPONSIVE === */
+
+@media (max-width: 1200px) {
+  .litiges-description-cell {
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .litiges-container {
+    padding: 16px;
+  }
+  
+  .litiges-filter-bar {
+    flex-direction: column;
+  }
+  
+  .litiges-search-field {
+    max-width: 100%;
+  }
+  
+  .litiges-sort-select {
+    width: 100%;
+  }
+}
+
+/* Tableau */
+.litiges-table-container {
+  border-radius: 10px !important;
+}
+
+.litiges-table-head {
+  background-color: #fcfaf7;
+}
+
+.litiges-table-th {
+  font-weight: bold !important;
+}
+
+.litiges-table-th-status {
+  font-weight: bold !important;
+  min-width: 130px;
+}
+
+.litiges-row:hover {
+  background-color: #fafafa !important;
+}
+
+.litiges-empty-cell {
+  padding-top: 32px !important;
+  padding-bottom: 32px !important;
+  color: rgba(0, 0, 0, 0.54);
+  font-style: italic;
+}
+
+/* Cellules spécifiques */
+.litiges-client-cell {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.litiges-client-name {
+  font-weight: 500 !important;
+}
+
+.litiges-motif-text {
+  font-weight: 500 !important;
+}
+
+.litiges-links-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.litiges-link-cmd {
+  color: #7a0606 !important;
+}
+
+.litiges-link-prest {
+  color: #0066cc !important;
+}
+
+.litiges-description-cell {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.litiges-date-text {
+  font-size: 0.8rem !important;
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+
+/* Sélecteur de statut dynamique */
+.litiges-status-select {
+  height: 30px;
+  font-size: 0.85rem !important;
+  font-weight: bold !important;
+}
+
+.status-ouvert { color: #0288d1 !important; }
+.status-en-cours { color: #ed6c02 !important; }
+.status-resolu { color: #2e7d32 !important; }
+.status-rejete { color: #d32f2f !important; }
+
+/* Modale de détails */
+.litiges-modal-title {
+  font-weight: bold !important;
+  border-bottom: '1px solid #e0e0e0' !important;
+  color: #4a0404;
+}
+
+.litiges-modal-content {
+  margin-top: 16px !important;
+}
+
+.litiges-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.litiges-modal-btn-close {
+  background-color: #4a0404 !important;
+}
+
+.litiges-modal-btn-close:hover {
+  background-color: #7a0606 !important;
+}

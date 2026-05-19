@@ -277,3 +277,169 @@
         padding: 15px;
     }
 }
+
+/* === MODALE DÉTAIL VIN === */
+
+.wine-detail-modal {
+    background-color: white;
+}
+
+.wine-detail-title {
+    margin-bottom: 16px;
+    font-weight: bold;
+    color: #4a0404;
+}
+
+.wine-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.wine-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 24px;
+    min-height: 300px;
+}
+
+.wine-image-large {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+}
+
+.wine-details-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.wine-info-row {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.wine-info-label {
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+}
+
+.wine-info-value {
+    color: #333;
+    font-size: 1rem;
+}
+
+.wine-price-large {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #4a0404;
+    margin-bottom: 12px;
+}
+
+.wine-rating-section {
+    margin-bottom: 24px;
+}
+
+.wine-rating-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.wine-stars {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.wine-rating-count {
+    font-size: 0.875rem;
+    color: #999;
+}
+
+/* Avis section */
+.wine-avis-container {
+    margin-top: 24px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.wine-avis-item {
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border-left: 3px solid #4a0404;
+}
+
+.wine-avis-author {
+    font-weight: bold;
+    margin-bottom: 4px;
+    color: #333;
+}
+
+.wine-avis-text {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.wine-avis-date {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+/* Boutons actions */
+.wine-modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.wine-btn-panier {
+    background-color: #4a0404 !important;
+    padding: 12px 32px !important;
+}
+
+.wine-btn-panier:hover {
+    background-color: #630606 !important;
+}
+
+.wine-modal-close-btn {
+    color: #999 !important;
+}
+
+/* Dialog titre */
+.wine-modal-dialog-title {
+    background-color: #4a0404 !important;
+    color: white !important;
+}
+
+.wine-modal-dialog-content {
+    padding: 32px !important;
+}
+
+/* === RESPONSIVE MODALE === */
+@media (max-width: 800px) {
+    .wine-detail-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+    }
+    
+    .wine-image-container {
+        min-height: 250px;
+    }
+    
+    .wine-modal-actions {
+        flex-direction: column;
+    }
+}

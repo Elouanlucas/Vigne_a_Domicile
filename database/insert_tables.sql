@@ -465,7 +465,8 @@ INSERT INTO
         vin_id,
         prestation_id,
         note,
-        commentaire
+        commentaire,
+        reponse_admin
     )
 VALUES
     -- Château Margaux (Vin ID 1)
@@ -474,14 +475,16 @@ VALUES
         1,
         NULL,
         5,
-        'Un millésime absolument exceptionnel. Des tanins soyeux, une longueur en bouche incroyable. Certes cher, mais unique.'
+        'Un millésime absolument exceptionnel. Des tanins soyeux, une longueur en bouche incroyable. Certes cher, mais unique.',
+        NULL
     ),
     (
         3,
         1,
         NULL,
         4,
-        'Excellent bordeaux, très complexe, mais demande à vieillir encore un peu en cave pour révéler tout son potentiel.'
+        'Excellent bordeaux, très complexe, mais demande à vieillir encore un peu en cave pour révéler tout son potentiel.',
+        NULL
     ),
     -- Champagne Dom Pérignon (Vin ID 2)
     (
@@ -489,7 +492,8 @@ VALUES
         2,
         NULL,
         5,
-        'La référence incontournable. Les bulles sont d''une finesse rare, parfait pour les grandes occasions !'
+        'La référence incontournable. Les bulles sont d''une finesse rare, parfait pour les grandes occasions !',
+        NULL
     ),
     -- Meursault 1er Cru (Vin ID 3)
     (
@@ -497,7 +501,8 @@ VALUES
         3,
         NULL,
         5,
-        'Mon blanc préféré de Bourgogne. Ces notes beurrées et de noisette sont un pur bonheur avec un poisson en sauce.'
+        'Mon blanc préféré de Bourgogne. Ces notes beurrées et de noisette sont un pur bonheur avec un poisson en sauce.',
+        NULL
     ),
     -- Côte-Rôtie 'La Mouline' (Vin ID 4)
     (
@@ -505,7 +510,8 @@ VALUES
         4,
         NULL,
         4,
-        'Un très grand nez, beaucoup de finesse et de puissance aromatique. Très satisfait de mon achat.'
+        'Un très grand nez, beaucoup de finesse et de puissance aromatique. Très satisfait de mon achat.',
+        NULL
     ),
     -- Petrus 2015 (Vin ID 5)
     (
@@ -513,7 +519,8 @@ VALUES
         5,
         NULL,
         5,
-        'Un mythe accessible pour un grand événement. Robe sombre, arômes de truffe magiques. Grandiose.'
+        'Un mythe accessible pour un grand événement. Robe sombre, arômes de truffe magiques. Grandiose.',
+        NULL
     ),
     -- Sancerre Blanc (Vin ID 6)
     (
@@ -521,7 +528,8 @@ VALUES
         6,
         NULL,
         4,
-        'Très bon rapport qualité-prix. Idéal pour accompagner un plateau de fruits de mer ou du fromage de chèvre.'
+        'Très bon rapport qualité-prix. Idéal pour accompagner un plateau de fruits de mer ou du fromage de chèvre.',
+        NULL
     ),
     -- Rosé de Provence (Vin ID 7)
     (
@@ -529,7 +537,8 @@ VALUES
         7,
         NULL,
         3,
-        'Rosé correct et très frais pour l''été, mais reste assez classique par rapport à d''autres références.'
+        'Rosé correct et très frais pour l''été, mais reste assez classique par rapport à d''autres références.',
+        NULL
     ),
     -- Château d'Yquem (Vin ID 8)
     (
@@ -537,7 +546,8 @@ VALUES
         8,
         NULL,
         5,
-        'Le roi des liquoreux porte bien son nom. Un équilibre parfait entre le sucre et l''acidité, des notes de miel intenses.'
+        'Le roi des liquoreux porte bien son nom. Un équilibre parfait entre le sucre et l''acidité, des notes de miel intenses.',
+        NULL
     ),
     -- Gevrey-Chambertin (Vin ID 9)
     (
@@ -545,7 +555,8 @@ VALUES
         9,
         NULL,
         4,
-        'Un Bourgogne puissant comme on les aime, belles notes de cerise noire. Parfait sur une viande rouge.'
+        'Un Bourgogne puissant comme on les aime, belles notes de cerise noire. Parfait sur une viande rouge.',
+        NULL
     ),
     -- Chablis Grand Cru (Vin ID 10)
     (
@@ -553,7 +564,8 @@ VALUES
         10,
         NULL,
         5,
-        'Une minéralité tranchante et pure. Un magnifique Chardonnay, très élégant.'
+        'Une minéralité tranchante et pure. Un magnifique Chardonnay, très élégant.',
+        NULL
     ),
     -- Champagne Krug Grande Cuvée (Vin ID 12)
     (
@@ -561,7 +573,8 @@ VALUES
         12,
         NULL,
         5,
-        'Une complexité folle ! Les notes de pain grillé et de fruits mûrs sont exceptionnelles.'
+        'Une complexité folle ! Les notes de pain grillé et de fruits mûrs sont exceptionnelles.',
+        NULL
     ),
     -- Condrieu "L’Eclat" (Vin ID 13)
     (
@@ -569,7 +582,8 @@ VALUES
         13,
         NULL,
         4,
-        'L''explosion de fruits (pêche, abricot) typique du Viognier. Très aromatique et agréable.'
+        'L''explosion de fruits (pêche, abricot) typique du Viognier. Très aromatique et agréable.',
+        NULL
     ),
     -- Châteauneuf-du-Pape (Vin ID 14)
     (
@@ -577,7 +591,8 @@ VALUES
         14,
         NULL,
         4,
-        'Un vin chaleureux, épicé et bien structuré. À carafer une heure avant le repas.'
+        'Un vin chaleureux, épicé et bien structuré. À carafer une heure avant le repas.',
+        NULL
     ),
     -- Pouilly-Fumé (Vin ID 17)
     (
@@ -585,7 +600,8 @@ VALUES
         17,
         NULL,
         4,
-        'Ce côté pierre à fusil et légèrement fumé est top. Très sympa à l''apéritif.'
+        'Ce côté pierre à fusil et légèrement fumé est top. Très sympa à l''apéritif.',
+        NULL
     ),
     -- Visite Historique & Dégustation (Prestation ID 1)
     (
@@ -593,14 +609,16 @@ VALUES
         NULL,
         1,
         5,
-        'Superbe visite de la cave parisienne. Le guide était passionné et la sélection des 3 crus était parfaite pour conclure !'
+        'Superbe visite de la cave parisienne. Le guide était passionné et la sélection des 3 crus était parfaite pour conclure !',
+        NULL
     ),
     (
         3,
         NULL,
         1,
         4,
-        'Cadre magnifique en plein Paris. Les explications étaient claires et la dégustation très interactive.'
+        'Cadre magnifique en plein Paris. Les explications étaient claires et la dégustation très interactive.',
+        NULL
     ),
     -- Atelier Initiation Rhône & Bourgogne (Prestation ID 2)
     (
@@ -608,7 +626,8 @@ VALUES
         NULL,
         2,
         5,
-        'Je recommande vivement cet atelier à Lyon ! J''ai enfin compris les différences de terroirs grâce aux conseils du sommelier.'
+        'Je recommande vivement cet atelier à Lyon ! J''ai enfin compris les différences de terroirs grâce aux conseils du sommelier.',
+        NULL
     ),
     -- Grand Cru Experience (Prestation ID 3)
     (
@@ -616,7 +635,8 @@ VALUES
         NULL,
         3,
         5,
-        'Une expérience exclusive incroyable à Bordeaux. Goûter à ces grands crus classés vaut largement le détour et le prix.'
+        'Une expérience exclusive incroyable à Bordeaux. Goûter à ces grands crus classés vaut largement le détour et le prix.',
+        NULL
     ),
     -- Sommelier Privé à Domicile (Prestation ID 5)
     (
@@ -624,5 +644,6 @@ VALUES
         NULL,
         5,
         5,
-        'Prestation haut de gamme pour l''anniversaire de mon conjoint. Le sommelier est venu avec des pépites, nos invités ont adoré !'
+        'Prestation haut de gamme pour l''anniversaire de mon conjoint. Le sommelier est venu avec des pépites, nos invités ont adoré !',
+        NULL
     );

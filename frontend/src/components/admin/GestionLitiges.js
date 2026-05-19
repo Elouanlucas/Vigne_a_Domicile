@@ -8,6 +8,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import SearchIcon from '@mui/icons-material/Search';
+import '../../styles/GestionLitiges.css';
+
+// Configuration de l'URL API centrale
+const API_URL = 'http://localhost:3001';
 
 function GestionLitiges() {
     const token = localStorage.getItem('token');
@@ -18,18 +22,18 @@ function GestionLitiges() {
     const [error, setError] = useState('');
     const [actionStatus, setActionStatus] = useState({ type: '', message: '' });
 
-    // NOUVEAU : États pour la recherche et le tri
+    // États pour la recherche et le tri
     const [searchTerm, setSearchTerm] = useState('');
-    const [orderByDate, setOrderByDate] = useState('desc'); // 'desc' (plus récent) ou 'asc' (plus ancien)
+    const [orderByDate, setOrderByDate] = useState('desc'); 
 
-    // Modale : On stocke directement le litige sélectionné
+    // Modale : Stockage du litige sélectionné
     const [openUserModal, setOpenUserModal] = useState(false);
     const [selectedLitige, setSelectedLitige] = useState(null);
 
     // Charger TOUS les litiges au démarrage
     const fetchAllLitiges = async () => {
         try {
-            const response = await fetch('http://localhost:3001/api/litiges', {
+            const response = await fetch(`${API_URL}/api/litiges`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -60,7 +64,7 @@ function GestionLitiges() {
     const handleStatusChange = async (id, newStatut) => {
         setActionStatus({ type: '', message: '' });
         try {
-            const response = await fetch(`http://localhost:3001/api/litiges/${id}`, {
+            const response = await fetch(`${API_URL}/api/litiges/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -86,7 +90,7 @@ function GestionLitiges() {
         setActionStatus({ type: '', message: '' });
 
         try {
-            const response = await fetch(`http://localhost:3001/api/litiges/${id}`, {
+            const response = await fetch(`${API_URL}/api/litiges/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -113,7 +117,7 @@ function GestionLitiges() {
         });
     };
 
-    // NOUVEAU : Logique de filtrage et de tri combinée
+    // Logique de filtrage et de tri combinée
     const filteredAndSortedLitiges = litiges
         .filter(litige => {
             const searchLower = searchTerm.toLowerCase();
@@ -132,17 +136,27 @@ function GestionLitiges() {
             return orderByDate === 'desc' ? dateB - dateA : dateA - dateB;
         });
 
+    // Fonction utilitaire pour attribuer dynamiquement la couleur du statut
+    const getStatusClass = (statut) => {
+        switch (statut) {
+            case 'ouvert': return 'status-ouvert';
+            case 'en_cours': return 'status-en-cours';
+            case 'resolu': return 'status-resolu';
+            default: return 'status-rejete';
+        }
+    };
+
     return (
-        <Box sx={{ p: 4 }}>
-            <Typography variant="h4" sx={{ mb: 1, color: '#4a0404', fontWeight: 'bold' }}>
-                Gestion des Litiges (Admin)
+        <Box className="litiges-container">
+            <Typography variant="h4" className="litiges-title">
+                Gestion des Litiges
             </Typography>
-            <Typography variant="body2" color="textSecondary" sx={{ mb: 4 }}>
+            <Typography variant="body2" color="textSecondary" className="litiges-subtitle">
                 Consultez, gérez les statuts et accédez aux coordonnées des clients ayant déclaré une réclamation.
             </Typography>
 
-            {/* NOUVEAU : Barre de Recherche et Filtre de Tri */}
-            <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
+            {/* Barre de Recherche et Filtre de Tri */}
+            <Box className="litiges-filter-bar">
                 <TextField
                     label="Rechercher un litige"
                     variant="outlined"
@@ -155,10 +169,10 @@ function GestionLitiges() {
                             startAdornment: <SearchIcon fontSize="small" sx={{ color: 'text.secondary', mr: 1 }} />,
                         },
                     }}
-                    sx={{ flexGrow: 1, maxWidth: '400px' }}
+                    className="litiges-search-field"
                 />
 
-                <FormControl size="small" sx={{ minWidth: '200px' }}>
+                <FormControl size="small" className="litiges-sort-select">
                     <InputLabel id="tri-date-label">Ordre chronologique</InputLabel>
                     <Select
                         labelId="tri-date-label"
@@ -173,45 +187,47 @@ function GestionLitiges() {
             </Box>
 
             {actionStatus.message && (
-                <Alert severity={actionStatus.type} sx={{ mb: 3 }} onClose={() => setActionStatus({ type: '', message: '' })}>
+                <Alert severity={actionStatus.type} className="litiges-alert" onClose={() => setActionStatus({ type: '', message: '' })}>
                     {actionStatus.message}
                 </Alert>
             )}
 
-            {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+            {error && <Alert severity="error" className="litiges-alert">{error}</Alert>}
 
             {loading ? (
-                <Box sx={{ display: 'flex', justifyContent: 'center', my: 5 }}><CircularProgress sx={{ color: '#4a0404' }} /></Box>
+                <Box className="litiges-loading-box">
+                    <CircularProgress className="litiges-spinner" />
+                </Box>
             ) : (
-                <TableContainer component={Paper} elevation={2} sx={{ borderRadius: '10px' }}>
+                <TableContainer component={Paper} elevation={2} className="litiges-table-container">
                     <Table size="small">
-                        <TableHead sx={{ bgcolor: '#fcfaf7' }}>
+                        <TableHead className="litiges-table-head">
                             <TableRow>
-                                <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>Client</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>Motif</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>Liaisons</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>Description</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }}>Date Déclaration</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold', minWidth: '130px' }}>Statut</TableCell>
-                                <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
+                                <TableCell className="litiges-table-th">ID</TableCell>
+                                <TableCell className="litiges-table-th">Client</TableCell>
+                                <TableCell className="litiges-table-th">Motif</TableCell>
+                                <TableCell className="litiges-table-th">Liaisons</TableCell>
+                                <TableCell className="litiges-table-th">Description</TableCell>
+                                <TableCell className="litiges-table-th">Date Déclaration</TableCell>
+                                <TableCell className="litiges-table-th-status">Statut</TableCell>
+                                <TableCell className="litiges-table-th" align="center">Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
                             {filteredAndSortedLitiges.length === 0 ? (
                                 <TableRow>
-                                    <TableCell colSpan={8} align="center" sx={{ py: 4, color: 'text.secondary', fontStyle: 'italic' }}>
+                                    <TableCell colSpan={8} align="center" className="litiges-empty-cell">
                                         {litiges.length === 0 ? "Aucun litige en base de données." : "Aucun litige ne correspond à votre recherche."}
                                     </TableCell>
                                 </TableRow>
                             ) : (
                                 filteredAndSortedLitiges.map((litige) => (
-                                    <TableRow key={litige.id} sx={{ '&:hover': { bgcolor: '#fafafa' } }}>
+                                    <TableRow key={litige.id} className="litiges-row">
                                         <TableCell>{litige.id}</TableCell>
                                         
                                         <TableCell>
-                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                <Typography variant="body2" sx={{ fontWeight: '500' }}>
+                                            <Box className="litiges-client-cell">
+                                                <Typography variant="body2" className="litiges-client-name">
                                                     👤 {litige.login || `ID: ${litige.numUtilisateur}`}
                                                 </Typography>
                                                 <IconButton 
@@ -225,35 +241,30 @@ function GestionLitiges() {
                                             </Box>
                                         </TableCell>
 
-                                        <TableCell sx={{ fontWeight: '500' }}>{litige.type_motif}</TableCell>
+                                        <TableCell className="litiges-motif-text">{litige.type_motif}</TableCell>
                                         
                                         <TableCell>
-                                            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
-                                                {litige.commande_id && <Typography variant="caption" sx={{ color: '#7a0606' }}>📦 Cmd N°{litige.commande_id}</Typography>}
-                                                {litige.prestation_id && <Typography variant="caption" sx={{ color: '#0066cc' }}>📅 Prest N°{litige.prestation_id}</Typography>}
+                                            <Box className="litiges-links-box">
+                                                {litige.commande_id && <Typography variant="caption" className="litiges-link-cmd">📦 Cmd N°{litige.commande_id}</Typography>}
+                                                {litige.prestation_id && <Typography variant="caption" className="litiges-link-prest">📅 Prest N°{litige.prestation_id}</Typography>}
                                                 {!litige.commande_id && !litige.prestation_id && <Typography variant="caption" color="textSecondary">—</Typography>}
                                             </Box>
                                         </TableCell>
 
-                                        <TableCell sx={{ maxWidth: '250px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        <TableCell className="litiges-description-cell">
                                             <Tooltip title={litige.description} placement="top">
                                                 <span>{litige.description}</span>
                                             </Tooltip>
                                         </TableCell>
 
-                                        <TableCell sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>{formatDate(litige.created_at)}</TableCell>
+                                        <TableCell className="litiges-date-text">{formatDate(litige.created_at)}</TableCell>
                                         
                                         <TableCell>
                                             <FormControl fullWidth size="small">
                                                 <Select
                                                     value={litige.statut}
                                                     onChange={(e) => handleStatusChange(litige.id, e.target.value)}
-                                                    sx={{ 
-                                                        height: '30px', 
-                                                        fontSize: '0.85rem',
-                                                        fontWeight: 'bold',
-                                                        color: litige.statut === 'ouvert' ? '#0288d1' : litige.statut === 'en_cours' ? '#ed6c02' : litige.statut === 'resolu' ? '#2e7d32' : '#d32f2f'
-                                                    }}
+                                                    className={`litiges-status-select ${getStatusClass(litige.statut)}`}
                                                 >
                                                     <MenuItem value="ouvert">🔴 Ouvert</MenuItem>
                                                     <MenuItem value="en_cours">🟠 En cours</MenuItem>
@@ -278,12 +289,12 @@ function GestionLitiges() {
 
             {/* MODALE DES INFOS CLIENT */}
             <Dialog open={openUserModal} onClose={() => setOpenUserModal(false)} maxWidth="xs" fullWidth>
-                <DialogTitle sx={{ fontWeight: 'bold', borderBottom: '1px solid #e0e0e0', color: '#4a0404' }}>
+                <DialogTitle className="litiges-modal-title">
                     Détails du Client
                 </DialogTitle>
-                <DialogContent sx={{ mt: 2 }}>
+                <DialogContent className="litiges-modal-content">
                     {selectedLitige ? (
-                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                        <Box className="litiges-info-list">
                             <Typography variant="body2"><strong>Numéro Client :</strong> {selectedLitige.numUtilisateur}</Typography>
                             <Typography variant="body2"><strong>Pseudo / Login :</strong> {selectedLitige.login || 'Non fourni'}</Typography>
                             <Typography variant="body2"><strong>Nom Complet :</strong> {selectedLitige.prenom || ''} {selectedLitige.nom || ''}</Typography>
@@ -297,7 +308,7 @@ function GestionLitiges() {
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={() => setOpenUserModal(false)} color="primary" variant="contained" sx={{ bgcolor: '#4a0404', '&:hover': { bgcolor: '#7a0606' } }}>
+                    <Button onClick={() => setOpenUserModal(false)} color="primary" variant="contained" className="litiges-modal-btn-close">
                         Fermer
                     </Button>
                 </DialogActions>

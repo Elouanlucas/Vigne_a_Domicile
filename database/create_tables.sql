@@ -192,6 +192,7 @@ CREATE TABLE avis (
     note INT NOT NULL,
     commentaire TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    reponse_admin TEXT NULL,
     
     -- Clés étrangères
     CONSTRAINT fk_avis_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE,

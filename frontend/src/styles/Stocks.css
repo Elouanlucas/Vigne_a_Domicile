@@ -1,0 +1,62 @@
+/* Container admin */
+.admin-stocks-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Conteneur stocks */
+.stocks-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Titre stocks */
+.stocks-title {
+    font-weight: bold;
+    color: #4a0404;
+    margin-bottom: 24px;
+    font-size: 2rem;
+}
+
+/* Paper tableau */
+.stocks-table-paper {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* En-tête tableau */
+.stocks-table-head {
+    background-color: #f5f5f5;
+}
+
+/* Cellule stock inline */
+.stocks-cell-stock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Bouton sauvegarder */
+.stocks-btn-save {
+    background-color: #4a0404 !important;
+}
+
+.stocks-btn-save:hover {
+    background-color: #630606 !important;
+}
+
+/* Snackbar */
+.stocks-snackbar {
+    position: fixed;
+    top: 16px;
+    center: 0;
+    z-index: 1300;
+}
+
+/* Alert */
+.stocks-alert {
+    margin-top: 16px;
+    border-radius: 8px;
+}

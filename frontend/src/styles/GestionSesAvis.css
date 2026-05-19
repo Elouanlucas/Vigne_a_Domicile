@@ -1,0 +1,201 @@
+/* Conteneur principal */
+.avis-container {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Titres */
+.avis-title {
+  margin-bottom: 8px !important;
+  color: #4a0404;
+  font-weight: bold !important;
+}
+
+.avis-subtitle {
+  margin-bottom: 32px !important;
+}
+
+/* Alertes Flash */
+.avis-alert {
+  margin-bottom: 24px !important;
+}
+
+/* Barre d'outils */
+.avis-toolbar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.avis-search-field {
+  flex-grow: 1;
+  min-width: 250px;
+  background-color: white;
+}
+
+.avis-search-icon {
+  color: #888;
+}
+
+.avis-filter-select {
+  min-width: 200px;
+  background-color: white;
+}
+
+/* Spinner de chargement */
+.avis-loading-box {
+  display: flex;
+  justify-content: center;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+.avis-spinner {
+  color: #4a0404 !important;
+}
+
+/* État vide */
+.avis-empty-paper {
+  padding: 32px !important;
+  text-align: center;
+  background-color: #fafafa !important;
+}
+
+/* Tableau */
+.avis-table-container {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  border-radius: 8px !important;
+}
+
+.avis-table-head {
+  background-color: #4a0404;
+}
+
+.avis-table-th {
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.avis-table-th-comment {
+  color: white !important;
+  font-weight: bold !important;
+  width: 45%;
+}
+
+.avis-table-th-actions {
+  color: white !important;
+  font-weight: bold !important;
+  text-align: center;
+}
+
+/* Cellules & Textes du tableau */
+.avis-type-text {
+  font-weight: bold !important;
+}
+
+.type-vin {
+  color: #4a0404;
+}
+
+.type-prestation {
+  color: #2e7d32;
+}
+
+.avis-cible-text {
+  font-weight: bold !important;
+}
+
+.avis-comment-text {
+  font-style: italic;
+  color: #333;
+}
+
+/* Bloc réponse admin */
+.avis-admin-response-box {
+  margin-top: 12px;
+  padding-left: 16px;
+  border-left: '3px solid #ff9800';
+  background-color: #fffbf5;
+  padding: 8px;
+  border-radius: 0 4px 4px 0;
+}
+
+.avis-admin-response-title {
+  font-weight: bold !important;
+  color: #e65100;
+  display: block;
+}
+
+.avis-admin-response-text {
+  font-style: italic;
+  color: #555;
+}
+
+/* Actions */
+.avis-actions-box {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Modale de modification */
+.avis-modal-title-edit {
+  background-color: #4a0404;
+  color: white !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avis-modal-tag {
+  color: #ffc107;
+  font-weight: bold !important;
+}
+
+.avis-modal-content {
+  padding-top: 24px !important;
+}
+
+.avis-modal-subtitle {
+  font-weight: bold !important;
+  margin-bottom: 16px !important;
+}
+
+.avis-modal-rating-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.avis-modal-actions {
+  padding: 16px !important;
+  gap: 8px;
+}
+
+.avis-btn-submit {
+  background-color: #4a0404 !important;
+}
+
+.avis-btn-submit:hover {
+  background-color: #7a0606 !important;
+}
+
+/* Modale de suppression */
+.avis-modal-title-delete {
+  background-color: #d32f2f;
+  color: white !important;
+}
+
+.avis-delete-warning {
+  margin-top: 8px !important;
+  font-weight: bold !important;
+}
+
+.avis-delete-irreversible {
+  margin-top: 8px !important;
+  font-style: italic;
+}

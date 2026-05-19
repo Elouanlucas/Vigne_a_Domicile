@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
     Button, TextField, Box, Dialog, DialogContent, 
     DialogTitle, IconButton, Typography, Radio, 
-    RadioGroup, FormControlLabel, Checkbox 
+    RadioGroup, FormControlLabel, Checkbox, Divider, Rating, CircularProgress
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
@@ -12,17 +12,20 @@ import BusinessIcon from '@mui/icons-material/Business';
 import { CurrencyContext } from '../../context/CurrencyContext';
 import '../../styles/Prestations.css';
 
+// Configuration de l'URL API centrale
+const API_URL = 'http://localhost:3001';
+
 const Prestations = () => {
     const { formatPrice } = useContext(CurrencyContext);
     const navigate = useNavigate();
     
-    // États pour les données
+    // --- ÉTATS POUR LES DONNÉES ---
     const [prestations, setPrestations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedPrestation, setSelectedPrestation] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    // États pour les filtres
+    // --- ÉTATS POUR LES FILTRES ---
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('asc');
     const [selectedCity, setSelectedCity] = useState('Toutes');
@@ -31,9 +34,19 @@ const Prestations = () => {
         domicile: true
     });
 
-    // 1. Chargement des données au montage du composant
+    // --- ÉTATS POUR LES AVIS ---
+    const [avisList, setAvisList] = useState([]);
+    const [loadingAvis, setLoadingAvis] = useState(false);
+    const [newNote, setNewNote] = useState(5);
+    const [newCommentaire, setNewCommentaire] = useState('');
+    const [avisError, setAvisError] = useState('');
+
+    // ID de l'utilisateur connecté (Simulé, à lier à ton Context d'authentification)
+    const currentUserId = 1;
+
+    // --- CHARGEMENT DES PRESTATIONS ---
     useEffect(() => {
-        fetch('http://localhost:3001/api/prestations')
+        fetch(`${API_URL}/api/prestations`)
             .then(res => {
                 if (!res.ok) throw new Error("Erreur réseau");
                 return res.json();
@@ -48,30 +61,91 @@ const Prestations = () => {
             });
     }, []);
 
-    // 2. Logique d'extraction de la ville (basée sur ton format d'adresse SQL)
+    // --- CHARGEMENT DES AVIS À L'OUVERTURE DE LA MODAL ---
+    useEffect(() => {
+        if (selectedPrestation) {
+            setLoadingAvis(true);
+            fetch(`${API_URL}/api/avis/prestation/${selectedPrestation.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    setAvisList(data);
+                    setLoadingAvis(false);
+                })
+                .catch(err => {
+                    console.error("Erreur chargement avis prestation:", err);
+                    setLoadingAvis(false);
+                });
+        }
+    }, [selectedPrestation]);
+
+    // --- FERMETURE DE LA MODAL (RESET DES ÉTATS) ---
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedPrestation(null);
+        setAvisList([]);
+        setAvisError('');
+        setNewCommentaire('');
+        setNewNote(5);
+    };
+
+    // --- SOUMISSION D'UN AVIS PRESTATION ---
+    const handleAvisSubmit = (e) => {
+        e.preventDefault();
+        setAvisError('');
+
+        const avisData = {
+            numUtilisateur: currentUserId,
+            prestation_id: selectedPrestation.id,
+            note: newNote,
+            commentaire: newCommentaire.trim()
+        };
+
+        fetch(`${API_URL}/api/avis`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(avisData)
+        })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
+            return data;
+        })
+        .then(() => {
+            // Rechargement immédiat de la liste locale des avis
+            return fetch(`${API_URL}/api/avis/prestation/${selectedPrestation.id}`);
+        })
+        .then(res => res.json())
+        .then(updatedAvis => {
+            setAvisList(updatedAvis);
+            setNewCommentaire('');
+            setNewNote(5);
+        })
+        .catch(err => {
+            setAvisError(err.message);
+        });
+    };
+
+    // --- EXTRACTION DE LA VILLE ---
     const extractCity = (address) => {
         if (!address) return '';
         const parts = address.trim().split(' ');
-        return parts[parts.length - 1]; // Prend le dernier mot de l'adresse
+        return parts[parts.length - 1];
     };
 
-    // Génération dynamique de la liste des villes
+    // Génération de la liste des villes pour la Sidebar
     const cities = ['Toutes', ...new Set(
         prestations
             .filter(p => p.type === 'cave' && p.cave_adresse)
             .map(p => extractCity(p.cave_adresse))
     )];
 
-    // 3. Logique de filtrage et tri
+    // --- FILTRAGE ET TRI ---
     const getFilteredPrestations = () => {
         return prestations
             .filter(p => {
                 const matchesSearch = p.nom.toLowerCase().includes(searchTerm.toLowerCase());
                 const matchesType = selectedTypes[p.type];
                 
-                // On garde la prestation si c'est "Toutes", 
-                // ou si c'est à domicile (disponible partout), 
-                // ou si la ville correspond.
                 const city = extractCity(p.cave_adresse);
                 const matchesCity = selectedCity === 'Toutes' || 
                                    p.type === 'domicile' || 
@@ -105,24 +179,17 @@ const Prestations = () => {
             <div className="produits-layout">
                 {/* Sidebar de Filtres */}
                 <aside className="filter-sidebar">
-                    {/* En-tête avec Titre et bouton RAZ */}
-                    <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'space-between', 
-                        alignItems: 'center', 
-                        mb: 2 
-                    }}>
-                        <Typography variant="h6" sx={{ color: '#4a0404' }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                        <Typography variant="h6" sx={{ color: '#4a0404', fontWeight: 'bold' }}>
                             Filtres
                         </Typography>
-                        
                         <Button 
                             size="small" 
                             onClick={() => {
-                                // Ici on réinitialise tous tes états
-                                setSelectedCity('Toutes'); // Ou '' selon ta valeur par défaut
+                                setSelectedCity('Toutes');
                                 setSelectedTypes({ cave: true, domicile: true });
-                                setSortBy('');
+                                setSortBy('asc');
+                                setSearchTerm('');
                             }}
                             sx={{ 
                                 color: '#4a0404', 
@@ -139,7 +206,7 @@ const Prestations = () => {
                     
                     {/* Filtre Ville */}
                     <div className="filter-group">
-                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                             <BusinessIcon fontSize="small" /> Villes
                         </Typography>
                         <RadioGroup value={selectedCity} onChange={(e) => setSelectedCity(e.target.value)}>
@@ -167,7 +234,7 @@ const Prestations = () => {
                     </div>
 
                     {/* Tri Prix */}
-                    <div className="filter-group">
+                    <div className="filter-group" style={{ borderBottom: 'none' }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Trier par prix</Typography>
                         <RadioGroup value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                             <FormControlLabel value="asc" control={<Radio sx={{color:'#4a0404', '&.Mui-checked': {color:'#4a0404'}}}/>} label="Croissant" />
@@ -181,7 +248,7 @@ const Prestations = () => {
                     {filteredData.length > 0 ? (
                         <div className="wine-cards-wrapper">
                             {filteredData.map(p => (
-                                <div key={p.id} className="prestation-card-mui">
+                                <div key={p.id} className="prestation-card-mui" style={{ position: 'relative' }}>
                                     <div className="card-badge-mui">
                                         {p.type === 'domicile' ? '🏠 Chez vous' : '🍷 En Cave'}
                                     </div>
@@ -194,9 +261,11 @@ const Prestations = () => {
                                     </IconButton>
 
                                     <img 
-                                        src={p.cover ? `http://localhost:3001/uploads/${p.cover}` : '/default-experience.jpg'} 
+                                        src={p.cover ? `${API_URL}/uploads/${p.cover}` : '/default-experience.jpg'} 
                                         alt={p.nom} 
                                         className="prestation-image-mui"
+                                        onClick={() => { setSelectedPrestation(p); setIsModalOpen(true); }}
+                                        style={{ cursor: 'pointer' }}
                                     />
                                     
                                     <div className="prestation-content-mui">
@@ -230,29 +299,30 @@ const Prestations = () => {
                 </div>
             </div>
 
-            {/* Modale de Détails */}
-            <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} maxWidth="sm" fullWidth>
+            {/* MODALE DE DÉTAILS MODIFIÉE AVEC SYSTEME D'AVIS */}
+            <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#4a0404', color: 'white' }}>
                     <Typography variant="h6"><strong>{selectedPrestation?.nom}</strong></Typography>
-                    <IconButton onClick={() => setIsModalOpen(false)} sx={{ color: 'white' }}><CloseIcon /></IconButton>
+                    <IconButton onClick={handleCloseModal} sx={{ color: 'white' }}><CloseIcon /></IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
                     {selectedPrestation && (
                         <Box sx={{ p: 1 }}>
+                            {/* Infos Générales Prestation */}
                             <img 
-                                src={`http://localhost:3001/uploads/${selectedPrestation.cover}`} 
+                                src={selectedPrestation.cover ? `${API_URL}/uploads/${selectedPrestation.cover}` : '/default-experience.jpg'} 
                                 alt="" 
-                                style={{ width: '100%', borderRadius: '12px', maxHeight: '300px', objectFit: 'cover', marginBottom: '20px' }} 
+                                style={{ width: '100%', borderRadius: '12px', maxHeight: '280px', objectFit: 'cover', marginBottom: '20px' }} 
                             />
                             <Typography variant="h5" sx={{ color: '#4a0404', fontWeight: 'bold' }}>
                                 {formatPrice(selectedPrestation.prix)} <span style={{fontSize: '0.9rem', fontWeight: 'normal'}}>/ pers.</span>
                             </Typography>
                             
-                            <Typography sx={{ mt: 2, lineHeight: 1.6, color: '#444' }}>
-                                {selectedPrestation.description}
+                            <Typography sx={{ mt: 2, lineHeight: 1.6, color: '#444', fontStyle: 'italic' }}>
+                                "{selectedPrestation.description}"
                             </Typography>
                             
-                            <Box sx={{ mt: 3, p: 2, bgcolor: '#f5f5f5', borderRadius: '8px' }}>
+                            <Box sx={{ mt: 3, p: 2, bgcolor: '#f5f5f5', borderRadius: '8px', mb: 3 }}>
                                 <Typography variant="subtitle1"><strong>Informations de lieu :</strong></Typography>
                                 <Typography variant="body2">
                                     {selectedPrestation.type === 'cave' 
@@ -265,11 +335,89 @@ const Prestations = () => {
                                 variant="contained" 
                                 fullWidth 
                                 size="large"
-                                sx={{ mt: 4, bgcolor: '#4a0404', py: 1.5 }}
-                                onClick={() => navigate(`/reservation/${selectedPrestation.id}`)}
+                                sx={{ mb: 4, bgcolor: '#4a0404', py: 1.2, '&:hover': { bgcolor: '#7a0606' } }}
+                                onClick={() => { handleCloseModal(); navigate(`/reservation/${selectedPrestation.id}`); }}
                             >
-                                Confirmer et choisir une date
+                                Choisir une date et réserver
                             </Button>
+
+                            <Divider sx={{ my: 3 }}><Typography variant="button" color="textSecondary">Avis Expériences</Typography></Divider>
+
+                            {/* Section des Avis Existants */}
+                            <Box sx={{ mb: 4 }}>
+                                {loadingAvis ? (
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+                                        <CircularProgress sx={{ color: '#4a0404' }} size={30} />
+                                    </Box>
+                                ) : avisList.length === 0 ? (
+                                    <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', my: 2 }}>
+                                        Aucun avis pour le moment. Partagez votre expérience après votre dégustation !
+                                    </Typography>
+                                ) : (
+                                    avisList.map((av) => (
+                                        <Box key={av.id} sx={{ bgcolor: '#fdfbfb', p: 1.5, borderRadius: 2, mb: 2, borderLeft: '4px solid #4a0404', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                                                <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                                                    {av.prenom} {av.nom ? `${av.nom.substring(0, 1)}.` : ''}
+                                                </Typography>
+                                                <Rating value={av.note} readOnly size="small" />
+                                            </Box>
+                                            <Typography variant="body2" color="textPrimary">{av.commentaire}</Typography>
+                                            {av.created_at && (
+                                                <Typography variant="caption" color="textSecondary" sx={{ display: 'block', mt: 0.5, textAlign: 'right' }}>
+                                                    Le {new Date(av.created_at).toLocaleDateString('fr-FR')}
+                                                </Typography>
+                                            )}
+                                        </Box>
+                                    ))
+                                )}
+                            </Box>
+
+                            <Divider sx={{ my: 2 }} />
+
+                            {/* Formulaire de Dépôt d'Avis */}
+                            <Box component="form" onSubmit={handleAvisSubmit} sx={{ mt: 2 }}>
+                                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#4a0404', mb: 1 }}>
+                                    Évaluer cette prestation
+                                </Typography>
+                                
+                                {avisError && (
+                                    <Typography variant="caption" color="error" sx={{ display: 'block', mb: 1, fontWeight: 'bold' }}>
+                                        ⚠️ {avisError}
+                                    </Typography>
+                                )}
+
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                                    <Typography variant="body2">Votre note :</Typography>
+                                    <Rating 
+                                        name="prestation-rating" 
+                                        value={newNote} 
+                                        onChange={(event, newValue) => setNewNote(newValue || 5)} 
+                                    />
+                                </Box>
+
+                                <TextField
+                                    label="Votre retour d'expérience..."
+                                    multiline
+                                    rows={3}
+                                    fullWidth
+                                    variant="outlined"
+                                    value={newCommentaire}
+                                    onChange={(e) => setNewCommentaire(e.target.value)}
+                                    placeholder="Qu'avez-vous pensé de l'animation, des explications ou de la sélection des bouteilles ?"
+                                    sx={{ mb: 2 }}
+                                />
+
+                                <Button 
+                                    type="submit" 
+                                    variant="outlined" 
+                                    fullWidth
+                                    disabled={!newCommentaire.trim()}
+                                    sx={{ color: '#4a0404', borderColor: '#4a0404', '&:hover': { bgcolor: '#fbebeb', borderColor: '#4a0404' }, textTransform: 'none' }}
+                                >
+                                    Soumettre l'avis
+                                </Button>
+                            </Box>
                         </Box>
                     )}
                 </DialogContent>

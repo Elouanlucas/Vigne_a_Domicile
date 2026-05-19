@@ -1,0 +1,192 @@
+/* Conteneur principal */
+.gestion-avis-container {
+    padding: 32px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Titres et textes d'introduction */
+.gestion-avis-title {
+    margin-bottom: 8px !important;
+    color: #4a0404;
+    font-weight: bold !important;
+}
+
+.gestion-avis-subtitle {
+    margin-bottom: 32px !important;
+}
+
+/* Alertes Flash */
+.gestion-avis-alert {
+    margin-bottom: 24px !important;
+}
+
+/* Barre d'outils (Recherche et Filtres) */
+.gestion-avis-toolbar {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.gestion-avis-search-field {
+    flex-grow: 1;
+    min-width: 300px;
+    background-color: white;
+}
+
+.gestion-avis-search-icon {
+    color: #888;
+}
+
+.gestion-avis-filter-control {
+    min-width: 200px;
+    background-color: white;
+}
+
+/* Chargement et état vide */
+.gestion-avis-loading-box {
+    display: flex;
+    justify-content: center;
+    padding-top: 64px;
+    padding-bottom: 64px;
+}
+
+.gestion-avis-loading-spinner {
+    color: #4a0404;
+}
+
+.gestion-avis-empty-paper {
+    padding: 32px;
+    text-align: center;
+    background-color: #fafafa !important;
+}
+
+/* Structure du Tableau */
+.gestion-avis-table-container {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    border-radius: 8px !important;
+}
+
+.gestion-avis-table-header {
+    background-color: #4a0404;
+}
+
+.gestion-avis-header-cell {
+    color: white !important;
+    font-weight: bold !important;
+}
+
+.gestion-avis-header-cell-center {
+    color: white !important;
+    font-weight: bold !important;
+    text-align: center !important;
+}
+
+/* Contenu des cellules */
+.gestion-avis-client-name {
+    font-weight: bold !important;
+}
+
+.gestion-avis-target-badge-vin {
+    display: block;
+    font-weight: bold;
+    color: #4a0404;
+}
+
+.gestion-avis-target-badge-prestation {
+    display: block;
+    font-weight: bold;
+    color: #2e7d32;
+}
+
+.gestion-avis-target-name {
+    font-weight: bold !important;
+}
+
+.gestion-avis-rating {
+    margin-bottom: 4px !important;
+}
+
+.gestion-avis-comment-text {
+    font-style: italic;
+    color: #333;
+}
+
+/* Bloc de réponse admin dans le tableau */
+.gestion-avis-response-box {
+    padding: 8px;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    border-left: 3px solid #ff9800;
+}
+
+.gestion-avis-response-text {
+    font-style: italic;
+}
+
+.gestion-avis-no-response {
+    font-style: italic;
+}
+
+/* Colonne Actions */
+.gestion-avis-actions-cell {
+    text-align: center !important;
+}
+
+.gestion-avis-actions-wrapper {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* Modale : Réponse Admin */
+.gestion-avis-dialog-title-reply {
+    background-color: #4a0404;
+    color: white !important;
+}
+
+.gestion-avis-dialog-content-reply {
+    padding-top: 24px !important;
+}
+
+.gestion-avis-client-comment-recall {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #fcf8f8;
+    border-radius: 4px;
+}
+
+.gestion-avis-client-comment-recall-title {
+    font-weight: bold;
+    color: #4a0404;
+}
+
+.gestion-avis-client-comment-recall-text {
+    font-style: italic;
+    margin-top: 4px !important;
+}
+
+.gestion-avis-dialog-actions {
+    padding: 16px !important;
+    gap: 8px;
+}
+
+.gestion-avis-submit-button {
+    background-color: #4a0404 !important;
+}
+
+.gestion-avis-submit-button:hover {
+    background-color: #7a0606 !important;
+}
+
+/* Modale : Suppression / Modération */
+.gestion-avis-dialog-title-delete {
+    background-color: #d32f2f;
+    color: white !important;
+}
+
+.gestion-avis-dialog-content-delete {
+    margin-top: 16px !important;
+}

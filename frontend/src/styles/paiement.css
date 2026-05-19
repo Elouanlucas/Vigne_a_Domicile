@@ -139,6 +139,114 @@
     box-shadow: 0 5px 15px rgba(74, 4, 4, 0.3) !important;
 }
 
+/* === CLASSES SUPPLÉMENTAIRES POUR PAIEMENT.JS === */
+
+/* Titre principal */
+.payment-main-title {
+    margin-bottom: 32px;
+    font-weight: bold;
+    color: #4a0404;
+}
+
+/* Récapitulatif panier */
+.payment-recap-box {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.payment-recap-title {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.payment-recap-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+/* Accordéons conteneur */
+.payment-accordions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Formulaire grille */
+.payment-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.payment-form-grid-fullwidth {
+    grid-column: 1 / -1 !important;
+}
+
+/* Carte bancaire inputs */
+.payment-card-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.payment-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Section totaux */
+.payment-totals-box {
+    padding: 16px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.payment-total-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.payment-total-row-border {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #ddd;
+}
+
+.payment-discount-row {
+    display: flex;
+    justify-content: space-between;
+    color: orange;
+}
+
+.payment-final-amount {
+    color: #4a0404;
+    font-weight: bold;
+}
+
+/* Tabs */
+.payment-tabs {
+    margin-bottom: 16px !important;
+    display: flex;
+    justify-content: center;
+}
+
+.payment-tab {
+    text-transform: none !important;
+}
+
+.payment-loading-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 850px) {
     .page-container {
@@ -147,5 +255,13 @@
     
     .MuiAccordionDetails-root {
         padding: 20px !important;
+    }
+    
+    .payment-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .payment-card-grid {
+        grid-template-columns: 1fr;
     }
 }

@@ -9,7 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import EventIcon from '@mui/icons-material/Event';
-import '../../styles/AdminPrestation.css'; // On réutilise ton CSS pour la cohérence
+import '../../styles/Agenda.css';
 
 function Agenda() {
     const [date, setDate] = useState(new Date());

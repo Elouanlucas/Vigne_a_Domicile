@@ -3,13 +3,15 @@ import '../styles/Selection_Produits.css';
 import { 
     Button, TextField, Box, Dialog, DialogContent, 
     DialogTitle, IconButton, Slider, Typography, 
-    Radio, RadioGroup, FormControlLabel, Switch
+    Radio, RadioGroup, FormControlLabel, Switch, Divider, Rating, CircularProgress
 } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
-import StarIcon from '@mui/icons-material/Star'; // Icône pour le favori
 import { CurrencyContext } from '../context/CurrencyContext';
+
+// Configuration de l'URL API centrale (Facilite le passage au réseau local / Docker)
+const API_URL = 'http://localhost:3001';
 
 const Produits = ({ onAjouter }) => {
   const { formatPrice } = useContext(CurrencyContext);
@@ -26,14 +28,22 @@ const Produits = ({ onAjouter }) => {
     rouge: true, blanc: true, champagne: true, rosé: true
   });
   const [priceRange, setPriceRange] = useState([0, 3000]);
-  
-  // NOUVEAUX ÉTATS DE FILTRE
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [onlyPromos, setOnlyPromos] = useState(false);
 
-  // --- CHARGEMENT DES DONNÉES ---
+  // --- ÉTATS POUR LES AVIS ---
+  const [avisList, setAvisList] = useState([]);
+  const [loadingAvis, setLoadingAvis] = useState(false);
+  const [newNote, setNewNote] = useState(5);
+  const [newCommentaire, setNewCommentaire] = useState('');
+  const [avisError, setAvisError] = useState('');
+
+  // ID de l'utilisateur connecté (À remplacer par ton Context d'authentification global)
+  const currentUserId = 1; 
+
+  // --- CHARGEMENT DES VINS ---
   useEffect(() => {
-    fetch('http://localhost:3001/api/vins')
+    fetch(`${API_URL}/api/vins`)
       .then(res => res.json())
       .then(data => { 
           setVins(data); 
@@ -45,7 +55,33 @@ const Produits = ({ onAjouter }) => {
       });
   }, []);
 
-  // Ajoute cette fonction qui manque :
+  // --- CHARGEMENT DES AVIS À L'OUVERTURE DE LA MODAL ---
+  useEffect(() => {
+    if (selectedWine) {
+      setLoadingAvis(true);
+      fetch(`${API_URL}/api/avis/vin/${selectedWine.id}`)
+        .then(res => res.json())
+        .then(data => {
+          setAvisList(data);
+          setLoadingAvis(false);
+        })
+        .catch(err => {
+          console.error("Erreur chargement avis:", err);
+          setLoadingAvis(false);
+        });
+    }
+  }, [selectedWine]);
+
+  // --- FERMETURE DE LA MODAL (RESET DES ETATS) ---
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedWine(null);
+    setAvisList([]);
+    setAvisError('');
+    setNewCommentaire('');
+    setNewNote(5);
+  };
+
   const handleQtyChange = (id, value, maxStock) => {
     const numValue = parseInt(value) || 0;
     setQuantities({ 
@@ -54,7 +90,43 @@ const Produits = ({ onAjouter }) => {
     });
   };
 
-  // --- ACTIONS ---
+  // --- SOUMISSION D'UN AVIS ---
+  const handleAvisSubmit = (e) => {
+    e.preventDefault();
+    setAvisError('');
+
+    const avisData = {
+        numUtilisateur: currentUserId,
+        vin_id: selectedWine.id,
+        note: newNote,
+        commentaire: newCommentaire.trim()
+    };
+
+    fetch(`${API_URL}/api/avis`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(avisData)
+    })
+    .then(async res => {
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
+        return data;
+    })
+    .then(() => {
+        // Recharger la liste des avis immédiatement après l'ajout
+        return fetch(`${API_URL}/api/avis/vin/${selectedWine.id}`);
+    })
+    .then(res => res.json())
+    .then(updatedAvis => {
+        setAvisList(updatedAvis);
+        setNewCommentaire('');
+        setNewNote(5);
+    })
+    .catch(err => {
+        setAvisError(err.message);
+    });
+  };
+
   const resetFilters = () => {
     setSearchTerm('');
     setSelectedCategories({ rouge: true, blanc: true, champagne: true, rosé: true });
@@ -70,8 +142,6 @@ const Produits = ({ onAjouter }) => {
         const matchesSearch = vin.name.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesCategory = selectedCategories[vin.category];
         const matchesPrice = vin.price >= priceRange[0] && vin.price <= priceRange[1];
-        
-        // Logique additionnelle pour Favoris et Promos
         const matchesFavorite = onlyFavorites ? vin.recommandations === 1 : true;        
         const matchesPromo = onlyPromos ? (vin.promotion_percentage > 0) : true;
 
@@ -80,32 +150,21 @@ const Produits = ({ onAjouter }) => {
       .sort((a, b) => sortBy === 'asc' ? a.price - b.price : b.price - a.price);
   };
 
-  // --- RENDU D'UNE CARTE VIN ---
   const renderWineCard = (vin) => {
     const isOutOfStock = vin.quantity <= 0;
     const hasPromo = vin.promotion_percentage && vin.promotion_percentage > 0;
-    const isFavorite = vin.is_favorite === 1;
     const discountedPrice = hasPromo ? vin.price * (1 - vin.promotion_percentage / 100) : vin.price;
     const qty = quantities[vin.id] || (isOutOfStock ? 0 : 1);
 
     return (
       <div key={vin.id} className="vin-card" style={{ opacity: isOutOfStock ? 0.8 : 1 }}>
-        {/* Bandeau de Rupture */}
         {isOutOfStock && <div className="out-of-stock-banner">RUPTURE</div>}
         
-        {/* NOUVEAU : Bandeau de Promotion (style similaire à rupture) */}
         {hasPromo && !isOutOfStock && (
           <div className="promo-banner" style={{
-            position: 'absolute',
-            top: '10px',
-            left: '-5px',
-            backgroundColor: '#4a0404',
-            color: 'white',
-            padding: '5px 15px',
-            fontWeight: 'bold',
-            zIndex: 1,
-            boxShadow: '2px 2px 5px rgba(0,0,0,0.2)',
-            fontSize: '0.85rem'
+            position: 'absolute', top: '10px', left: '-5px',
+            backgroundColor: '#4a0404', color: 'white', padding: '5px 15px',
+            fontWeight: 'bold', zIndex: 1, boxShadow: '2px 2px 5px rgba(0,0,0,0.2)', fontSize: '0.85rem'
           }}>
             -{vin.promotion_percentage}%
           </div>
@@ -123,7 +182,7 @@ const Produits = ({ onAjouter }) => {
         </IconButton>
 
         <img 
-          src={vin.cover ? `http://localhost:3001/uploads/${vin.cover}` : '/placeholder-vin.png'} 
+          src={vin.cover ? `${API_URL}/uploads/${vin.cover}` : '/placeholder-vin.png'} 
           alt={vin.name} 
           className="vin-image"
           onClick={() => { setSelectedWine(vin); setIsModalOpen(true); }}
@@ -132,7 +191,6 @@ const Produits = ({ onAjouter }) => {
         <div className="vin-card-content">
             <h3>{vin.name}</h3>
             
-            {/* Zone de Prix mise à jour */}
             <Box sx={{ mb: 1 }}>
               {hasPromo ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -183,7 +241,6 @@ const Produits = ({ onAjouter }) => {
     <section className="produits-tout">
       <h1>Nos Vins & Spiritueux</h1>
 
-      {/* Barre de recherche */}
       <div className="search-section">
         <div className="search-container">
           <TextField
@@ -197,24 +254,12 @@ const Produits = ({ onAjouter }) => {
       </div>
 
       <div className="produits-layout">
-        {/* SIDEBAR DE FILTRES */}
         <aside className="filter-sidebar">
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
             <Typography variant="h6" sx={{ color: '#4a0404', fontWeight: 'bold' }}>
               Filtres
             </Typography>
-            <Button 
-              size="small" 
-              onClick={resetFilters}
-              sx={{ 
-                color: '#4a0404', 
-                fontSize: '0.7rem', 
-                textDecoration: 'underline',
-                minWidth: 'auto',
-                p: 0,
-                '&:hover': { backgroundColor: 'transparent', textDecoration: 'none', color: '#7a0606' }
-              }}
-            >
+            <Button size="small" onClick={resetFilters} sx={{ color: '#4a0404', fontSize: '0.7rem', textDecoration: 'underline', minWidth: 'auto', p: 0, '&:hover': { backgroundColor: 'transparent', textDecoration: 'none', color: '#7a0606' } }}>
               Réinitialiser
             </Button>
           </Box>
@@ -231,7 +276,6 @@ const Produits = ({ onAjouter }) => {
             />
           </div>
           
-          {/* Catégories */}
           <div className="filter-group">
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1.5 }}>Catégories</Typography>
             {['rouge', 'blanc', 'champagne', 'rosé'].map(cat => (
@@ -246,21 +290,14 @@ const Produits = ({ onAjouter }) => {
             ))}
           </div>
 
-          {/* Budget */}
           <div className="filter-group">
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Budget max</Typography>
             <Typography variant="body2" sx={{ color: '#4a0404', fontWeight: 'bold', mb: 1 }}>
                 {formatPrice(priceRange[1])}
             </Typography>
-            <Slider
-              value={priceRange} 
-              onChange={(e, val) => setPriceRange(val)}
-              min={0} max={3000} step={10} 
-              sx={{ color: '#4a0404', width: '90%', ml: 1 }}
-            />
+            <Slider value={priceRange} onChange={(e, val) => setPriceRange(val)} min={0} max={3000} step={10} sx={{ color: '#4a0404', width: '90%', ml: 1 }} />
           </div>
           
-          {/* Tri */}
           <div className="filter-group" style={{ borderBottom: 'none' }}>
             <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mb: 1 }}>Tri</Typography>
             <RadioGroup value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
@@ -270,7 +307,6 @@ const Produits = ({ onAjouter }) => {
           </div>
         </aside>
 
-        {/* GRILLE DE PRODUITS */}
         <div className="products-grid-container">
           {filteredVins.length > 0 ? (
             ['rouge', 'blanc', 'champagne', 'rosé']
@@ -291,40 +327,133 @@ const Produits = ({ onAjouter }) => {
         </div>
       </div>
 
-      {/* MODAL DE DÉTAILS */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle sx={{ 
-            display: 'flex', justifyContent: 'space-between', 
-            alignItems: 'center', bgcolor: '#4a0404', color: 'white' 
-        }}>
+      {/* MODAL DE DÉTAILS MODIFIÉE AVEC AVIS */}
+      <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
+        <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#4a0404', color: 'white' }}>
           <strong>{selectedWine?.name}</strong>
-          <IconButton onClick={() => setIsModalOpen(false)} sx={{ color: 'white' }}>
+          <IconButton onClick={handleCloseModal} sx={{ color: 'white' }}>
               <CloseIcon />
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
           {selectedWine && (
-            <Box sx={{ p: 2, textAlign: 'center' }}>
-              <img 
-                src={`http://localhost:3001/uploads/${selectedWine.cover}`} 
-                alt={selectedWine.name} 
-                style={{ maxHeight:'350px', objectFit:'contain', borderRadius: '8px' }} 
-              />
-              <Typography variant="h5" sx={{ color: '#4a0404', fontWeight: 'bold', mt: 3 }}>
-                  {formatPrice(selectedWine.price)}
-              </Typography>
-              <Typography sx={{ mt: 2, color: '#555', lineHeight: 1.6 }}>
-                  {selectedWine.description}
-              </Typography>
-              <Button 
-                variant="contained" 
-                fullWidth 
-                sx={{ mt: 4, bgcolor: '#4a0404', py: 1.5 }} 
-                onClick={() => { onAjouter(selectedWine, 1); setIsModalOpen(false); }}
-                disabled={selectedWine.quantity <= 0}
-              >
-                Ajouter au Panier
-              </Button>
+            <Box sx={{ p: 2 }}>
+              {/* Infos Vin */}
+              <Box sx={{ textAlign: 'center' }}>
+                <img 
+                  src={selectedWine.cover ? `${API_URL}/uploads/${selectedWine.cover}` : '/placeholder-vin.png'} 
+                  alt={selectedWine.name} 
+                  style={{ maxHeight:'280px', objectFit:'contain', borderRadius: '8px' }} 
+                />
+                <Typography variant="h5" sx={{ color: '#4a0404', fontWeight: 'bold', mt: 2 }}>
+                    {formatPrice(selectedWine.price)}
+                </Typography>
+                <Typography sx={{ mt: 1, color: '#555', lineHeight: 1.6, fontStyle: 'italic' }}>
+                    "{selectedWine.description}"
+                </Typography>
+                <Button 
+                  variant="contained" fullWidth sx={{ mt: 2, mb: 4, bgcolor: '#4a0404', py: 1 }} 
+                  onClick={() => { onAjouter(selectedWine, 1); handleCloseModal(); }}
+                  disabled={selectedWine.quantity <= 0}
+                >
+                  Ajouter au Panier
+                </Button>
+              </Box>
+
+              <Divider sx={{ my: 3 }}><Typography variant="button" color="textSecondary">Avis Clients</Typography></Divider>
+
+              {/* Liste des Avis Existants */}
+              <Box sx={{ mb: 4 }}>
+                {loadingAvis ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
+                    <CircularProgress sx={{ color: '#4a0404' }} size={30} />
+                  </Box>
+                ) : avisList.length === 0 ? (
+                  <Typography variant="body2" color="textSecondary" sx={{ textAlign: 'center', my: 2 }}>
+                    Aucun avis pour le moment. Soyez le premier à partager votre expérience !
+                  </Typography>
+                ) : (
+                  avisList.map((av) => (
+                    <Box key={av.id} sx={{ bgcolor: '#fdfbfb', p: 1.5, borderRadius: 2, mb: 2, borderLeft: '4px solid #4a0404', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+                          {av.prenom} {av.nom ? `${av.nom.substring(0, 1)}.` : ''}
+                        </Typography>
+                        <Rating value={av.note} readOnly size="small" />
+                      </Box>
+                      <Typography variant="body2" color="textPrimary" sx={{ fontStyle: 'italic', color: '#333' }}>
+                        "{av.commentaire}"
+                      </Typography>
+
+                      {/* BLOC INJECTÉ : Affiche la réponse admin dans la modale produit si elle existe */}
+                      {av.reponse_admin && (
+                        <Box sx={{ 
+                          mt: 1.5, 
+                          pl: 2, 
+                          borderLeft: '3px solid #ff9800', 
+                          bgcolor: '#fffbf5', 
+                          p: 1, 
+                          borderRadius: '0 4px 4px 0' 
+                        }}>
+                          <Typography variant="caption" sx={{ fontWeight: 'bold', color: '#e65100', display: 'block' }}>
+                            Réponse du domaine :
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontStyle: 'italic', color: '#555' }}>
+                            "{av.reponse_admin}"
+                          </Typography>
+                        </Box>
+                      )}
+                    </Box>
+                  ))
+                )}
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* Formulaire pour laisser un Avis */}
+              <Box component="form" onSubmit={handleAvisSubmit} sx={{ mt: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#4a0404', mb: 1 }}>
+                  Donner votre avis
+                </Typography>
+                
+                {avisError && (
+                  <Typography variant="caption" color="error" sx={{ display: 'block', mb: 1, fontWeight: 'bold' }}>
+                    ⚠️ {avisError}
+                  </Typography>
+                )}
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+                  <Typography variant="body2">Votre note :</Typography>
+                  <Rating 
+                    name="simple-controlled" 
+                    value={newNote} 
+                    onChange={(event, newValue) => setNewNote(newValue || 5)} 
+                  />
+                </Box>
+
+                <TextField
+                  label="Votre commentaire..."
+                  multiline
+                  rows={3}
+                  fullWidth
+                  variant="outlined"
+                  value={newCommentaire}
+                  onChange={(e) => setNewCommentaire(e.target.value)}
+                  placeholder="Qu'avez-vous pensé de la robe, du nez ou de la bouche de ce vin ?"
+                  sx={{ mb: 2 }}
+                />
+
+                <Button 
+                  type="submit" 
+                  variant="outlined" 
+                  fullWidth
+                  disabled={!newCommentaire.trim()}
+                  sx={{ color: '#4a0404', borderColor: '#4a0404', '&:hover': { bgcolor: '#fbebeb', borderColor: '#4a0404' }, textTransform: 'none' }}
+                >
+                  Soumettre l'avis
+                </Button>
+              </Box>
+
             </Box>
           )}
         </DialogContent>

@@ -1,0 +1,65 @@
+/* Conteneur principal */
+.admin-intro-container {
+    padding: 32px;
+}
+
+/* Section En-tête de bienvenue */
+.admin-intro-header {
+    margin-bottom: 32px;
+}
+
+.admin-intro-title {
+    color: #4a0404;
+    font-weight: bold !important;
+    margin-bottom: 8px !important;
+}
+
+.admin-intro-subtitle {
+    color: #555;
+}
+
+.admin-intro-welcome-text {
+    margin-top: 8px !important;
+    font-style: italic;
+    color: #888;
+}
+
+/* Ligne de séparation */
+.admin-intro-divider {
+    margin-bottom: 32px !important;
+}
+
+/* Cartes de statistiques */
+.admin-intro-card {
+    padding: 24px !important;
+    text-align: center;
+    border-left: 8px solid #4a0404 !important;
+    box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 
+                0px 6px 10px 0px rgba(0,0,0,0.14), 
+                0px 1px 18px 0px rgba(0,0,0,0.12) !important; /* Correspond à elevation={3} */
+}
+
+/* Icônes dans les cartes */
+.admin-intro-card-icon {
+    font-size: 50px !important;
+    color: #4a0404;
+    margin-bottom: 8px;
+}
+
+/* Valeurs numériques dans les cartes */
+.admin-intro-card-value {
+    font-weight: bold !important;
+}
+
+/* Section Information système */
+.admin-intro-system-box {
+    margin-top: 48px;
+    padding: 24px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+}
+
+.admin-intro-system-title {
+    color: #4a0404;
+    margin-bottom: 8px !important;
+}

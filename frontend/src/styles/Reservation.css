@@ -6,11 +6,42 @@
     min-height: 100vh;
 }
 
+/* Titre principal */
+.reservation-title {
+    color: #4a0404;
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+/* Conteneur principal */
+.reservation-container {
+    display: flex;
+    gap: 32px;
+    margin-top: 32px;
+}
+
+/* Sections */
+.reservation-section {
+    margin-bottom: 32px;
+}
+
+.reservation-section-title {
+    font-weight: bold;
+    color: #4a0404;
+    margin-bottom: 16px;
+    font-size: 1.1rem;
+}
+
+/* === CALENDRIER === */
+
 /* Personnalisation de l'agenda react-calendar */
 .calendar-container {
     display: flex;
     justify-content: center;
     margin-top: 20px;
+    flex: 1;
 }
 
 .react-calendar {
@@ -18,6 +49,8 @@
     border: none !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     border-radius: 12px;
+    padding: 16px;
+    background-color: #f9f9f9;
 }
 
 .react-calendar__tile--active {
@@ -42,4 +75,187 @@
     background-color: #f0e6e6;
     border-radius: 6px;
     color: #4a0404;
+}
+
+/* === SÉLECTION D'HORAIRES === */
+
+.time-slots-container {
+    background-color: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 16px;
+}
+
+.time-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
+}
+
+.time-slot-btn {
+    padding: 12px !important;
+    border: 1.5px solid #ddd !important;
+    border-radius: 8px !important;
+    background-color: white !important;
+    color: #666 !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.time-slot-btn:hover {
+    border-color: #4a0404 !important;
+    background-color: #f0e6e6 !important;
+}
+
+.time-slot-btn-selected {
+    background-color: #4a0404 !important;
+    color: white !important;
+    border-color: #4a0404 !important;
+}
+
+.time-slot-btn-disabled {
+    background-color: #eee !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* === FORMULAIRE ADRESSE === */
+
+.address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.address-input {
+    width: 100%;
+}
+
+.address-input .MuiOutlinedInput-root {
+    border-radius: 8px !important;
+}
+
+/* === PANNEAU RÉCAPITULATIF === */
+
+.recap-panel {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 300px;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.recap-item {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eee;
+}
+
+.recap-item-label {
+    font-weight: 600;
+    color: #666;
+}
+
+.recap-item-value {
+    color: #333;
+    font-weight: bold;
+}
+
+.recap-divider {
+    border-bottom: 2px solid #4a0404;
+    margin: 8px 0;
+}
+
+.recap-total {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #4a0404;
+    margin-top: 12px;
+}
+
+.recap-confirm-btn {
+    background-color: #4a0404 !important;
+    color: white !important;
+    padding: 12px 24px !important;
+    font-weight: bold !important;
+    margin-top: 12px;
+    text-transform: none !important;
+}
+
+.recap-confirm-btn:hover {
+    background-color: #630606 !important;
+}
+
+/* === MESSAGES D'ERREUR === */
+
+.reservation-error-message {
+    background-color: #ffebee;
+    color: #d32f2f;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.reservation-success-message {
+    background-color: #e8f5e9;
+    color: #388e3c;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+/* === SPINNER === */
+
+.reservation-loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.reservation-spinner {
+    color: #4a0404 !important;
+}
+
+/* === RESPONSIVE === */
+
+@media (max-width: 1024px) {
+    .reservation-container {
+        flex-direction: column;
+    }
+    
+    .recap-panel {
+        position: static;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .reservation-page {
+        padding: 20px;
+    }
+    
+    .reservation-title {
+        font-size: 1.5rem;
+    }
+    
+    .time-slots-grid {
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    }
+    
+    .recap-panel {
+        min-width: auto;
+    }
 }

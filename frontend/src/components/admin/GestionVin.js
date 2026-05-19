@@ -11,6 +11,7 @@ import StarIcon from '@mui/icons-material/Star';
 
 // Importation du contexte de devise
 import { CurrencyContext } from '../../context/CurrencyContext';
+import '../../styles/GestionVin.css';
 
 function GestionVin() {
     // Utilisation du contexte pour formater les prix dynamiquement
@@ -131,18 +132,18 @@ function GestionVin() {
     );
 
     return (
-        <Box sx={{ p: 3 }}>
-            <Typography variant="h4" sx={{ mb: 3, color: '#4a0404', fontWeight: 'bold' }}>
+        <Box className="gv-container">
+            <Typography variant="h4" className="gv-title">
                 Gestion Stocks & Promos
             </Typography>
 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, gap: 2 }}>
+            <Box className="gv-toolbar">
                 <TextField label="Rechercher..." variant="outlined" fullWidth value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 <Button 
                     variant="contained" 
                     startIcon={<AddIcon />} 
                     onClick={handleOpenDialog}
-                    sx={{ backgroundColor: '#4a0404', '&:hover': { backgroundColor: '#630606' }, minWidth: '180px' }}
+                    className="gv-btn-add"
                 >
                     Ajouter un vin
                 </Button>
@@ -150,7 +151,7 @@ function GestionVin() {
 
             <TableContainer component={Paper} elevation={3}>
                 <Table>
-                    <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                    <TableHead className="gv-table-head">
                         <TableRow>
                             <TableCell><strong>Nom</strong></TableCell>
                             <TableCell><strong>Catégorie</strong></TableCell>
@@ -172,11 +173,11 @@ function GestionVin() {
                             return (
                                 <TableRow key={v.id} hover>
                                     <TableCell>
-                                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <Box className="gv-cell-name">
                                             <img 
                                                 src={`http://localhost:3001/uploads/${v.cover}`} 
                                                 alt="" 
-                                                style={{ width: 40, height: 40, borderRadius: 4, objectFit: 'cover' }} 
+                                                className="gv-img-cover"
                                                 onError={(e) => e.target.src = 'https://via.placeholder.com/40'} 
                                             />
                                             {v.name}
@@ -185,24 +186,24 @@ function GestionVin() {
                                     <TableCell>{v.category}</TableCell>
                                     
                                     {/* Utilisation de formatPrice pour le prix de base */}
-                                    <TableCell sx={{ textDecoration: v.promotion_percentage ? 'line-through' : 'none', color: v.promotion_percentage ? 'gray' : 'inherit' }}>
+                                    <TableCell className={v.promotion_percentage ? 'gv-price-promo' : ''}>
                                         {formatPrice(v.price)}
                                     </TableCell>
 
-                                    <TableCell sx={{ color: 'red', fontWeight: 'bold' }}>
+                                    <TableCell className="gv-promo-percent">
                                         {v.promotion_percentage ? `-${v.promotion_percentage}%` : '-'}
                                     </TableCell>
 
                                     {/* Utilisation de formatPrice pour le prix final */}
-                                    <TableCell sx={{ fontWeight: 'bold', color: v.promotion_percentage ? 'green' : 'inherit' }}>
+                                    <TableCell className={v.promotion_percentage ? 'gv-price-final' : ''}>
                                         {formatPrice(prixFinal)}
                                     </TableCell>
 
-                                    <TableCell sx={{ color: v.quantity <= 5 ? 'red' : 'inherit', fontWeight: v.quantity <= 5 ? 'bold' : 'normal' }}>
+                                    <TableCell className={v.quantity <= 5 ? 'gv-stock-low' : ''}>
                                         {v.quantity}
                                     </TableCell>
-                                    <TableCell align="center">
-                                        {v.recommandations ? <StarIcon sx={{ color: '#ffc107' }} /> : '-'}
+                                    <TableCell align="center" className="gv-recommandation">
+                                        {v.recommandations ? <StarIcon className="gv-star" /> : '-'}
                                     </TableCell>
                                     <TableCell align="center">
                                         <IconButton color="info" onClick={() => handleEdit(v)}><EditIcon /></IconButton>
@@ -216,12 +217,12 @@ function GestionVin() {
             </TableContainer>
 
             <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth maxWidth="sm">
-                <DialogTitle sx={{ backgroundColor: '#4a0404', color: '#fff' }}>
+                <DialogTitle className="gv-dialog-title">
                     {isEditing ? 'Modifier le vin' : 'Ajouter un nouveau vin'}
                 </DialogTitle>
                 <DialogContent dividers>
-                    <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mt: 1 }}>
-                        <TextField label="Nom" required value={newVin.name} onChange={(e) => setNewVin({...newVin, name: e.target.value})} sx={{ gridColumn: '1 / -1' }} />
+                    <Box className="gv-dialog-form">
+                        <TextField label="Nom" required value={newVin.name} onChange={(e) => setNewVin({...newVin, name: e.target.value})} className="gv-form-fullwidth" />
                         <TextField label="Catégorie" required value={newVin.category} onChange={(e) => setNewVin({...newVin, category: e.target.value})} />
                         <TextField label="Stock" type="number" required value={newVin.quantity} onChange={(e) => setNewVin({...newVin, quantity: e.target.value})} />
                         <TextField label="Prix de base" type="number" required value={newVin.price} onChange={(e) => setNewVin({...newVin, price: e.target.value})} />
@@ -234,7 +235,7 @@ function GestionVin() {
                             helperText="Ex: 20 pour -20%" 
                         />
                         
-                        <Box sx={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <Box className="gv-form-actions">
                             <Button variant="outlined" component="label">
                                 {newVin.cover instanceof File ? newVin.cover.name : "Changer l'image"}
                                 <input type="file" hidden accept="image/*" onChange={(e) => setNewVin({ ...newVin, cover: e.target.files[0] })} />
@@ -245,7 +246,7 @@ function GestionVin() {
                             />
                         </Box>
 
-                        <TextField label="Description" multiline rows={3} value={newVin.description} onChange={(e) => setNewVin({...newVin, description: e.target.value})} sx={{ gridColumn: '1 / -1' }} />
+                        <TextField label="Description" multiline rows={3} value={newVin.description} onChange={(e) => setNewVin({...newVin, description: e.target.value})} className="gv-form-fullwidth" />
                     </Box>
                 </DialogContent>
                 <DialogActions>

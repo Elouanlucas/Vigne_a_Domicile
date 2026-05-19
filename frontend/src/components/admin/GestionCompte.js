@@ -7,6 +7,10 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import '../../styles/GestionCompte.css';
+
+// Configuration de l'URL API centrale
+const API_URL = 'http://localhost:3001';
 
 function GestionCompte() {
   const [users, setUsers] = useState([]);
@@ -37,7 +41,7 @@ function GestionCompte() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/user/all', {
+      const response = await fetch(`${API_URL}/api/user/all`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const data = await response.json();
@@ -50,7 +54,7 @@ function GestionCompte() {
   // Fonction pour envoyer le nouvel utilisateur au Back
   const handleAddUser = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', { // On utilise ta route d'inscription existante
+      const response = await fetch(`${API_URL}/api/auth/register`, {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -76,7 +80,7 @@ function GestionCompte() {
   const handleDelete = async (userLogin) => {
     if (window.confirm(`Voulez-vous vraiment supprimer l'utilisateur ${userLogin} ?`)) {
       try {
-        const response = await fetch(`http://localhost:3001/api/user/delete-admin/${userLogin}`, {
+        const response = await fetch(`${API_URL}/api/user/delete-admin/${userLogin}`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -92,17 +96,24 @@ function GestionCompte() {
   );
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ mb: 3, color: '#4a0404', fontWeight: 'bold' }}>Gestion des Utilisateurs</Typography>
+    <Box className="gestion-compte-container">
+      <Typography variant="h4" className="gestion-compte-title">
+        Gestion des Utilisateurs
+      </Typography>
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, gap: 2 }}>
-        <TextField label="Rechercher..." variant="outlined" fullWidth value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-        {/* On ouvre la modale d'ajout ici */}
+      <Box className="gestion-compte-toolbar">
+        <TextField 
+          label="Rechercher..." 
+          variant="outlined" 
+          fullWidth 
+          value={searchTerm} 
+          onChange={(e) => setSearchTerm(e.target.value)} 
+        />
         <Button 
           variant="contained" 
           startIcon={<PersonAddIcon />} 
           onClick={() => setOpenAdd(true)}
-          sx={{ backgroundColor: '#4a0404', '&:hover': { backgroundColor: '#630606' }, minWidth: '180px' }}
+          className="gestion-compte-btn-add"
         >
           Ajouter
         </Button>
@@ -110,7 +121,7 @@ function GestionCompte() {
 
       <TableContainer component={Paper} elevation={3}>
         <Table>
-          <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+          <TableHead className="gestion-compte-table-header">
             <TableRow>
               <TableCell><strong>Login</strong></TableCell>
               <TableCell><strong>Prénom</strong></TableCell>
@@ -127,8 +138,12 @@ function GestionCompte() {
                 <TableCell>{u.nom}</TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell align="center">
-                  <IconButton color="info" onClick={() => { setSelectedUser(u); setOpenInfo(true); }}><InfoIcon /></IconButton>
-                  <IconButton color="error" onClick={() => handleDelete(u.login)}><DeleteIcon /></IconButton>
+                  <IconButton color="info" onClick={() => { setSelectedUser(u); setOpenInfo(true); }}>
+                    <InfoIcon />
+                  </IconButton>
+                  <IconButton color="error" onClick={() => handleDelete(u.login)}>
+                    <DeleteIcon />
+                  </IconButton>
                 </TableCell>
               </TableRow>
             ))}
@@ -138,9 +153,11 @@ function GestionCompte() {
 
       {/* --- MODALE D'AJOUT --- */}
       <Dialog open={openAdd} onClose={() => setOpenAdd(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ backgroundColor: '#4a0404', color: '#fff' }}>Ajouter un nouvel utilisateur</DialogTitle>
+        <DialogTitle className="gestion-compte-dialog-title">
+          Ajouter un nouvel utilisateur
+        </DialogTitle>
         <DialogContent dividers>
-          <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2, mt: 1 }}>
+          <Box className="gestion-compte-form-grid">
             <TextField label="Login" required value={newUser.login} onChange={(e) => setNewUser({...newUser, login: e.target.value})} />
             <TextField label="Mot de passe" type="password" required value={newUser.motDePasse} onChange={(e) => setNewUser({...newUser, motDePasse: e.target.value})} />
             <TextField label="Nom" required value={newUser.nom} onChange={(e) => setNewUser({...newUser, nom: e.target.value})} />
@@ -156,16 +173,20 @@ function GestionCompte() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenAdd(false)}>Annuler</Button>
-          <Button variant="contained" onClick={handleAddUser} sx={{ backgroundColor: '#4a0404' }}>Créer</Button>
+          <Button variant="contained" onClick={handleAddUser} className="gestion-compte-btn-submit">
+            Créer
+          </Button>
         </DialogActions>
       </Dialog>
 
-      {/* --- MODALE D'INFOS (déjà existante) --- */}
+      {/* --- MODALE D'INFOS --- */}
       <Dialog open={openInfo} onClose={() => setOpenInfo(false)} fullWidth maxWidth="sm">
-        <DialogTitle sx={{ backgroundColor: '#4a0404', color: '#fff' }}>Détails de l'utilisateur</DialogTitle>
+        <DialogTitle className="gestion-compte-dialog-title">
+          Détails de l'utilisateur
+        </DialogTitle>
         <DialogContent dividers>
           {selectedUser && (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+            <Box className="gestion-compte-info-list">
               <Typography><strong>Login :</strong> {selectedUser.login}</Typography>
               <Typography><strong>Prénom :</strong> {selectedUser.prenom}</Typography>
               <Typography><strong>Nom :</strong> {selectedUser.nom}</Typography>
@@ -174,7 +195,9 @@ function GestionCompte() {
             </Box>
           )}
         </DialogContent>
-        <DialogActions><Button onClick={() => setOpenInfo(false)}>Fermer</Button></DialogActions>
+        <DialogActions>
+          <Button onClick={() => setOpenInfo(false)}>Fermer</Button>
+        </DialogActions>
       </Dialog>
     </Box>
   );

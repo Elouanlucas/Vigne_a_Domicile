@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../../styles/SuiviCommande.css'; // On réutilise les styles pour les détails déroulants
+import '../../styles/SuiviCommande.css';
 
 function Commande() {
     const [orders, setOrders] = useState([]);

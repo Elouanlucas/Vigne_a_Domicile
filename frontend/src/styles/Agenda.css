@@ -1,0 +1,178 @@
+/* Container principal */
+.admin-agenda-container {
+    padding: 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Titre */
+.admin-agenda-title {
+    margin-bottom: 24px;
+    color: #4a0404;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Calendrier personnalisé */
+.admin-large-calendar {
+    width: 100%;
+}
+
+/* Section de la grille */
+.admin-agenda-grid-calendar {
+    width: 100%;
+}
+
+/* Paper contenant le calendrier */
+.admin-agenda-calendar-paper {
+    padding: 16px;
+    border-radius: 8px;
+}
+
+/* Section date sélectionnée */
+.admin-agenda-date-section {
+    margin-top: 16px;
+}
+
+/* Titre de la date */
+.admin-agenda-date-title {
+    margin-bottom: 16px;
+    color: #4a0404;
+    font-weight: 500;
+}
+
+/* Divider */
+.admin-agenda-divider {
+    background-color: #4a0404;
+    height: 2px;
+    margin-bottom: 24px;
+}
+
+/* Grille de prestations */
+.admin-agenda-prestations-grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+/* Carte prestation */
+.admin-agenda-prestation-paper {
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-left: 5px solid #4a0404;
+}
+
+.admin-agenda-prestation-paper:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(74, 4, 4, 0.15);
+}
+
+/* Titre prestation */
+.admin-agenda-prestation-title {
+    font-weight: bold;
+    color: #4a0404;
+    margin-bottom: 8px;
+}
+
+/* Chips prestation */
+.admin-agenda-prestation-chips {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+/* Paper vide */
+.admin-agenda-empty-paper {
+    padding: 32px;
+    text-align: center;
+    background-color: #f9f9f9;
+}
+
+.admin-agenda-empty-text {
+    font-style: italic;
+    color: #999;
+}
+
+/* Modale titre */
+.admin-agenda-dialog-title {
+    background-color: #4a0404 !important;
+    color: white !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Grille stats */
+.admin-agenda-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* Stats card */
+.admin-agenda-stats-paper {
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.admin-agenda-stats-label {
+    font-size: 0.875rem;
+}
+
+.admin-agenda-stats-value {
+    font-size: 1.5rem;
+    color: #4a0404;
+    font-weight: bold;
+}
+
+/* Liste participants */
+.admin-agenda-participants-section {
+    font-weight: bold;
+    margin-top: 16px;
+}
+
+.admin-agenda-participants-list {
+    margin-top: 8px;
+    padding: 0;
+}
+
+.admin-agenda-participant-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.admin-agenda-no-participants {
+    padding: 16px;
+    text-align: center;
+    color: #999;
+}
+
+/* Tile content (point rouge sur calendrier) */
+.admin-agenda-tile-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.admin-agenda-dot-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: #4a0404;
+    border-radius: 50%;
+}
+
+.admin-agenda-event-count {
+    font-size: 0.75rem;
+    background-color: #4a0404;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+}

@@ -3,6 +3,7 @@ import { Box, Typography, Paper, Grid, Divider } from '@mui/material';
 import PeopleIcon from '@mui/icons-material/People';
 import WineBarIcon from '@mui/icons-material/WineBar';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import '../../styles/AdminIntro.css';
 
 function AdminIntro({ user }) {
   const [stats, setStats] = useState({
@@ -38,46 +39,46 @@ function AdminIntro({ user }) {
   }, [token]);
 
   return (
-    <Box sx={{ p: 4 }}>
+    <Box className="admin-intro-container">
       {/* En-tête de bienvenue */}
-      <Box sx={{ mb: 4 }}>
-        <Typography variant="h3" sx={{ color: '#4a0404', fontWeight: 'bold', mb: 1 }}>
+      <Box className="admin-intro-header">
+        <Typography variant="h3" className="admin-intro-title">
           Tableau de bord
         </Typography>
-        <Typography variant="h5" sx={{ color: '#555' }}>
+        <Typography variant="h5" className="admin-intro-subtitle">
           Bonjour, {user?.prenom || 'Administrateur'} ! 
         </Typography>
-        <Typography variant="body1" sx={{ mt: 1, fontStyle: 'italic', color: '#888' }}>
+        <Typography variant="body1" className="admin-intro-welcome-text">
           Voici un aperçu de l'activité de "Vigne à Domicile".
         </Typography>
       </Box>
 
-      <Divider sx={{ mb: 4 }} />
+      <Divider className="admin-intro-divider" />
 
       {/* Cartes de statistiques */}
       <Grid container spacing={3}>
         {/* Carte Utilisateurs */}
         <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderLeft: '8px solid #4a0404' }}>
-            <PeopleIcon sx={{ fontSize: 50, color: '#4a0404', mb: 1 }} />
+          <Paper className="admin-intro-card">
+            <PeopleIcon className="admin-intro-card-icon" />
             <Typography variant="h6">Utilisateurs</Typography>
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{stats.users}</Typography>
+            <Typography variant="h4" className="admin-intro-card-value">{stats.users}</Typography>
           </Paper>
         </Grid>
 
         {/* Carte Vins */}
         <Grid item xs={12} sm={4}>
-          <Paper elevation={3} sx={{ p: 3, textAlign: 'center', borderLeft: '8px solid #4a0404' }}>
-            <WineBarIcon sx={{ fontSize: 50, color: '#4a0404', mb: 1 }} />
+          <Paper className="admin-intro-card">
+            <WineBarIcon className="admin-intro-card-icon" />
             <Typography variant="h6">Vins en cave</Typography>
-            <Typography variant="h4" sx={{ fontWeight: 'bold' }}>{stats.vins}</Typography>
+            <Typography variant="h4" className="admin-intro-card-value">{stats.vins}</Typography>
           </Paper>
         </Grid>
       </Grid>
 
       {/* Section Information système */}
-      <Box sx={{ mt: 6, p: 3, backgroundColor: '#f9f9f9', borderRadius: 2 }}>
-        <Typography variant="h6" sx={{ color: '#4a0404', mb: 1 }}>Statut du système</Typography>
+      <Box className="admin-intro-system-box">
+        <Typography variant="h6" className="admin-intro-system-title">Statut du système</Typography>
         <Typography variant="body2">
           • Serveur Backend : <strong>Connecté (Port 3001)</strong><br />
           • Base de données : <strong>MySQL Active</strong><br />

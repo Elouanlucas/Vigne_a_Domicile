@@ -6,6 +6,7 @@ import SuiviCommande from './SuiviCommande';
 import HistoriqueCommande from './HistoriqueCommande';
 import GestionPrestation from './GestionPrestation';
 import DeclarationLitiges from './DeclarationLitiges';
+import GestionSesAvis from './GestionSesAvis';
 import SuiviLitige from './SuiviLitige';
 
 import '../../styles/Utilisateur.css';
@@ -27,6 +28,7 @@ function Utilisateur() {
             case 'prestation': return <GestionPrestation user={user} />;
             case 'litige': return <DeclarationLitiges user={user} />;
             case 'suivi-litige': return <SuiviLitige user={user} />;
+            case 'gestion-avis': return <GestionSesAvis user={user} />;
             default: return <MaPage user={user} />;
         }
     };
@@ -52,12 +54,15 @@ function Utilisateur() {
                     <li className={currentPage === 'prestation' ? 'active' : ''} 
                         onClick={() => setCurrentPage('prestation')}>Gestion des prestations</li>
                 </ul>
-                <h3>Litiges</h3>
+                <h3>Avis/Litiges</h3>
                 <ul>
+                    <li className={currentPage === 'gestion-avis' ? 'active' : ''}
+                        onClick={() => setCurrentPage('gestion-avis')}>Gestion de mes avis</li>
                     <li className={currentPage === 'litige' ? 'active' : ''} 
                         onClick={() => setCurrentPage('litige')}>Declaration des litiges</li>
                     <li className={currentPage === 'suivi-litige' ? 'active' : ''}
                         onClick={() => setCurrentPage('suivi-litige')}>Suivi des litiges</li>
+
                 </ul>
             </nav>
 
