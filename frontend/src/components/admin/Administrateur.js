@@ -7,6 +7,7 @@ import Stoke from './Stocks';
 import Statistique from './Statistique';
 import Prestation from './Prestation';
 import Agenda from './Agenda';
+import GestionLitiges from './GestionLitiges';
 import '../../styles/Administrateur.css';
 
 function Administrateur() {
@@ -28,6 +29,7 @@ function Administrateur() {
             case 'statistique': return <Statistique user={user} />;
             case 'prestation': return <Prestation user={user} />;
             case 'agenda': return <Agenda user={user} />;
+            case 'litiges': return <GestionLitiges user={user} />;
             default: return <AdminIntro user={user} />;
         }
     };
@@ -48,6 +50,11 @@ function Administrateur() {
                         onClick={() => setCurrentPage('vins')}>Vins</li>
                     <li className={currentPage === 'prestation' ? 'active' : ''} 
                         onClick={() => setCurrentPage('prestation')}>Prestations</li>
+                </ul>
+                <h3>Gestion des Litiges</h3>
+                <ul>
+                    <li className={currentPage === 'litiges' ? 'active' : ''} 
+                        onClick={() => setCurrentPage('litiges')}>Litiges</li>
                 </ul>
                 <h3>Commande</h3>
                 <ul>

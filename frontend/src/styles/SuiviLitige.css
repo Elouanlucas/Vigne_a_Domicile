@@ -1,0 +1,33 @@
+.suivi-page {
+  min-height: 85vh;
+  display: flex;
+  align-items: flex-start; /* Évite de forcer le centrage vertical si la liste grandit */
+  padding: 30px 10px;
+  transition: background-color 0.3s ease;
+}
+
+/* Thèmes de fond */
+.suivi-page.light { background: #fcfaf7; }
+.suivi-page.dark { background: #121212; }
+
+/* Conteneur principal */
+.suivi-page.light .suivi-card { background-color: #ffffff; }
+.suivi-page.dark .suivi-card { 
+  background-color: #1d1d1d; 
+  color: #ffffff; 
+}
+
+/* Surcharges lignes et cellules pour le mode sombre */
+.suivi-page.dark .MuiTableCell-root {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.suivi-page.dark .MuiIconButton-root {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Enlève le contour double de la table */
+.MuiTableContainer-root {
+  overflow-x: auto;
+}

@@ -22,6 +22,12 @@ DROP TABLE IF EXISTS Utilisateur;
 
 DROP TABLE IF EXISTS cave;
 
+DROP TABLE IF EXISTS code_promo;
+
+DROP TABLE IF EXISTS litiges;
+
+DROP TABLE IF EXISTS avis;
+
 -- 3. Table des utilisateurs
 CREATE TABLE Utilisateur (
     numUtilisateur INT NOT NULL AUTO_INCREMENT,
@@ -47,7 +53,7 @@ CREATE TABLE vins (
     quantity INT NOT NULL,
     category VARCHAR(50),
     description TEXT,
-    promotion_percentage DECIMAL(5,2) DEFAULT NULL,
+    promotion_percentage DECIMAL(5, 2) DEFAULT NULL,
     recommandations BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB;
@@ -153,4 +159,53 @@ CREATE TABLE code_promo (
     discount_percentage DECIMAL(5, 2) NOT NULL,
     valid_from DATE NOT NULL,
     valid_to DATE NOT NULL
+) ENGINE = InnoDB;
+
+CREATE TABLE litiges (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    commande_id INT NULL, -- NULL au cas où la commande est archivée/supprimée
+    numUtilisateur INT NOT NULL,
+    prestation_id INT NULL, -- Optionnel : pour cibler une dégustation précise
+    type_motif VARCHAR(255) NOT NULL, -- Ex: "Bouteille cassée", "Prestation non honorée"
+    description TEXT NOT NULL,
+    statut ENUM(
+        'ouvert',
+        'en_cours',
+        'resolu',
+        'rejete'
+    ) DEFAULT 'ouvert',
+    piece_jointe VARCHAR(255) NULL, -- Pour stocker le nom d'une photo (ex: "prev-litige-12.jpg")
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, -- Pour savoir quand le statut a changé
+    
+    -- Clés étrangères
+    CONSTRAINT fk_litiges_commande FOREIGN KEY (commande_id) REFERENCES commandes (id) ON DELETE SET NULL,
+    CONSTRAINT fk_litiges_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE,
+    CONSTRAINT fk_litiges_prestation FOREIGN KEY (prestation_id) REFERENCES prestations (id) ON DELETE SET NULL
+) ENGINE = InnoDB;
+
+CREATE TABLE avis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numUtilisateur INT NOT NULL,
+    prestation_id INT NULL,
+    vin_id INT NULL, -- Renommé pour être cohérent avec la table 'vins'
+    note INT NOT NULL,
+    commentaire TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Clés étrangères
+    CONSTRAINT fk_avis_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE,
+    CONSTRAINT fk_avis_prestation FOREIGN KEY (prestation_id) REFERENCES prestations (id) ON DELETE CASCADE,
+    CONSTRAINT fk_avis_vin FOREIGN KEY (vin_id) REFERENCES vins (id) ON DELETE CASCADE,
+
+    -- Sécurités applicatives au niveau SQL
+    CONSTRAINT chk_note_1_a_5 CHECK (note >= 1 AND note <= 5),
+    CONSTRAINT chk_cible_unique CHECK (
+        (prestation_id IS NOT NULL AND vin_id IS NULL) OR 
+        (prestation_id IS NULL AND vin_id IS NOT NULL)
+    ),
+
+    -- Unicité : Un utilisateur ne peut laisser qu'un seul avis par vin ou par prestation
+    UNIQUE KEY uniq_user_vin (numUtilisateur, vin_id),
+    UNIQUE KEY uniq_user_prestation (numUtilisateur, prestation_id)
 ) ENGINE = InnoDB;

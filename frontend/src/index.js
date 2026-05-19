@@ -23,6 +23,28 @@ import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { CurrencyProvider } from './context/CurrencyContext';
 
+// Filtre global pour ignorer une erreur courante de ResizeObserver
+// qui peut provoquer l'affichage d'une overlay d'erreur en dev.
+window.addEventListener('error', (event) => {
+  const msg = event?.message || '';
+  if (typeof msg === 'string' && msg.includes('ResizeObserver loop completed with undelivered notifications')) {
+    event.stopImmediatePropagation();
+    event.preventDefault();
+  }
+});
+
+// Également ignorer les promesses non gérées qui peuvent contenir la même erreur
+window.addEventListener('unhandledrejection', (event) => {
+  const reason = event?.reason;
+  const msg = typeof reason === 'string' ? reason : (reason?.message || '');
+  if (typeof msg === 'string' && (
+    msg.includes('ResizeObserver loop completed with undelivered notifications') ||
+    msg.includes('ResizeObserver loop limit exceeded')
+  )) {
+    event.preventDefault();
+  }
+});
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

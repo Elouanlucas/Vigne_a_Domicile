@@ -1,0 +1,102 @@
+/* ==========================================
+   Conteneur Principal de la Page
+   ========================================== */
+.contact-page {
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Gestion des Thèmes (Clair par défaut / Sombre) */
+.contact-page.light {
+  background: linear-gradient(135deg, #fcfaf7 0%, #f4eee8 100%);
+}
+
+.contact-page.dark {
+  background: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
+}
+
+/* ==========================================
+   Carte du Formulaire (.contact-card)
+   ========================================== */
+.contact-card {
+  width: 100%;
+  max-width: 650px;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.contact-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(74, 4, 4, 0.12);
+}
+
+/* Adaptations de la carte selon le thème */
+.contact-page.light .contact-card {
+  background-color: #ffffff;
+  border: 1px solid rgba(74, 4, 4, 0.05);
+}
+
+.contact-page.dark .contact-card {
+  background-color: #1d1d1d;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+/* ==========================================
+   Surcharges Material-UI pour le Mode Sombre
+   ========================================== */
+/* Force la bonne couleur du texte des labels MUI en mode sombre */
+.contact-page.dark .MuiInputLabel-root {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.contact-page.dark .MuiInputLabel-root.Mui-focused {
+  color: #ff8a8a; /* Couleur focus adaptative en sombre */
+}
+
+/* Input text et Select en mode sombre */
+.contact-page.dark .MuiOutlinedInput-root {
+  color: #ffffff;
+}
+
+.contact-page.dark .MuiOutlinedInput-notchedOutline {
+  borderColor: rgba(255, 255, 255, 0.2);
+}
+
+.contact-page.dark .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  borderColor: rgba(255, 255, 255, 0.45);
+}
+
+.contact-page.dark .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  borderColor: #ff8a8a;
+}
+
+/* Icône du sélecteur en mode sombre */
+.contact-page.dark .MuiSelect-icon {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Description ou sous-titres secondaires en mode sombre */
+.contact-page.dark .MuiTypography-colorTextSecondary {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ==========================================
+   Responsive Design
+   ========================================== */
+@media (max-width: 600px) {
+  .contact-page {
+    padding: 20px 10px;
+  }
+
+  .contact-card {
+    padding: 25px 20px;
+    border-radius: 12px;
+  }
+}

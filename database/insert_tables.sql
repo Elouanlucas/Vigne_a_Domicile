@@ -450,12 +450,179 @@ INSERT INTO
         valid_from,
         valid_to
     )
-VALUES
-    (
+VALUES (
         'BIENVENUE10',
         '10% de réduction sur votre première commande pour découvrir notre sélection de vins et prestations.',
         10.00,
         '2024-01-01',
         '2034-12-31'
     );
-  
+
+-- Remplissage de la table avis (20 avis réalistes)
+INSERT INTO
+    avis (
+        numUtilisateur,
+        vin_id,
+        prestation_id,
+        note,
+        commentaire
+    )
+VALUES
+    -- Château Margaux (Vin ID 1)
+    (
+        2,
+        1,
+        NULL,
+        5,
+        'Un millésime absolument exceptionnel. Des tanins soyeux, une longueur en bouche incroyable. Certes cher, mais unique.'
+    ),
+    (
+        3,
+        1,
+        NULL,
+        4,
+        'Excellent bordeaux, très complexe, mais demande à vieillir encore un peu en cave pour révéler tout son potentiel.'
+    ),
+    -- Champagne Dom Pérignon (Vin ID 2)
+    (
+        1,
+        2,
+        NULL,
+        5,
+        'La référence incontournable. Les bulles sont d''une finesse rare, parfait pour les grandes occasions !'
+    ),
+    -- Meursault 1er Cru (Vin ID 3)
+    (
+        2,
+        3,
+        NULL,
+        5,
+        'Mon blanc préféré de Bourgogne. Ces notes beurrées et de noisette sont un pur bonheur avec un poisson en sauce.'
+    ),
+    -- Côte-Rôtie 'La Mouline' (Vin ID 4)
+    (
+        3,
+        4,
+        NULL,
+        4,
+        'Un très grand nez, beaucoup de finesse et de puissance aromatique. Très satisfait de mon achat.'
+    ),
+    -- Petrus 2015 (Vin ID 5)
+    (
+        1,
+        5,
+        NULL,
+        5,
+        'Un mythe accessible pour un grand événement. Robe sombre, arômes de truffe magiques. Grandiose.'
+    ),
+    -- Sancerre Blanc (Vin ID 6)
+    (
+        2,
+        6,
+        NULL,
+        4,
+        'Très bon rapport qualité-prix. Idéal pour accompagner un plateau de fruits de mer ou du fromage de chèvre.'
+    ),
+    -- Rosé de Provence (Vin ID 7)
+    (
+        3,
+        7,
+        NULL,
+        3,
+        'Rosé correct et très frais pour l''été, mais reste assez classique par rapport à d''autres références.'
+    ),
+    -- Château d'Yquem (Vin ID 8)
+    (
+        1,
+        8,
+        NULL,
+        5,
+        'Le roi des liquoreux porte bien son nom. Un équilibre parfait entre le sucre et l''acidité, des notes de miel intenses.'
+    ),
+    -- Gevrey-Chambertin (Vin ID 9)
+    (
+        2,
+        9,
+        NULL,
+        4,
+        'Un Bourgogne puissant comme on les aime, belles notes de cerise noire. Parfait sur une viande rouge.'
+    ),
+    -- Chablis Grand Cru (Vin ID 10)
+    (
+        3,
+        10,
+        NULL,
+        5,
+        'Une minéralité tranchante et pure. Un magnifique Chardonnay, très élégant.'
+    ),
+    -- Champagne Krug Grande Cuvée (Vin ID 12)
+    (
+        2,
+        12,
+        NULL,
+        5,
+        'Une complexité folle ! Les notes de pain grillé et de fruits mûrs sont exceptionnelles.'
+    ),
+    -- Condrieu "L’Eclat" (Vin ID 13)
+    (
+        1,
+        13,
+        NULL,
+        4,
+        'L''explosion de fruits (pêche, abricot) typique du Viognier. Très aromatique et agréable.'
+    ),
+    -- Châteauneuf-du-Pape (Vin ID 14)
+    (
+        3,
+        14,
+        NULL,
+        4,
+        'Un vin chaleureux, épicé et bien structuré. À carafer une heure avant le repas.'
+    ),
+    -- Pouilly-Fumé (Vin ID 17)
+    (
+        2,
+        17,
+        NULL,
+        4,
+        'Ce côté pierre à fusil et légèrement fumé est top. Très sympa à l''apéritif.'
+    ),
+    -- Visite Historique & Dégustation (Prestation ID 1)
+    (
+        2,
+        NULL,
+        1,
+        5,
+        'Superbe visite de la cave parisienne. Le guide était passionné et la sélection des 3 crus était parfaite pour conclure !'
+    ),
+    (
+        3,
+        NULL,
+        1,
+        4,
+        'Cadre magnifique en plein Paris. Les explications étaient claires et la dégustation très interactive.'
+    ),
+    -- Atelier Initiation Rhône & Bourgogne (Prestation ID 2)
+    (
+        1,
+        NULL,
+        2,
+        5,
+        'Je recommande vivement cet atelier à Lyon ! J''ai enfin compris les différences de terroirs grâce aux conseils du sommelier.'
+    ),
+    -- Grand Cru Experience (Prestation ID 3)
+    (
+        2,
+        NULL,
+        3,
+        5,
+        'Une expérience exclusive incroyable à Bordeaux. Goûter à ces grands crus classés vaut largement le détour et le prix.'
+    ),
+    -- Sommelier Privé à Domicile (Prestation ID 5)
+    (
+        3,
+        NULL,
+        5,
+        5,
+        'Prestation haut de gamme pour l''anniversaire de mon conjoint. Le sommelier est venu avec des pépites, nos invités ont adoré !'
+    );

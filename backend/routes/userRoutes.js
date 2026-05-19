@@ -18,7 +18,6 @@ router.delete('/delete/:login', verifyToken, userController.deleteUser);
 // ==========================================
 
 router.get('/all', verifyToken, userController.getAllUsers);
-
 router.delete('/delete-admin/:login', verifyToken, userController.adminDeleteUser);
 
 module.exports = router;
