@@ -28,7 +28,7 @@
 
 /* Tableaux */
 .table-head-grey {
-    background-color: #f5f5f5;
+    background-color: var(--surface-color);
 }
 
 .img-preview-table {

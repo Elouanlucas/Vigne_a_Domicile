@@ -5,7 +5,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fdfcfb; /* Fond crème léger style papier */
+    background-color: var(--bg-color); /* Adaptation du fond selon le thème */
     overflow: hidden;
 }
 
@@ -17,7 +17,7 @@
 }
 
 .home-title {
-    color: #333;
+    color: var(--text-color);
     font-weight: 800 !important;
     letter-spacing: -1px;
     margin-bottom: 24px !important;
@@ -28,7 +28,7 @@
 }
 
 .home-subtitle {
-    color: #666;
+    color: var(--muted-text);
     font-style: italic;
     line-height: 1.6 !important;
     font-weight: 300 !important;
@@ -44,7 +44,7 @@
 }
 
 .home-scroll-hint {
-    color: #888;
+    color: var(--muted-text);
     text-transform: uppercase;
     font-size: 0.8rem !important;
     letter-spacing: 2px;

@@ -28,6 +28,8 @@ DROP TABLE IF EXISTS litiges;
 
 DROP TABLE IF EXISTS avis;
 
+DROP TABLE IF EXISTS livre_d_or;
+
 -- 3. Table des utilisateurs
 CREATE TABLE Utilisateur (
     numUtilisateur INT NOT NULL AUTO_INCREMENT,
@@ -209,4 +211,43 @@ CREATE TABLE avis (
     -- Unicité : Un utilisateur ne peut laisser qu'un seul avis par vin ou par prestation
     UNIQUE KEY uniq_user_vin (numUtilisateur, vin_id),
     UNIQUE KEY uniq_user_prestation (numUtilisateur, prestation_id)
+) ENGINE = InnoDB;
+
+CREATE TABLE livre_d_or (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numUtilisateur INT NOT NULL,
+    avis_prestation BOOLEAN DEFAULT FALSE,
+    avis_vin BOOLEAN DEFAULT FALSE,
+    avis_livraison BOOLEAN DEFAULT FALSE,
+    avis_SAV BOOLEAN DEFAULT FALSE,
+    avis_site BOOLEAN DEFAULT FALSE,
+    
+    -- Remplacement du boolean par un INT de 1 à 5
+    note_generale INT DEFAULT 5 CHECK (note_generale BETWEEN 1 AND 5),
+    
+    message TEXT NOT NULL,
+    reponse_admin TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Clé étrangère
+    CONSTRAINT fk_livre_d_or_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE
+) ENGINE = InnoDB;
+
+CREATE TABLE livre_d_or_tempo (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    numUtilisateur INT NOT NULL,
+    avis_prestation BOOLEAN DEFAULT FALSE,
+    avis_vin BOOLEAN DEFAULT FALSE,
+    avis_livraison BOOLEAN DEFAULT FALSE,
+    avis_SAV BOOLEAN DEFAULT FALSE,
+    avis_site BOOLEAN DEFAULT FALSE,
+    
+    -- Remplacement du boolean par un INT de 1 à 5
+    note_generale INT DEFAULT 5 CHECK (note_generale BETWEEN 1 AND 5),
+    
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    
+    -- Clé étrangère
+    CONSTRAINT fk_livre_d_or_tempo_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE
 ) ENGINE = InnoDB;

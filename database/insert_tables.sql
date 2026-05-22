@@ -48,6 +48,126 @@ VALUES (
         'client',
         '789 Boulevard des Crus, 33000 Bordeaux',
         NULL
+    ),
+    (
+        'thomas_bordeaux',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Bernard',
+        'Thomas',
+        '1992-04-14',
+        'thomas.b@exemple.fr',
+        '0622334455',
+        'client',
+        '12 Place de la Bourse, 33000 Bordeaux',
+        NULL
+    ),
+    (
+        'julie_sommeliere',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Petit',
+        'Julie',
+        '1996-08-05',
+        'julie.p@exemple.fr',
+        '0633445566',
+        'client',
+        '87 Rue des Cépages, 21000 Dijon',
+        NULL
+    ),
+    (
+        'max_vintage',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Durand',
+        'Maxime',
+        '1989-12-01',
+        'maxime.d@exemple.fr',
+        '0644556677',
+        'client',
+        '54 Allée du Chardonnay, 51100 Reims',
+        NULL
+    ),
+    (
+        'emma_grape',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Leroy',
+        'Emma',
+        '2001-07-19',
+        'emma.l@exemple.fr',
+        '0755667788',
+        'client',
+        '3 Avenue du Merlot, 44000 Nantes',
+        NULL
+    ),
+    (
+        'admin_test',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Moreau',
+        'Alexandre',
+        '1994-03-25',
+        'alexandre.m@exemple.fr',
+        '0666778899',
+        'admin',
+        '9 Rue de la Paix, 75002 Paris',
+        NULL
+    ),
+    (
+        'pierre_rhone',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Fournier',
+        'Pierre',
+        '1985-06-30',
+        'pierre.f@exemple.fr',
+        '0677889900',
+        'client',
+        '21 Route des Côtes, 26000 Valence',
+        NULL
+    ),
+    (
+        'chloe_nectar',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Girard',
+        'Chloé',
+        '1997-10-12',
+        'chloe.g@exemple.fr',
+        '0711335577',
+        'client',
+        '68 Chemin du Pressoir, 49100 Angers',
+        NULL
+    ),
+    (
+        'luc_terroir',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Rousseau',
+        'Luc',
+        '1990-01-15',
+        'luc.r@exemple.fr',
+        '0622446688',
+        'client',
+        '104 Boulevard d''Alsace, 67000 Strasbourg',
+        NULL
+    ),
+    (
+        'lea_vigne',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Mercier',
+        'Léa',
+        '1999-09-08',
+        'lea.m@exemple.fr',
+        '0633557799',
+        'client',
+        '15 Rue de la Cave, 34000 Montpellier',
+        NULL
+    ),
+    (
+        'nico_tinto',
+        '$2b$10$UimUCZg48JJlQ4XlmtUd9e8pZrWizcu1hAPwOgTSXMLBgqFnb2vvO',
+        'Blanc',
+        'Nicolas',
+        '1993-02-14',
+        'nicolas.b@exemple.fr',
+        '0744668800',
+        'client',
+        '42 Impasse du Syrah, 31000 Toulouse',
+        NULL
     );
 
 -- Remplissage de la table vins
@@ -647,3 +767,75 @@ VALUES
         'Prestation haut de gamme pour l''anniversaire de mon conjoint. Le sommelier est venu avec des pépites, nos invités ont adoré !',
         NULL
     );
+
+INSERT INTO livre_d_or (
+    numUtilisateur, 
+    avis_prestation, 
+    avis_vin, 
+    note_generale, -- Changé ici
+    avis_livraison, 
+    avis_SAV, 
+    avis_site, 
+    message, 
+    created_at
+) VALUES
+(
+    1, 
+    1, 0, 5, 0, 0, 1, -- Note : 5/5 (Super site, recommande vivement)
+    'Super site ! Très intuitif et facile à utiliser. Je recommande vivement.', 
+    '2026-05-15 10:30:00'
+),
+(
+    2, 
+    0, 0, 5, 0, 1, 1, -- Note : 5/5 (Service client au top en - de 5 min)
+    'Le service client est au top, ils ont répondu à ma question en moins de 5 minutes. Merci !', 
+    '2026-05-16 14:15:22'
+),
+(
+    3, 
+    0, 1, 3, 1, 0, 0, -- Note : 3/5 (Un peu de retard sur la livraison)
+    'Un peu de retard sur la livraison de ma dernière commande, mais le produit est conforme.', 
+    '2026-05-17 09:05:11'
+),
+(
+    4, 
+    1, 0, 5, 0, 0, 0, -- Note : 5/5 (Fait gagner un temps fou)
+    'Je l''utilise tous les jours pour mon travail, ça me fait gagner un temps fou.', 
+    '2026-05-18 18:42:00'
+),
+(
+    5, 
+    0, 0, 4, 0, 0, 1, -- Note : 4/5 (Propre mais quelques petits bugs sur mobile)
+    'Le design est propre et moderne. Quelques petits bugs sur mobile mais rien de méchant.', 
+    '2026-05-19 11:20:34'
+),
+(
+    6, 
+    1, 0, 5, 0, 0, 1, -- Note : 5/5 (Super communauté, bravo à l'équipe)
+    'Une super communauté et des fonctionnalités vraiment bien pensées. Bravo à l''équipe !', 
+    '2026-05-20 16:55:03'
+),
+(
+    7, 
+    0, 1, 5, 0, 0, 0, -- Note : 5/5 (Rapport qualité-prix imbattable)
+    'Rapport qualité-prix imbattable. Je ne regrette pas mon inscription.', 
+    '2026-05-21 08:12:45'
+),
+(
+    8, 
+    1, 0, 4, 0, 0, 1, -- Note : 4/5 (Concept génial, attend la mise à jour)
+    'J''attends la prochaine mise à jour avec impatience, le concept est génial.', 
+    '2026-05-21 21:30:12'
+),
+(
+    9, 
+    1, 1, 5, 1, 1, 1, -- Note : 5/5 (Franchement parfait, la totale)
+    'Franchement parfait, rien à redire. Tout fonctionne comme prévu.', 
+    '2026-05-22 07:45:19'
+),
+(
+    10, 
+    0, 0, 5, 1, 0, 1, -- Note : 5/5 (Expérience globale très fluide)
+    'Une expérience utilisateur globale très fluide. Merci pour cette plateforme !', 
+    '2026-05-22 09:15:00'
+);

@@ -106,7 +106,7 @@ const Header = ({ onTogglePanier }) => {
               <li><Link to="/">Accueil</Link></li>
               <li><Link to="/produits">Produits</Link></li>
               <li><Link to="/prestations">Prestations</Link></li>
-
+            
 
               <li 
                 onMouseEnter={handleOpenInfo} 
@@ -125,8 +125,16 @@ const Header = ({ onTogglePanier }) => {
                   sx={{ pointerEvents: 'none' }}
                 >
                   <Box sx={{ pointerEvents: 'auto' }}>
-                    <MenuItem onClick={handleCloseInfo} component={Link} to="/APropos">À propos</MenuItem>
-                    <MenuItem onClick={handleCloseInfo} component={Link} to="/contact">Contact</MenuItem>
+                    {/* Utilisation de la prop component standard avec Link de react-router-dom */}
+                    <MenuItem onClick={handleCloseInfo} component={Link} to="/APropos">
+                      À propos
+                    </MenuItem>
+                    <MenuItem onClick={handleCloseInfo} component={Link} to="/contact">
+                      Contact
+                    </MenuItem>
+                    <MenuItem onClick={handleCloseInfo} component={Link} to="/livredor">
+                      Livre d'or
+                    </MenuItem>
                   </Box>
                 </Menu>
               </li>

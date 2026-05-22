@@ -126,7 +126,7 @@
 
 .reservation-prestation-location {
     font-size: 0.875rem;
-    color: #666;
+    color: var(--muted-text);
 }
 
 /* Details section */

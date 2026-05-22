@@ -33,16 +33,20 @@
 .gestion-avis-search-field {
     flex-grow: 1;
     min-width: 300px;
-    background-color: white;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 .gestion-avis-search-icon {
-    color: #888;
+    color: var(--muted-text);
 }
 
 .gestion-avis-filter-control {
     min-width: 200px;
-    background-color: white;
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 /* Chargement et état vide */
@@ -60,7 +64,9 @@
 .gestion-avis-empty-paper {
     padding: 32px;
     text-align: center;
-    background-color: #fafafa !important;
+    background-color: var(--card-bg) !important;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
 }
 
 /* Structure du Tableau */
@@ -111,13 +117,13 @@
 
 .gestion-avis-comment-text {
     font-style: italic;
-    color: #333;
+    color: var(--text-color);
 }
 
 /* Bloc de réponse admin dans le tableau */
 .gestion-avis-response-box {
     padding: 8px;
-    background-color: #f5f5f5;
+    background-color: var(--surface-color);
     border-radius: 4px;
     border-left: 3px solid #ff9800;
 }

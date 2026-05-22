@@ -16,8 +16,8 @@ import RecapPanier from './pages/RecapPanier';
 import Prestations from './pages/Prestations';
 import Paier from './pages/Paier';
 import Reservations from './pages/Reservations';
+import LivreDOR from './pages/LivreDOR';
 import 'leaflet/dist/leaflet.css';
-
 
 import { CartProvider } from './context/CartContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -67,7 +67,7 @@ root.render(
               <Route path="/paiement" element={<Paier />} />
               <Route path="/prestations" element={<Prestations />} />
               <Route path="/reservation/:id" element={<Reservations />} />
-              
+              <Route path="/livredor" element={<LivreDOR />} />
 
               <Route path="*" element={<Error />} />
             </Routes>

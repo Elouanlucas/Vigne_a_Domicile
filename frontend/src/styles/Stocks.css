@@ -1,3 +1,7 @@
+/* ==========================================================================
+   === GESTION DES STOCKS - STYLES COMPLETS (LIGHT & DARK MODE) ===
+   ========================================================================== */
+
 /* Container admin */
 .admin-stocks-layout {
     display: flex;
@@ -17,17 +21,56 @@
     color: #4a0404;
     margin-bottom: 24px;
     font-size: 2rem;
+    transition: color 0.3s ease;
 }
+.dark-mode .stocks-title {
+    color: #ff8484; /* Bordeaux plus lumineux pour le mode sombre */
+}
+
+/* ==========================================================================
+   === TABLEAU ET CONTENEURS (PAPER) ===
+   ========================================================================== */
 
 /* Paper tableau */
 .stocks-table-paper {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
+    background-color: #4a0404 !important; /* CORRIGÉ : Le fond du tableau passe en bordeaux en mode clair */
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.dark-mode .stocks-table-paper {
+    background-color: #1e1e1e !important; /* Reste gris foncé/noir en mode sombre */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid #333333;
 }
 
 /* En-tête tableau */
 .stocks-table-head {
-    background-color: #f5f5f5;
+    background-color: #310202; /* Version légèrement plus sombre pour détacher l'en-tête du reste du tableau */
+}
+.dark-mode .stocks-table-head {
+    background-color: #2a2a2a;
+}
+
+/* Lignes du tableau (pour harmoniser le texte et le hover) */
+.stocks-table-row {
+    transition: background-color 0.2s ease;
+    color: #ffffff !important; /* CORRIGÉ : Texte blanc en mode clair sur le fond bordeaux */
+}
+.stocks-table-row th, .stocks-table-row td {
+    color: inherit !important; /* Force les cellules à utiliser la couleur blanche de la ligne */
+}
+
+.dark-mode .stocks-table-row {
+    color: #ffffff !important; /* CORRIGÉ : Texte blanc également sur le fond sombre */
+}
+
+/* Effets au survol (Hover) */
+.stocks-table-row:hover {
+    background-color: #5c0505 !important; /* Survol bordeaux un peu plus clair en mode clair */
+}
+.dark-mode .stocks-table-row:hover {
+    background-color: #2c2c2c !important; /* Survol gris en mode sombre */
 }
 
 /* Cellule stock inline */
@@ -38,20 +81,49 @@
     gap: 8px;
 }
 
+/* ==========================================================================
+   === BOUTONS ET CONTROLES ===
+   ========================================================================== */
+
 /* Bouton sauvegarder */
 .stocks-btn-save {
-    background-color: #4a0404 !important;
+    background-color: #ffffff !important; /* CORRIGÉ : Bouton blanc sur fond bordeaux pour le contraste */
+    color: #4a0404 !important;
+    font-weight: bold !important;
+}
+.stocks-btn-save:hover {
+    background-color: #f5f5f5 !important;
 }
 
-.stocks-btn-save:hover {
-    background-color: #630606 !important;
+.dark-mode .stocks-btn-save {
+    background-color: #7a0606 !important; /* Repasse en bordeaux en mode sombre */
+    color: white !important;
 }
+.dark-mode .stocks-btn-save:hover {
+    background-color: #a80a0a !important;
+}
+
+/* Ajustement des inputs text/champs de saisie de stock */
+.stocks-cell-stock input {
+    color: #ffffff !important; /* Texte blanc dans l'input en mode clair */
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+.dark-mode .stocks-cell-stock input {
+    color: #ffffff !important; /* Texte blanc en mode sombre */
+    background-color: #121212 !important;
+    border-color: #444444 !important;
+}
+
+/* ==========================================================================
+   === NOTIFICATIONS ET ALERTES ===
+   ========================================================================== */
 
 /* Snackbar */
 .stocks-snackbar {
     position: fixed;
     top: 16px;
-    center: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 1300;
 }
 
@@ -59,4 +131,7 @@
 .stocks-alert {
     margin-top: 16px;
     border-radius: 8px;
+}
+.dark-mode .stocks-alert {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }

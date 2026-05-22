@@ -2,7 +2,7 @@
 .admin-layout {
     display: flex;
     min-height: 90vh; /* Un peu plus grand pour l'immersion */
-    background-color: #f8f9fa; /* Gris très clair pour faire ressortir les cartes */
+    background-color: var(--bg-color); /* Gris très clair pour faire ressortir les cartes */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -54,8 +54,8 @@
 }
 
 .admin-sidebar li.active {
-    background-color: #ffffff; /* Fond blanc pour l'actif */
-    color: #4a0404; /* Texte bordeaux */
+    background-color: var(--surface-color); /* Fond clair pour l'actif */
+    color: var(--primary-color); /* Texte bordeaux */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
@@ -64,7 +64,7 @@
     flex: 1;
     padding: 40px;
     overflow-y: auto;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: var(--bg-color);
 }
 
 /* Animation d'entrée pour le contenu */
@@ -148,15 +148,15 @@
 }
 
 .stat-card {
-    background: white;
+    background: var(--card-bg);
     padding: 25px;
     border-radius: 15px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
 }
 
 .stat-card h3 {
-    color: #333;
+    color: var(--text-color);
     margin-bottom: 20px;
     font-size: 1.2rem;
     border-left: 4px solid #4a0404;

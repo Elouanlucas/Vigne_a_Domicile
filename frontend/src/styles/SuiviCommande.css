@@ -12,17 +12,17 @@
 
 /* --- 2. STRUCTURE DE LA CARTE --- */
 .order-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    border: 1px solid var(--border-color);
     transition: all 0.3s ease;
 }
 
 .order-card.expanded {
-    border-color: #4a0404;
+    border-color: var(--primary-color);
 }
 
 .history-card {
@@ -35,21 +35,21 @@
     justify-content: space-between;
     align-items: center;
     font-weight: bold;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 15px;
     margin-bottom: 20px;
-    color: #4a0404;
+    color: var(--primary-color);
 }
 
 .order-date {
-    color: #888;
+    color: var(--muted-text);
     font-size: 0.9rem;
     font-weight: normal;
 }
 
 .arrow-icon {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--muted-text);
     margin-left: 10px;
 }
 
@@ -65,7 +65,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #ccc;
+    color: var(--muted-text);
     flex: 1;
 }
 
@@ -76,7 +76,7 @@
     width: 30px;
     height: 30px;
     border-radius: 50%;
-    background: #eee;
+    background: var(--surface-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -89,7 +89,7 @@
 
 .line {
     height: 2px;
-    background: #eee;
+    background: var(--border-color);
     flex: 1;
     margin-bottom: 25px;
 }
@@ -100,18 +100,18 @@
 
 /* --- 5. DÉTAILS ET CONTENU DÉROULANT --- */
 .order-details-dropdown {
-    background: #f9f9f9;
+    background: var(--surface-color);
     padding: 15px;
     border-radius: 8px;
     margin: 15px 0;
-    border-left: 3px solid #4a0404;
+    border-left: 3px solid var(--primary-color);
     animation: slideDown 0.3s ease-out;
 }
 
 .order-details-dropdown h4 {
     margin: 0 0 10px 0;
     font-size: 0.85rem;
-    color: #888;
+    color: var(--muted-text);
     text-transform: uppercase;
 }
 
@@ -124,8 +124,8 @@
 .articles-list-items li {
     padding: 8px 0;
     font-size: 0.95rem;
-    color: #4a0404;
-    border-bottom: 1px solid #eee;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .articles-list-items li:last-child {
@@ -153,8 +153,8 @@
 
 .btn-toggle {
     background: transparent;
-    border: 1px solid #4a0404;
-    color: #4a0404;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
     padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
@@ -188,17 +188,19 @@
     display: flex;
     gap: 15px;
     margin-bottom: 25px;
-    background: white;
+    background: var(--surface-color);
     padding: 15px;
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .filter-input, .filter-select {
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-color);
     border-radius: 6px;
     flex: 1;
+    background: var(--input-bg);
+    color: var(--text-color);
 }
 
 .admin-actions {

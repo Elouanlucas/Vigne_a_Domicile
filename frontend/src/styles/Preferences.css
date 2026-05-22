@@ -55,8 +55,9 @@
 .pref-select {
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1px solid #ddd;
-    background-color: white;
+    border: 1px solid var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-color);
     font-family: inherit;
     font-size: 0.95rem;
     cursor: pointer;
@@ -76,18 +77,18 @@
 
 .switch-label {
     font-size: 0.9rem;
-    color: #666;
+    color: var(--muted-text);
     cursor: pointer;
 }
 
 /* Mode sombre spécifique */
-.dark .pref-item {
+body.dark .pref-item {
     background: rgba(255,255,255,0.05);
     border-color: rgba(255,255,255,0.1);
 }
 
-.dark .pref-select {
-    background-color: #333;
-    color: white;
-    border-color: #444;
+body.dark .pref-select {
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    border-color: var(--input-border);
 }

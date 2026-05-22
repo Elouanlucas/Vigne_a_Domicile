@@ -1,3 +1,7 @@
+html, body {
+  min-height: 100%;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,6 +11,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-color);
   color: var(--text-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 code {
@@ -17,16 +22,159 @@ code {
 /* Variables pour le thème clair */
 :root {
   --primary-color: #4a0404;
+  --secondary-color: #8a1f1f;
   --bg-color: #fff;
-  --text-color: #333333;
-  --border-color: #eee;
+  --text-color: #222222;
+  --muted-text: #666666;
+  --card-bg: #ffffff;
+  --surface-color: #f5f5f5;
+  --input-bg: #ffffff;
+  --input-border: #ddd;
+  --border-color: #e5e5e5;
+  --shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
 }
 
 /* Variables pour le thème sombre */
 body.dark {
-  --bg-color: #121212;
-  --text-color: #e0e0e0;
-  --primary-color: #d32f2f; /* Bordeaux plus clair pour le mode sombre */
-  --card-bg: #1e1e1e; /* Un gris sombre pour les cartes en mode nuit */
-  --border-color: #333;
+  --primary-color: #ff7f7f;
+  --secondary-color: #d26969;
+  --bg-color: #090909;
+  --text-color: #e7e7e7;
+  --muted-text: #a8a8a8;
+  --card-bg: #161616;
+  --surface-color: #1b1b1b;
+  --input-bg: #1f1f1f;
+  --input-border: #333333;
+  --border-color: #2a2a2a;
+  --shadow: 0 15px 35px rgba(0, 0, 0, 0.35);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+body.dark,
+body.dark main,
+body.dark section,
+body.dark article,
+body.dark header,
+body.dark footer,
+body.dark nav {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+body.dark a,
+body.dark a:hover,
+body.dark a:focus {
+  color: var(--primary-color);
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select,
+body.dark button {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-color: var(--input-border);
+}
+
+body.dark ::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark .MuiOutlinedInput-root,
+body.dark .MuiInputBase-root,
+body.dark .MuiTextField-root {
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+body.dark .MuiOutlinedInput-notchedOutline {
+  border-color: var(--input-border) !important;
+}
+
+body.dark .MuiInputLabel-root {
+  color: var(--muted-text) !important;
+}
+
+body.dark .MuiInputLabel-root.Mui-focused {
+  color: var(--primary-color) !important;
+}
+
+body.dark .MuiPaper-root,
+body.dark .MuiAccordion-root,
+body.dark .MuiDrawer-paper {
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+}
+
+body.dark .card,
+body.dark .card-content,
+body.dark .container,
+body.dark .section,
+body.dark .box,
+body.dark .panel,
+body.dark .content,
+body.dark .form-card,
+body.dark .preferences-card,
+body.dark .contact-card,
+body.dark .suivi-card,
+body.dark .reservation-card,
+body.dark .product-card,
+body.dark .admin-card,
+body.dark .info-card {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow);
+}
+
+body.dark hr {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+body.dark .btn,
+body.dark .button,
+body.dark button {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+body.dark .secondary,
+body.dark .btn-secondary,
+body.dark .button-secondary {
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark .MuiTableCell-root,
+body.dark .MuiTableRow-root,
+body.dark .MuiTableHead-root,
+body.dark .MuiTableBody-root {
+  color: var(--text-color) !important;
+}
+
+body.dark .react-calendar,
+body.dark .react-calendar__tile,
+body.dark .react-calendar__navigation button,
+body.dark .react-calendar__tile:enabled:hover,
+body.dark .react-calendar__tile:enabled:focus {
+  background-color: var(--surface-color) !important;
+  color: var(--text-color) !important;
+}
+
+body.dark .react-calendar__tile--active {
+  background: var(--primary-color) !important;
+  color: white !important;
+}
+
+body.dark .react-calendar__tile--now {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--primary-color) !important;
 }

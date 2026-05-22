@@ -1,0 +1,9 @@
+.admin-badge {
+  background-color: #f5ecec;
+  color: #4a0404;
+  font-size: 0.72rem;
+  font-weight: bold;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #eddada;
+}

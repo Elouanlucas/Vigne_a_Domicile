@@ -1,4 +1,6 @@
-/* === GESTION LITIGES ADMIN - STYLES COMPLETS === */
+/* ==========================================================================
+   === GESTION LITIGES ADMIN - STYLES COMPLETS ===
+   ========================================================================== */
 
 /* Conteneur principal */
 .litiges-container {
@@ -10,6 +12,9 @@
   margin-bottom: 8px !important;
   color: #4a0404;
   font-weight: bold !important;
+}
+.dark-mode .litiges-title {
+  color: #ff8484; /* Bordeaux éclairci pour le mode sombre */
 }
 
 .litiges-subtitle {
@@ -49,115 +54,175 @@
 .litiges-spinner {
   color: #4a0404 !important;
 }
+.dark-mode .litiges-spinner {
+  color: #ff8484 !important;
+}
 
-/* === TABLEAU === */
+/* ==========================================================================
+   === TABLEAU ===
+   ========================================================================== */
 
 /* Conteneur tableau */
 .litiges-table-container {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
+  border-radius: 10px !important;
   overflow: hidden;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.dark-mode .litiges-table-container {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid #333333;
 }
 
 /* En-tête tableau */
 .litiges-table-head {
   background-color: #4a0404;
 }
+.dark-mode .litiges-table-head {
+  background-color: #2a0202; /* Version plus sombre de l'en-tête */
+}
 
 .litiges-table-th {
-  font-weight: bold;
+  font-weight: bold !important;
   color: white !important;
   padding: 16px !important;
 }
 
 .litiges-table-th-status {
-  font-weight: bold;
+  font-weight: bold !important;
   color: white !important;
   padding: 16px !important;
   text-align: right;
+  min-width: 130px;
 }
 
 /* Lignes tableau */
 .litiges-row {
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
   transition: background-color 0.2s ease;
+}
+.dark-mode .litiges-row {
+  border-bottom: 1px solid #333333;
 }
 
 .litiges-row:hover {
-  background-color: #f5f5f5;
+  background-color: var(--surface-color, #f9f9f9);
+}
+.dark-mode .litiges-row:hover {
+  background-color: #2c2c2c !important;
 }
 
 /* Cellule client */
 .litiges-client-cell {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .litiges-client-name {
-  font-weight: bold;
+  font-weight: 500 !important;
+  color: #333333;
+}
+.dark-mode .litiges-client-name {
+  color: #e0e0e0;
 }
 
 /* Motif texte */
 .litiges-motif-text {
-  font-weight: 600;
+  font-weight: 500 !important;
+  color: #222222;
+}
+.dark-mode .litiges-motif-text {
+  color: #ffffff;
 }
 
 /* Boîte liens */
 .litiges-links-box {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
 }
 
 .litiges-link-cmd {
   font-size: 0.75rem;
   background-color: #e3f2fd;
+  color: #7a0606 !important;
   padding: 4px 8px;
   border-radius: 4px;
   display: inline-block;
   width: fit-content;
+}
+.dark-mode .litiges-link-cmd {
+  background-color: rgba(122, 6, 6, 0.2);
+  color: #ff8484 !important;
 }
 
 .litiges-link-prest {
   font-size: 0.75rem;
   background-color: #f3e5f5;
+  color: #0066cc !important;
   padding: 4px 8px;
   border-radius: 4px;
   display: inline-block;
   width: fit-content;
 }
+.dark-mode .litiges-link-prest {
+  background-color: rgba(0, 102, 204, 0.2);
+  color: #64b5f6 !important;
+}
 
 /* Cellule description */
 .litiges-description-cell {
-  max-width: 300px;
+  max-width: 250px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: #444444;
+}
+.dark-mode .litiges-description-cell {
+  color: #aaaaaa;
 }
 
 /* Date */
 .litiges-date-text {
-  font-size: 0.875rem;
-  color: #666;
+  font-size: 0.8rem !important;
+  color: rgba(0, 0, 0, 0.54) !important;
+}
+.dark-mode .litiges-date-text {
+  color: rgba(255, 255, 255, 0.54) !important;
 }
 
 /* Cellule vide */
 .litiges-empty-cell {
   padding: 32px !important;
-  color: #999;
+  color: rgba(0, 0, 0, 0.54);
   font-style: italic;
 }
+.dark-mode .litiges-empty-cell {
+  color: rgba(255, 255, 255, 0.38);
+}
 
-/* === MODALES ET DIALOGUES === */
+/* ==========================================================================
+   === MODALES ET DIALOGUES ===
+   ========================================================================== */
 
 .litiges-dialog-title {
   background-color: #4a0404 !important;
   color: white !important;
 }
+.dark-mode .litiges-dialog-title {
+  background-color: #2a0202 !important;
+}
 
 .litiges-dialog-content {
   padding: 24px !important;
+  background-color: #ffffff;
+}
+.dark-mode .litiges-dialog-content {
+  background-color: #121212;
+  color: #ffffff;
 }
 
 .litiges-form-grid {
@@ -171,29 +236,77 @@
   grid-column: 1 / -1 !important;
 }
 
-/* === CHIPS DE STATUT === */
-
-.litiges-chip-ouvert {
-  background-color: #e3f2fd !important;
-  color: #1976d2 !important;
+/* Modale de détails spécifique */
+.litiges-modal-title {
+  font-weight: bold !important;
+  border-bottom: 1px solid #e0e0e0 !important;
+  color: #4a0404;
+}
+.dark-mode .litiges-modal-title {
+  color: #ff8484;
+  border-bottom: 1px solid #333333 !important;
 }
 
-.litiges-chip-en-cours {
-  background-color: #fff3e0 !important;
-  color: #f57c00 !important;
+.litiges-modal-content {
+  margin-top: 16px !important;
 }
 
-.litiges-chip-resolu {
-  background-color: #e8f5e9 !important;
-  color: #388e3c !important;
+.litiges-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.litiges-chip-rejete {
-  background-color: #ffebee !important;
-  color: #d32f2f !important;
+.litiges-modal-btn-close {
+  background-color: #4a0404 !important;
+}
+.dark-mode .litiges-modal-btn-close {
+  background-color: #7a0606 !important;
+}
+.litiges-modal-btn-close:hover {
+  background-color: #7a0606 !important;
+}
+.dark-mode .litiges-modal-btn-close:hover {
+  background-color: #a80a0a !important;
 }
 
-/* === RESPONSIVE === */
+/* ==========================================================================
+   === CHIPS ET SELECTEURS DE STATUT ===
+   ========================================================================== */
+
+/* Sélecteur dynamique */
+.litiges-status-select {
+  height: 30px;
+  font-size: 0.85rem !important;
+  font-weight: bold !important;
+}
+
+/* Mode Clair (Chips) */
+.litiges-chip-ouvert { background-color: #e3f2fd !important; color: #1976d2 !important; }
+.litiges-chip-en-cours { background-color: rgba(245, 124, 0, 0.12) !important; color: #f57c00 !important; }
+.litiges-chip-resolu { background-color: #e8f5e9 !important; color: #388e3c !important; }
+.litiges-chip-rejete { background-color: #ffebee !important; color: #d32f2f !important; }
+
+/* Mode Sombre (Chips ajustées pour le contraste) */
+.dark-mode .litiges-chip-ouvert { background-color: rgba(25, 118, 210, 0.2) !important; color: #64b5f6 !important; }
+.dark-mode .litiges-chip-en-cours { background-color: rgba(245, 124, 0, 0.2) !important; color: #ffb74d !important; }
+.dark-mode .litiges-chip-resolu { background-color: rgba(56, 142, 60, 0.2) !important; color: #81c784 !important; }
+.dark-mode .litiges-chip-rejete { background-color: rgba(211, 47, 47, 0.2) !important; color: #e57373 !important; }
+
+/* Classes de couleur texte brute */
+.status-ouvert { color: #0288d1 !important; }
+.status-en-cours { color: #ed6c02 !important; }
+.status-resolu { color: #2e7d32 !important; }
+.status-rejete { color: #d32f2f !important; }
+
+.dark-mode .status-ouvert { color: #29b6f6 !important; }
+.dark-mode .status-en-cours { color: #ffa726 !important; }
+.dark-mode .status-resolu { color: #66bb6a !important; }
+.dark-mode .status-rejete { color: #ef5350 !important; }
+
+/* ==========================================================================
+   === RESPONSIVE ===
+   ========================================================================== */
 
 @media (max-width: 1200px) {
   .litiges-description-cell {
@@ -217,111 +330,4 @@
   .litiges-sort-select {
     width: 100%;
   }
-}
-
-/* Tableau */
-.litiges-table-container {
-  border-radius: 10px !important;
-}
-
-.litiges-table-head {
-  background-color: #fcfaf7;
-}
-
-.litiges-table-th {
-  font-weight: bold !important;
-}
-
-.litiges-table-th-status {
-  font-weight: bold !important;
-  min-width: 130px;
-}
-
-.litiges-row:hover {
-  background-color: #fafafa !important;
-}
-
-.litiges-empty-cell {
-  padding-top: 32px !important;
-  padding-bottom: 32px !important;
-  color: rgba(0, 0, 0, 0.54);
-  font-style: italic;
-}
-
-/* Cellules spécifiques */
-.litiges-client-cell {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.litiges-client-name {
-  font-weight: 500 !important;
-}
-
-.litiges-motif-text {
-  font-weight: 500 !important;
-}
-
-.litiges-links-box {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.litiges-link-cmd {
-  color: #7a0606 !important;
-}
-
-.litiges-link-prest {
-  color: #0066cc !important;
-}
-
-.litiges-description-cell {
-  max-width: 250px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.litiges-date-text {
-  font-size: 0.8rem !important;
-  color: rgba(0, 0, 0, 0.54) !important;
-}
-
-/* Sélecteur de statut dynamique */
-.litiges-status-select {
-  height: 30px;
-  font-size: 0.85rem !important;
-  font-weight: bold !important;
-}
-
-.status-ouvert { color: #0288d1 !important; }
-.status-en-cours { color: #ed6c02 !important; }
-.status-resolu { color: #2e7d32 !important; }
-.status-rejete { color: #d32f2f !important; }
-
-/* Modale de détails */
-.litiges-modal-title {
-  font-weight: bold !important;
-  border-bottom: '1px solid #e0e0e0' !important;
-  color: #4a0404;
-}
-
-.litiges-modal-content {
-  margin-top: 16px !important;
-}
-
-.litiges-info-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.litiges-modal-btn-close {
-  background-color: #4a0404 !important;
-}
-
-.litiges-modal-btn-close:hover {
-  background-color: #7a0606 !important;
 }

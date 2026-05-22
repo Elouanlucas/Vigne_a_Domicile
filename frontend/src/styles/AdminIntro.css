@@ -15,13 +15,13 @@
 }
 
 .admin-intro-subtitle {
-    color: #555;
+    color: var(--muted-text);
 }
 
 .admin-intro-welcome-text {
     margin-top: 8px !important;
     font-style: italic;
-    color: #888;
+    color: var(--muted-text);
 }
 
 /* Ligne de séparation */
@@ -33,9 +33,10 @@
 .admin-intro-card {
     padding: 24px !important;
     text-align: center;
-    border-left: 8px solid #4a0404 !important;
-    box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.2), 
-                0px 6px 10px 0px rgba(0,0,0,0.14), 
+    border-left: 8px solid var(--primary-color) !important;
+    background: var(--card-bg);
+    box-shadow: 0px 3px 5px -1px rgba(0,0,0,0.15), 
+                0px 6px 10px 0px rgba(0,0,0,0.18), 
                 0px 1px 18px 0px rgba(0,0,0,0.12) !important; /* Correspond à elevation={3} */
 }
 
@@ -55,7 +56,7 @@
 .admin-intro-system-box {
     margin-top: 48px;
     padding: 24px;
-    background-color: #f9f9f9;
+    background-color: var(--surface-color);
     border-radius: 8px;
 }
 

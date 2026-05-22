@@ -9,6 +9,7 @@ import Prestation from './Prestation';
 import Agenda from './Agenda';
 import GestionLitiges from './GestionLitiges';
 import GestionAvis from './GestionAvis';
+import GestionLivreDOR from './GestionLivreDOR';
 import '../../styles/Administrateur.css';
 
 function Administrateur() {
@@ -32,6 +33,8 @@ function Administrateur() {
             case 'agenda': return <Agenda user={user} />;
             case 'litiges': return <GestionLitiges user={user} />;
             case 'avis': return <GestionAvis user={user} />;
+            case 'livredor': return <GestionLivreDOR user={user} />;
+
             default: return <AdminIntro user={user} />;
         }
     };
@@ -53,12 +56,14 @@ function Administrateur() {
                     <li className={currentPage === 'prestation' ? 'active' : ''} 
                         onClick={() => setCurrentPage('prestation')}>Prestations</li>
                 </ul>
-                <h3>Gestion des Avis/Litiges</h3>
+                <h3>Gestion des Avis/Litiges/Livre d'Or</h3>
                 <ul>
                     <li className={currentPage === 'litiges' ? 'active' : ''} 
                         onClick={() => setCurrentPage('litiges')}>Litiges</li>
                     <li className={currentPage === 'avis' ? 'active' : ''} 
                         onClick={() => setCurrentPage('avis')}>Avis</li>
+                    <li className={currentPage === 'livredor' ? 'active' : ''}
+                        onClick={() => setCurrentPage('livredor')}>Livre d'Or</li>
                 </ul>
                 <h3>Commande</h3>
                 <ul>

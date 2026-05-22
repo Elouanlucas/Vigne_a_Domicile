@@ -1,3 +1,7 @@
+/* ==========================================================================
+   === GESTION DES VINS - STYLES COMPLETS (LIGHT & DARK MODE) ===
+   ========================================================================== */
+
 /* Container principal */
 .gv-container {
     padding: 24px;
@@ -8,6 +12,10 @@
     margin-bottom: 24px;
     color: #4a0404;
     font-weight: bold;
+    transition: color 0.3s ease;
+}
+.dark-mode .gv-title {
+    color: #ff8484; /* Bordeaux plus lumineux pour le mode sombre */
 }
 
 /* Barre d'outils (recherche + bouton) */
@@ -22,15 +30,53 @@
 .gv-btn-add {
     background-color: #4a0404 !important;
     min-width: 180px !important;
+    color: white !important;
 }
-
 .gv-btn-add:hover {
     background-color: #630606 !important;
+}
+.dark-mode .gv-btn-add {
+    background-color: #7a0606 !important;
+}
+.dark-mode .gv-btn-add:hover {
+    background-color: #a80a0a !important;
+}
+
+/* ==========================================================================
+   === TABLEAU DE GESTION ===
+   ========================================================================== */
+
+/* Conteneur global du tableau pour gérer le fond en mode sombre */
+.gv-table-container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.dark-mode .gv-table-container {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    border: 1px solid #333333;
 }
 
 /* En-tête du tableau */
 .gv-table-head {
-    background-color: #f5f5f5;
+    background-color: var(--surface-color, #f5f5f5);
+}
+.dark-mode .gv-table-head {
+    background-color: #2a2a2a;
+}
+
+/* Lignes du tableau (hover effect) */
+.gv-row {
+    transition: background-color 0.2s ease;
+}
+.gv-row:hover {
+    background-color: #fbfaf8;
+}
+.dark-mode .gv-row:hover {
+    background-color: #2c2c2c !important;
 }
 
 /* Ligne du tableau avec image */
@@ -38,6 +84,10 @@
     display: flex;
     align-items: center;
     gap: 16px;
+    color: #333333;
+}
+.dark-mode .gv-cell-name {
+    color: #ffffff;
 }
 
 /* Image de couverture */
@@ -46,12 +96,21 @@
     height: 40px;
     border-radius: 4px;
     object-fit: cover;
+    border: 1px solid #e0e0e0;
 }
+.dark-mode .gv-img-cover {
+    border: 1px solid #444444;
+}
+
+/* === ÉLÉMENTS DE PRIX ET PROMOTION === */
 
 /* Prix avec promotion (barré) */
 .gv-price-promo {
     text-decoration: line-through;
     color: gray;
+}
+.dark-mode .gv-price-promo {
+    color: #888888;
 }
 
 /* Pourcentage de promotion */
@@ -59,17 +118,26 @@
     color: red;
     font-weight: bold;
 }
+.dark-mode .gv-promo-percent {
+    color: #ff5252; /* Rouge plus doux et contrasté pour écran noir */
+}
 
-/* Prix final remisé (en vert) */
+/* Prix final remisé */
 .gv-price-final {
     font-weight: bold;
     color: green;
 }
+.dark-mode .gv-price-final {
+    color: #4caf50; /* Vert pastel plus lisible */
+}
 
-/* Stock faible (en rouge) */
+/* Stock faible */
 .gv-stock-low {
     color: red;
     font-weight: bold;
+}
+.dark-mode .gv-stock-low {
+    color: #ff5252;
 }
 
 /* Colonne recommandation */
@@ -82,12 +150,28 @@
     color: #ffc107;
 }
 
-/* === DIALOG STYLES === */
+/* ==========================================================================
+   === DIALOG / MODAL STYLES ===
+   ========================================================================== */
 
 /* Titre du dialogue */
 .gv-dialog-title {
     background-color: #4a0404 !important;
     color: white !important;
+}
+.dark-mode .gv-dialog-title {
+    background-color: #2a0202 !important;
+}
+
+/* Contenu de la modale */
+.gv-dialog-content {
+    background-color: #ffffff;
+    color: #333333;
+    transition: background-color 0.3s ease;
+}
+.dark-mode .gv-dialog-content {
+    background-color: #121212;
+    color: #ffffff;
 }
 
 /* Formulaire dans le dialogue */
@@ -109,4 +193,30 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 8px 0;
+}
+
+/* Pied de la modale (Actions) */
+.gv-dialog-actions {
+    background-color: #ffffff;
+}
+.dark-mode .gv-dialog-actions {
+    background-color: #1a1a1a;
+}
+
+/* ==========================================================================
+   === RESPONSIVE ===
+   ========================================================================== */
+
+@media (max-width: 768px) {
+    .gv-toolbar {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .gv-btn-add {
+        width: 100% !important;
+    }
+    .gv-dialog-form {
+        grid-template-columns: 1fr; /* Formulaire sur une colonne sur mobile */
+    }
 }

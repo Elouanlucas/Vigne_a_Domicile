@@ -94,7 +94,7 @@
 .panier-total-section strong { font-size: 1.6rem; }
 
 .btn-paiement {
-    background-color: white !important;
+    background-color: var(--card-bg) !important;
     color: #4a0404 !important;
     font-weight: bold !important;
     padding: 12px !important;

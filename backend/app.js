@@ -13,6 +13,7 @@ const caveRoutes = require('./routes/caveRoutes');
 const promoRoutes = require('./routes/promoRoutes');
 const litigesRoutes = require('./routes/litigesRoutes');
 const avisRoutes = require('./routes/avisRoutes');
+const livreDORRoutes = require('./routes/livredORRoutes');
 
 const app = express();
 
@@ -36,7 +37,7 @@ app.use('/api/caves', caveRoutes); // Gère /api/caves/ et /api/caves/:id
 app.use('/api/promo', promoRoutes); // Gère /api/promo/validate et /api/promo/details/:code
 app.use('/api/litiges', litigesRoutes); // Gère /api/litiges/ et /api/litiges/:id
 app.use('/api/avis', avisRoutes); // Gère /api/avis/ et /api/avis/vin/:vinId
-
+app.use('/api/livredor', livreDORRoutes); // Gère /api/livredor/ et /api/livredor/:id
 
 // --- GESTION DES ERREURS 404 ---
 app.use((req, res) => {
@@ -48,7 +49,7 @@ const PORT = process.env.PORT || 3001;
 // On écoute sur 0.0.0.0 pour que ce soit accessible depuis Docker ou le réseau local
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Serveur Backend démarré sur : http://localhost:${PORT}`);
-    console.log(`📡 Routes actives : /api/auth, /api/user, /api/orders, /api/litiges, /api/avis, /api/caves, /api/vins, /api/prestations, /api/promo`);
+    console.log(`📡 Routes actives : /api/auth, /api/user, /api/orders, /api/litiges, /api/avis, /api/caves, /api/vins, /api/prestations, /api/promo, /api/livredor`);
 });
 
 module.exports = app;

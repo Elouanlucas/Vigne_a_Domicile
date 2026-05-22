@@ -27,15 +27,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  border-bottom: 1px solid #ddd;
-  background: #fff;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--card-bg);
   margin-bottom: 10px;
   border-radius: 8px;
   transition: background-color 0.2s ease;
 }
 
 .recap-item-card:hover {
-  background-color: #f9f9f9;
+  background-color: var(--surface-color);
 }
 
 .recap-item-image {
@@ -51,7 +51,7 @@
 
 .recap-item-name {
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
   margin-bottom: 4px;
 }
 
@@ -62,7 +62,7 @@
 
 .recap-item-price-original {
   text-decoration: line-through;
-  color: #999;
+  color: var(--muted-text);
   margin-right: 8px;
 }
 
@@ -121,13 +121,13 @@
 
 /* Résumé commande */
 .recap-summary {
-  background: #f9f9f9;
+  background: var(--surface-color);
   padding: 25px;
   border-radius: 12px;
   height: fit-content;
   position: sticky;
   top: 100px;
-  border: 1px solid #eee;
+  border: 1px solid var(--border-color);
 }
 
 .recap-summary-title {
@@ -145,19 +145,19 @@
 }
 
 .summary-line-label {
-  color: #666;
+  color: var(--muted-text);
 }
 
 .summary-line-value {
   font-weight: bold;
-  color: #333;
+  color: var(--text-color);
 }
 
 .summary-line.total {
   font-weight: bold;
   font-size: 1.2rem;
   color: #4a0404;
-  border-top: 2px solid #ddd;
+  border-top: 2px solid var(--border-color);
   padding-top: 12px;
   margin-top: 12px;
 }
@@ -199,7 +199,7 @@
 .recap-empty {
   text-align: center;
   padding: 40px 20px;
-  color: #999;
+  color: var(--muted-text);
 }
 
 .recap-empty-icon {
@@ -216,7 +216,7 @@
 /* Erreurs et avertissements */
 .item-error {
     border: 2px solid #d32f2f !important;
-    background-color: #fff8f8;
+    background-color: rgba(211, 47, 47, 0.1);
 }
 
 .stock-warning {

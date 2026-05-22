@@ -2,7 +2,7 @@
     padding: 30px;
     max-width: 1400px;
     margin: 0 auto;
-    background-color: #fcfcfc;
+    background-color: var(--bg-color);
     min-height: 100vh;
 }
 
@@ -27,7 +27,7 @@
 .filter-sidebar {
     width: 250px;
     flex-shrink: 0;
-    background: white;
+    background: var(--card-bg);
     padding: 20px;
     border-radius: 12px;
     height: fit-content;
@@ -55,12 +55,12 @@
 
 /* Carte */
 .prestation-card-mui {
-    background: white;
+    background: var(--card-bg);
     border-radius: 12px;
     overflow: hidden;
     position: relative;
     transition: all 0.3s ease;
-    border: 1px solid #eee;
+    border: 1px solid var(--border-color);
 }
 
 .prestation-card-mui:hover {
@@ -81,7 +81,7 @@
 .prestation-content-mui h3 {
     margin: 0;
     font-size: 1.1rem;
-    color: #333;
+    color: var(--text-color);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

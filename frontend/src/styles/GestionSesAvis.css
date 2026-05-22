@@ -33,16 +33,20 @@
 .avis-search-field {
   flex-grow: 1;
   min-width: 250px;
-  background-color: white;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 .avis-search-icon {
-  color: #888;
+  color: var(--muted-text);
 }
 
 .avis-filter-select {
   min-width: 200px;
-  background-color: white;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 /* Spinner de chargement */
@@ -61,7 +65,9 @@
 .avis-empty-paper {
   padding: 32px !important;
   text-align: center;
-  background-color: #fafafa !important;
+  background-color: var(--card-bg) !important;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
 }
 
 /* Tableau */
@@ -110,15 +116,15 @@
 
 .avis-comment-text {
   font-style: italic;
-  color: #333;
+  color: var(--text-color);
 }
 
 /* Bloc réponse admin */
 .avis-admin-response-box {
   margin-top: 12px;
   padding-left: 16px;
-  border-left: '3px solid #ff9800';
-  background-color: #fffbf5;
+  border-left: 3px solid #ff9800;
+  background-color: var(--surface-color);
   padding: 8px;
   border-radius: 0 4px 4px 0;
 }

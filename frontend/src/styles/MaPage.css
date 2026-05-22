@@ -14,7 +14,7 @@
     margin: 20px auto; /* Réduit pour mieux s'intégrer sous la navbar */
     padding: 0 25px;
     font-family: 'Segoe UI', Roboto, sans-serif;
-    color: #333;
+    color: var(--text-color);
 }
 
 /* --- HEADER (Fixation du bouton Déconnexion) --- */
@@ -24,7 +24,7 @@
     align-items: center;            /* Aligne les deux verticalement au centre */
     margin-bottom: 40px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border-color);
     position: relative;
 }
 
@@ -37,8 +37,8 @@
 .btn-logout-top {
     /* Suppression du position: absolute qui posait problème */
     background: transparent;
-    border: 1.5px solid #ddd;
-    color: #666;
+    border: 1.5px solid var(--border-color);
+    color: var(--muted-text);
     padding: 8px 18px;
     border-radius: 10px;
     font-weight: 500;
@@ -62,11 +62,12 @@
 
 /* --- SIDEBAR (Photo & Profil) --- */
 .photo-card {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: var(--profile-border-radius);
     box-shadow: var(--profile-shadow);
     text-align: center;
+    border: 1px solid var(--border-color);
 }
 
 .main-profile-img {
@@ -75,14 +76,14 @@
     border-radius: 12px;
     object-fit: cover;
     margin-bottom: 20px;
-    background: #f8f8f8;
-    border: 1px solid #eee;
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
 }
 
 .upload-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: #f0f0f0;
+    background: var(--surface-color);
     border-radius: 20px;
     font-size: 0.85rem;
     cursor: pointer;
@@ -98,11 +99,11 @@
 .photo-card h3 {
     margin: 10px 0 5px;
     font-size: 1.25rem;
-    color: #333;
+    color: var(--text-color);
 }
 
 .role-text {
-    color: #888;
+    color: var(--muted-text);
     text-transform: uppercase;
     font-size: 0.75rem;
     letter-spacing: 1px;
@@ -117,10 +118,11 @@
 }
 
 .info-group {
-    background: white;
+    background: var(--card-bg);
     padding: 30px;
     border-radius: var(--profile-border-radius);
     box-shadow: var(--profile-shadow);
+    border: 1px solid var(--border-color);
 }
 
 .info-group h3 {
@@ -139,7 +141,7 @@
     display: grid;
     grid-template-columns: 140px 1fr;
     padding: 15px 0;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid var(--border-color);
     align-items: center;
 }
 
@@ -150,22 +152,23 @@
 .info-item label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: #999;
+    color: var(--muted-text);
 }
 
 .info-item p {
     margin: 0;
     font-weight: 500;
-    color: #444;
+    color: var(--text-color);
 }
 
 /* Champs de saisie Edition */
 .edit-input, .edit-textarea {
     width: 100%;
     padding: 10px 15px;
-    border: 1.5px solid #eee;
+    border: 1.5px solid var(--input-border);
     border-radius: 8px;
-    background: #fcfcfc;
+    background: var(--input-bg);
+    color: var(--text-color);
     font-size: 0.95rem;
     transition: all 0.2s;
 }
@@ -173,8 +176,8 @@
 .edit-input:focus, .edit-textarea:focus {
     outline: none;
     border-color: var(--bordeaux-fonce);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(74, 4, 4, 0.1);
+    background: var(--input-bg);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
 }
 
 .edit-textarea {
@@ -209,9 +212,9 @@
 
 .btn-action-delete {
     flex: 1;
-    background: #fff;
+    background: var(--surface-color);
     color: #eb4d4b;
-    border: 1.5px solid #ffdada;
+    border: 1.5px solid rgba(235, 77, 75, 0.3);
     padding: 14px;
     border-radius: 12px;
     font-weight: 600;
@@ -220,13 +223,13 @@
 }
 
 .btn-action-delete:hover {
-    background: #fff5f5;
+    background: rgba(255, 255, 255, 0.08);
     border-color: #eb4d4b;
 }
 
 .btn-cancel-edit {
     flex: 1;
-    background: #eee;
+    background: var(--surface-color);
     border: none;
     padding: 14px;
     border-radius: 12px;
