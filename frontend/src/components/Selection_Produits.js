@@ -10,13 +10,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import InfoIcon from '@mui/icons-material/Info';
 import { CurrencyContext } from '../context/CurrencyContext';
 
-// Configuration de l'URL API centrale (Facilite le passage au réseau local / Docker)
 const API_URL = 'http://localhost:3001';
 
 const Produits = ({ onAjouter }) => {
   const { formatPrice } = useContext(CurrencyContext);
   
-  // --- ÉTATS ---
   const [quantities, setQuantities] = useState({});
   const [vins, setVins] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,17 +29,14 @@ const Produits = ({ onAjouter }) => {
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [onlyPromos, setOnlyPromos] = useState(false);
 
-  // --- ÉTATS POUR LES AVIS ---
   const [avisList, setAvisList] = useState([]);
   const [loadingAvis, setLoadingAvis] = useState(false);
   const [newNote, setNewNote] = useState(5);
   const [newCommentaire, setNewCommentaire] = useState('');
   const [avisError, setAvisError] = useState('');
 
-  // ID de l'utilisateur connecté (À remplacer par ton Context d'authentification global)
-  const currentUserId = 1; 
+  const currentUserId = localStorage.getItem('userId');
 
-  // --- CHARGEMENT DES VINS ---
   useEffect(() => {
     fetch(`${API_URL}/api/vins`)
       .then(res => res.json())
@@ -55,7 +50,6 @@ const Produits = ({ onAjouter }) => {
       });
   }, []);
 
-  // --- CHARGEMENT DES AVIS À L'OUVERTURE DE LA MODAL ---
   useEffect(() => {
     if (selectedWine) {
       setLoadingAvis(true);
@@ -72,7 +66,6 @@ const Produits = ({ onAjouter }) => {
     }
   }, [selectedWine]);
 
-  // --- FERMETURE DE LA MODAL (RESET DES ETATS) ---
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedWine(null);
@@ -90,13 +83,18 @@ const Produits = ({ onAjouter }) => {
     });
   };
 
-  // --- SOUMISSION D'UN AVIS ---
+  // --- SOUMISSION D'UN AVIS MODIFIÉE ---
   const handleAvisSubmit = (e) => {
     e.preventDefault();
     setAvisError('');
 
+    if (!currentUserId) {
+        setAvisError("Vous devez être connecté pour laisser un avis.");
+        return;
+    }
+
     const avisData = {
-        numUtilisateur: currentUserId,
+        numUtilisateur: currentUserId, 
         vin_id: selectedWine.id,
         note: newNote,
         commentaire: newCommentaire.trim()
@@ -112,15 +110,20 @@ const Produits = ({ onAjouter }) => {
         if (!res.ok) throw new Error(data.error || "Erreur lors de l'envoi");
         return data;
     })
-    .then(() => {
-        // Recharger la liste des avis immédiatement après l'ajout
+    .then((data) => {
+        // Alerte l'utilisateur du succès de la soumission et de l'attente admin
+        alert(data.message || "Avis soumis avec succès ! Il sera visible après validation.");
+        
+        // Vider le formulaire
+        setNewCommentaire('');
+        setNewNote(5);
+
+        // Recharger la liste (qui ne contiendra toujours que les avis validés)
         return fetch(`${API_URL}/api/avis/vin/${selectedWine.id}`);
     })
     .then(res => res.json())
     .then(updatedAvis => {
         setAvisList(updatedAvis);
-        setNewCommentaire('');
-        setNewNote(5);
     })
     .catch(err => {
         setAvisError(err.message);
@@ -327,7 +330,6 @@ const Produits = ({ onAjouter }) => {
         </div>
       </div>
 
-      {/* MODAL DE DÉTAILS MODIFIÉE AVEC AVIS */}
       <Dialog open={isModalOpen} onClose={handleCloseModal} maxWidth="sm" fullWidth>
         <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', bgcolor: '#4a0404', color: 'white' }}>
           <strong>{selectedWine?.name}</strong>
@@ -338,7 +340,6 @@ const Produits = ({ onAjouter }) => {
         <DialogContent dividers>
           {selectedWine && (
             <Box sx={{ p: 2 }}>
-              {/* Infos Vin */}
               <Box sx={{ textAlign: 'center' }}>
                 <img 
                   src={selectedWine.cover ? `${API_URL}/uploads/${selectedWine.cover}` : '/placeholder-vin.png'} 
@@ -362,7 +363,6 @@ const Produits = ({ onAjouter }) => {
 
               <Divider sx={{ my: 3 }}><Typography variant="button" color="textSecondary">Avis Clients</Typography></Divider>
 
-              {/* Liste des Avis Existants */}
               <Box sx={{ mb: 4 }}>
                 {loadingAvis ? (
                   <Box sx={{ display: 'flex', justifyContent: 'center', my: 3 }}>
@@ -385,7 +385,6 @@ const Produits = ({ onAjouter }) => {
                         "{av.commentaire}"
                       </Typography>
 
-                      {/* BLOC INJECTÉ : Affiche la réponse admin dans la modale produit si elle existe */}
                       {av.reponse_admin && (
                         <Box sx={{ 
                           mt: 1.5, 
@@ -410,7 +409,6 @@ const Produits = ({ onAjouter }) => {
 
               <Divider sx={{ my: 2 }} />
 
-              {/* Formulaire pour laisser un Avis */}
               <Box component="form" onSubmit={handleAvisSubmit} sx={{ mt: 2 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 'bold', color: '#4a0404', mb: 1 }}>
                   Donner votre avis

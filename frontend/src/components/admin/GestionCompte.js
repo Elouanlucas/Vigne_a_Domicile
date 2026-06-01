@@ -64,7 +64,6 @@ function GestionCompte() {
       });
 
       if (response.ok) {
-        alert("Utilisateur ajouté !");
         setOpenAdd(false);
         fetchUsers(); // Rafraîchir la liste
         setNewUser({ login: '', motDePasse: '', nom: '', prenom: '', dateDeNaissance: '', email: '', telephone: '', role: 'client' });

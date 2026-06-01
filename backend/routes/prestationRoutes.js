@@ -37,6 +37,6 @@ router.put('/:id', verifyToken, upload.single('cover'), prestationController.upd
 // DELETE /api/prestations/:id
 router.delete('/:id', verifyToken, prestationController.deletePrestation);
 
-
+router.delete('/:prestationId/participants/:userEmail', verifyToken, prestationController.deleteParticipantFromPrestation);
 
 module.exports = router;

@@ -64,7 +64,6 @@ function MaPage() {
             if (resProfile.ok && resAddress.ok) {
                 setIsEditing(false);
                 fetchUserInfo();
-                alert("Modifications enregistrées !");
             }
         } catch (error) { console.error("Erreur sauvegarde:", error); }
     };

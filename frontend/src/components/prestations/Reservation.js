@@ -67,8 +67,6 @@ const Reservation = () => {
 
         // Ajout au panier via le Context
         handleAjouterAuPanier(itemPourPanier, 1);
-        
-        alert("Réservation ajoutée au panier !");
         navigate('/prestations'); 
     };
 

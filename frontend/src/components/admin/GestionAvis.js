@@ -8,9 +8,9 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import ReplyIcon from '@mui/icons-material/Reply';
 import SearchIcon from '@mui/icons-material/Search';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import '../../styles/GestionAvis.css';
 
-// Configuration de l'URL API centrale
 const API_URL = 'http://localhost:3001';
 
 function GestionAvis() {
@@ -23,6 +23,7 @@ function GestionAvis() {
     // États pour la recherche et les filtres
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('tous'); // 'tous', 'vin', 'prestation'
+    const [filterStatus, setFilterStatus] = useState('tous'); // 'tous', 'attente', 'valide'
 
     // États pour les Modales
     const [selectedAvis, setSelectedAvis] = useState(null);
@@ -58,13 +59,37 @@ function GestionAvis() {
     // --- ACTIONS : OUVERTURE MODALES ---
     const handleOpenReply = (av) => {
         setSelectedAvis(av);
-        setAdminResponse(av.reponse_admin || ''); // Pré-remplit si une réponse existe déjà
+        setAdminResponse(av.reponse_admin || '');
         setIsReplyOpen(true);
     };
 
     const handleOpenDelete = (av) => {
         setSelectedAvis(av);
         setIsDeleteOpen(true);
+    };
+
+    // --- ACTION : VALIDER UN AVIS CORRIGÉE (PUT /api/avis/:id/validation) ---
+    const handleValidateAvis = (id) => {
+        setError('');
+        setSuccessMessage('');
+
+        // Correction de l'URL pour correspondre à router.put('/:id/validation')
+        // et envoi du body { accept: true } requis par ton contrôleur validateAvis
+        fetch(`${API_URL}/api/avis/${id}/validation`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ accept: true })
+        })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Erreur lors de la validation de l'avis.");
+            return data;
+        })
+        .then(() => {
+            setSuccessMessage("L'avis a été validé et est maintenant visible sur le site.");
+            fetchAllAvis(); 
+        })
+        .catch(err => setError(err.message));
     };
 
     // --- ACTION : ENREGISTRER LA RÉPONSE ADMIN (PUT /:id/reponse) ---
@@ -88,7 +113,7 @@ function GestionAvis() {
         .then(() => {
             setSuccessMessage("Réponse enregistrée avec succès !");
             setIsReplyOpen(false);
-            fetchAllAvis(); // Recharger le tableau mis à jour
+            fetchAllAvis(); 
         })
         .catch(err => setError(err.message));
     };
@@ -109,20 +134,29 @@ function GestionAvis() {
         .then(() => {
             setSuccessMessage("L'avis a bien été supprimé du site (modération).");
             setIsDeleteOpen(false);
-            fetchAllAvis(); // Recharger le tableau
+            fetchAllAvis(); 
         })
         .catch(err => setError(err.message));
     };
 
-    // --- FILTRAGE ET RECHERCHE EN TEMPS RÉEL ---
+    // --- FILTRAGE ET RECHERCHE EN TEMPS RÉEL CORRIGÉS ---
     const filteredAvis = allAvis.filter(av => {
-        // Filtre par catégorie
+        // 1. Filtre par catégorie
         const matchesType = 
             filterType === 'tous' || 
             (filterType === 'vin' && av.vin_id) || 
             (filterType === 'prestation' && av.prestation_id);
 
-        // Recherche par nom de produit/prestation, par client (nom/prenom) ou par texte du commentaire
+        // 2. CORRECTION : On utilise la propriété 'valider' (reçue de la BDD SQL) et non 'valide'
+        // On force la comparaison numérique ou booléenne (0 / false vs 1 / true)
+        const isAvisValide = Number(av.valider) === 1 || av.valider === true;
+
+        const matchesStatus = 
+            filterStatus === 'tous' ||
+            (filterStatus === 'attente' && !isAvisValide) ||
+            (filterStatus === 'valide' && isAvisValide);
+
+        // 3. Recherche textuelle
         const itemNom = av.vin_nom || av.prestation_nom || '';
         const clientNom = `${av.prenom || ''} ${av.nom || ''}`.toLowerCase();
         const commentaireSecurise = av.commentaire || '';
@@ -132,7 +166,7 @@ function GestionAvis() {
             clientNom.includes(searchTerm.toLowerCase()) ||
             commentaireSecurise.toLowerCase().includes(searchTerm.toLowerCase());
 
-        return matchesType && matchesSearch;
+        return matchesType && matchesStatus && matchesSearch;
     });
 
     return (
@@ -141,7 +175,7 @@ function GestionAvis() {
                 Gestion des avis
             </Typography>
             <Typography variant="body2" color="textSecondary" className="gestion-avis-subtitle">
-                Modérez les avis de vos clients et répondez à leurs retours d'expériences.
+                Modérez, validez les avis de vos clients et répondez à leurs retours d'expériences.
             </Typography>
 
             {/* Alertes Flash */}
@@ -149,13 +183,14 @@ function GestionAvis() {
             {error && <Alert severity="error" className="gestion-avis-alert" onClose={() => setError('')}>{error}</Alert>}
 
             {/* Outils de recherche et filtres */}
-            <Box className="gestion-avis-toolbar">
+            <Box className="gestion-avis-toolbar" sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
                 <TextField
                     placeholder="Rechercher par client, cuvée, commentaire..."
                     size="small"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="gestion-avis-search-field"
+                    sx={{ flexGrow: 1 }}
                     InputProps={{
                         startAdornment: (
                             <InputAdornment position="start">
@@ -165,7 +200,7 @@ function GestionAvis() {
                     }}
                 />
 
-                <FormControl size="small" className="gestion-avis-filter-control">
+                <FormControl size="small" className="gestion-avis-filter-control" sx={{ minWidth: 150 }}>
                     <InputLabel id="admin-filter-label">Catégorie</InputLabel>
                     <Select
                         labelId="admin-filter-label"
@@ -176,6 +211,21 @@ function GestionAvis() {
                         <MenuItem value="tous">Tout afficher</MenuItem>
                         <MenuItem value="vin">🍷 Vins & Spiritueux</MenuItem>
                         <MenuItem value="prestation">🏠 Expériences & Dégustations</MenuItem>
+                    </Select>
+                </FormControl>
+
+                {/* CORRECTION : Filtre Statut synchronisé avec 'valider' */}
+                <FormControl size="small" className="gestion-avis-filter-control" sx={{ minWidth: 150 }}>
+                    <InputLabel id="admin-status-filter-label">Statut</InputLabel>
+                    <Select
+                        labelId="admin-status-filter-label"
+                        value={filterStatus}
+                        label="Statut"
+                        onChange={(e) => setFilterStatus(e.target.value)}
+                    >
+                        <MenuItem value="tous">Tous les statuts</MenuItem>
+                        <MenuItem value="attente">⏳ En attente ({allAvis.filter(a => Number(a.valider) === 0 || a.valider === false).length})</MenuItem>
+                        <MenuItem value="valide">✅ Validés ({allAvis.filter(a => Number(a.valider) === 1 || a.valider === true).length})</MenuItem>
                     </Select>
                 </FormControl>
             </Box>
@@ -196,6 +246,7 @@ function GestionAvis() {
                     <Table>
                         <TableHead className="gestion-avis-table-header">
                             <TableRow>
+                                <TableCell className="gestion-avis-header-cell">Statut</TableCell>
                                 <TableCell className="gestion-avis-header-cell">Client</TableCell>
                                 <TableCell className="gestion-avis-header-cell">Cible</TableCell>
                                 <TableCell className="gestion-avis-header-cell">Note / Commentaire</TableCell>
@@ -205,100 +256,137 @@ function GestionAvis() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {filteredAvis.map((av) => (
-                                <TableRow key={av.id} hover>
-                                    {/* Client */}
-                                    <TableCell>
-                                        <Typography variant="body2" className="gestion-avis-client-name">
-                                            {av.prenom} {av.nom}
-                                        </Typography>
-                                        <Typography variant="caption" color="textSecondary">
-                                            ID User: {av.numUtilisateur}
-                                        </Typography>
-                                    </TableCell>
+                            {filteredAvis.map((av) => {
+                                // Variable locale pour simplifier le rendu des conditions de validation
+                                const isValide = Number(av.valider) === 1 || av.valider === true;
 
-                                    {/* Cible (Nom du vin ou de la prestation) */}
-                                    <TableCell>
-                                        <Typography variant="caption" className={av.vin_id ? "gestion-avis-target-badge-vin" : "gestion-avis-target-badge-prestation"}>
-                                            {av.vin_id ? '🍷 VIN' : '🏠 PRESTATION'}
-                                        </Typography>
-                                        <Typography variant="body2" className="gestion-avis-target-name">
-                                            {av.vin_nom || av.prestation_nom || 'Article inconnu'}
-                                        </Typography>
-                                    </TableCell>
-
-                                    {/* Note et Commentaire */}
-                                    <TableCell>
-                                        <Rating value={av.note} readOnly size="small" className="gestion-avis-rating" />
-                                        <Typography variant="body2" className="gestion-avis-comment-text">
-                                            "{av.commentaire || 'Pas de texte'}"
-                                        </Typography>
-                                    </TableCell>
-
-                                    {/* Réponse Admin Actuelle */}
-                                    <TableCell>
-                                        {av.reponse_admin ? (
-                                            <Box className="gestion-avis-box-container">
-                                                <Box className="gestion-avis-response-box">
-                                                    <Typography variant="body2" className="gestion-avis-response-text">
-                                                        "{av.reponse_admin}"
-                                                    </Typography>
-                                                </Box>
+                                return (
+                                    <TableRow 
+                                        key={av.id} 
+                                        hover 
+                                        sx={{ 
+                                            backgroundColor: !isValide ? 'rgba(255, 152, 0, 0.05)' : 'inherit',
+                                            '&:hover': { backgroundColor: !isValide ? 'rgba(255, 152, 0, 0.1) !important' : '' }
+                                        }}
+                                    >
+                                        {/* CORRECTION : Colonne Statut de Validation mise à jour */}
+                                        <TableCell>
+                                            <Box 
+                                                sx={{ 
+                                                    display: 'inline-block', 
+                                                    padding: '4px 8px', 
+                                                    borderRadius: '4px',
+                                                    fontSize: '0.75rem',
+                                                    fontWeight: 'bold',
+                                                    backgroundColor: isValide ? 'rgba(76, 175, 80, 0.1)' : 'rgba(255, 152, 0, 0.1)',
+                                                    color: isValide ? '#2e7d32' : '#ed6c02',
+                                                    border: isValide ? '1px solid #2e7d32' : '1px solid #ed6c02'
+                                                }}
+                                            >
+                                                {isValide ? 'En ligne' : 'En attente'}
                                             </Box>
-                                        ) : (
-                                            <Typography variant="caption" color="textSecondary" className="gestion-avis-no-response">
-                                                Aucune réponse enregistrée.
+                                        </TableCell>
+
+                                        {/* Client */}
+                                        <TableCell>
+                                            <Typography variant="body2" className="gestion-avis-client-name">
+                                                {av.prenom} {av.nom}
                                             </Typography>
-                                        )}
-                                    </TableCell>
+                                            <Typography variant="caption" color="textSecondary">
+                                                ID User: {av.numUtilisateur}
+                                            </Typography>
+                                        </TableCell>
 
-                                    {/* Date */}
-                                    <TableCell variant="body2">
-                                        {av.created_at ? new Date(av.created_at).toLocaleDateString('fr-FR') : 'N/C'}
-                                    </TableCell>
+                                        {/* Cible */}
+                                        <TableCell>
+                                            <Typography variant="caption" className={av.vin_id ? "gestion-avis-target-badge-vin" : "gestion-avis-target-badge-prestation"}>
+                                                {av.vin_id ? '🍷 VIN' : '🏠 PRESTATION'}
+                                            </Typography>
+                                            <Typography variant="body2" className="gestion-avis-target-name">
+                                                {av.vin_nom || av.prestation_nom || 'Article inconnu'}
+                                            </Typography>
+                                        </TableCell>
 
-                                    {/* Actions Administrateur */}
-                                    <TableCell className="gestion-avis-actions-cell">
-                                        <Box className="gestion-avis-actions-wrapper">
-                                            <Tooltip title={av.reponse_admin ? "Modifier la réponse" : "Répondre"}>
-                                                <IconButton color="warning" onClick={() => handleOpenReply(av)}>
-                                                    <ReplyIcon size="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                            <Tooltip title="Supprimer (Modération)">
-                                                <IconButton color="error" onClick={() => handleOpenDelete(av)}>
-                                                    <DeleteIcon size="small" />
-                                                </IconButton>
-                                            </Tooltip>
-                                        </Box>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
+                                        {/* Note et Commentaire */}
+                                        <TableCell>
+                                            <Rating value={av.note} readOnly size="small" className="gestion-avis-rating" />
+                                            <Typography variant="body2" className="gestion-avis-comment-text">
+                                                "{av.commentaire || 'Pas de texte'}"
+                                            </Typography>
+                                        </TableCell>
+
+                                        {/* Réponse Admin Actuelle */}
+                                        <TableCell>
+                                            {av.reponse_admin ? (
+                                                <Box className="gestion-avis-box-container">
+                                                    <Box className="gestion-avis-response-box">
+                                                        <Typography variant="body2" className="gestion-avis-response-text">
+                                                            "{av.reponse_admin}"
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            ) : (
+                                                <Typography variant="caption" color="textSecondary" className="gestion-avis-no-response">
+                                                    Aucune réponse enregistrée.
+                                                </Typography>
+                                            )}
+                                        </TableCell>
+
+                                        {/* Date */}
+                                        <TableCell>
+                                            {av.created_at ? new Date(av.created_at).toLocaleDateString('fr-FR') : 'N/C'}
+                                        </TableCell>
+
+                                        {/* Actions Administrateur */}
+                                        <TableCell className="gestion-avis-actions-cell">
+                                            <Box className="gestion-avis-actions-wrapper" sx={{ display: 'flex', gap: 0.5 }}>
+                                                
+                                                {/* CORRECTION : Bouton de Validation affiché si non validé */}
+                                                {!isValide && (
+                                                    <Tooltip title="Valider et publier l'avis">
+                                                        <IconButton color="success" onClick={() => handleValidateAvis(av.id)}>
+                                                            <CheckCircleIcon fontSize="small" />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
+
+                                                <Tooltip title={av.reponse_admin ? "Modifier la réponse" : "Répondre"}>
+                                                    <IconButton color="warning" onClick={() => handleOpenReply(av)}>
+                                                        <ReplyIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+
+                                                <Tooltip title="Supprimer (Modération)">
+                                                    <IconButton color="error" onClick={() => handleOpenDelete(av)}>
+                                                        <DeleteIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
                         </TableBody>
                     </Table>
                 </TableContainer>
             )}
 
-            {/* =========================================================================
-                MODALE 1 : RÉPONDRE À UN AVIS / MODIFIER LA RÉPONSE
-                ========================================================================= */}
+            {/* MODALE 1 : RÉPONDRE À UN AVIS */}
             <Dialog open={isReplyOpen} onClose={() => setIsReplyOpen(false)} maxWidth="sm" fullWidth>
                 <Box component="form" onSubmit={handleSaveReply}>
                     <DialogTitle className="gestion-avis-dialog-title-reply">
                         Répondre à l'avis de {selectedAvis?.prenom} {selectedAvis?.nom}
                     </DialogTitle>
                     <DialogContent dividers className="gestion-avis-dialog-content-reply">
-                        {/* Rappel du commentaire client */}
-                        <Box className="gestion-avis-client-comment-recall">
-                            <Typography variant="caption" className="gestion-avis-client-comment-recall-title">
+                        <Box className="gestion-avis-client-comment-recall" sx={{ mb: 2 }}>
+                            <Typography variant="caption" className="gestion-avis-client-comment-recall-title" sx={{ fontWeight: 'bold', display: 'block' }}>
                                 Commentaire du client :
                             </Typography>
-                            <Typography variant="body2" className="gestion-avis-client-comment-recall-text">
+                            <Typography variant="body2" className="gestion-avis-client-comment-recall-text" sx={{ fontStyle: 'italic', color: 'text.secondary' }}>
                                 "{selectedAvis?.commentaire}"
                             </Typography>
                         </Box>
 
-                        {/* Champ texte pour l'admin */}
                         <TextField
                             label="Votre réponse officielle"
                             multiline
@@ -312,20 +400,14 @@ function GestionAvis() {
                     </DialogContent>
                     <DialogActions className="gestion-avis-dialog-actions">
                         <Button onClick={() => setIsReplyOpen(false)} color="inherit">Annuler</Button>
-                        <Button 
-                            type="submit" 
-                            variant="contained" 
-                            className="gestion-avis-submit-button"
-                        >
+                        <Button type="submit" variant="contained" className="gestion-avis-submit-button">
                             Enregistrer la réponse
                         </Button>
                     </DialogActions>
                 </Box>
             </Dialog>
 
-            {/* =========================================================================
-                MODALE 2 : CONFIRMATION DE SUPPRESSION (MODÉRATION)
-                ========================================================================= */}
+            {/* MODALE 2 : CONFIRMATION DE SUPPRESSION */}
             <Dialog open={isDeleteOpen} onClose={() => setIsDeleteOpen(false)}>
                 <DialogTitle className="gestion-avis-dialog-title-delete">Supprimer l'avis définitivement ?</DialogTitle>
                 <DialogContent className="gestion-avis-dialog-content-delete">

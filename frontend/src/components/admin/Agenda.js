@@ -7,8 +7,8 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PeopleIcon from '@mui/icons-material/People';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import EventIcon from '@mui/icons-material/Event';
+import DeleteIcon from '@mui/icons-material/Delete'; // Importation de l'icône Corbeille
 import '../../styles/Agenda.css';
 
 function Agenda() {
@@ -29,28 +29,61 @@ function Agenda() {
             });
             const data = await response.json();
             
-            // Vérifie si data est bien un tableau avant de faire le .map
             if (Array.isArray(data)) {
                 const formatted = data.map(p => ({
                     ...p,
                     dateKey: new Date(p.date_prestation).toLocaleDateString('en-CA')
                 }));
                 setPrestations(formatted);
+
+                // Si la modale est ouverte, on rafraîchit aussi l'objet sélectionné
+                if (selectedPres) {
+                    const updatedSelected = formatted.find(p => p.id === selectedPres.id);
+                    if (updatedSelected) setSelectedPres(updatedSelected);
+                }
             } else {
                 console.error("Format de données invalide :", data);
-                setPrestations([]); // Évite l'erreur .map
+                setPrestations([]);
             }
         } catch (error) {
             console.error("Erreur chargement agenda:", error);
         }
     };
 
-    const handleOpenDetails = (pres) => {
-        setSelectedPres(pres);
-        setIsModalOpen(true);
+    // --- NOUVELLE FONCTION : SUPPRESSION D'UN PARTICIPANT ---
+    const handleDeleteParticipant = async (participant) => {
+        if (!window.confirm(`Voulez-vous vraiment désinscrire ${participant.nom_complet || participant.email} de cette prestation ?`)) {
+            return;
+        }
+
+        try {
+            // Appel de la nouvelle route avec l'ID de la prestation et l'email du participant
+            const response = await fetch(`http://localhost:3001/api/prestations/${selectedPres.id}/participants/${participant.email}`, {
+                method: 'DELETE',
+                headers: { 
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.ok) {
+                await fetchAllPrestations(); // Recharge les données
+            } else {
+                const errData = await response.json();
+                alert(errData.error || "Erreur lors de la suppression du participant.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de la suppression :", error);
+            alert("Impossible de joindre le serveur.");
+        }
     };
 
-    // Affiche un indicateur sur les jours ayant des prestations
+    const handleOpenDetails = (pres) => {
+        setSelectedPres(pres);
+        setIsModalOpen(false); // Sécurité reset
+        setTimeout(() => setIsModalOpen(true), 50);
+    };
+
     const tileContent = ({ date, view }) => {
         if (view === 'month') {
             const dateStr = date.toLocaleDateString('en-CA');
@@ -75,7 +108,6 @@ function Agenda() {
             </Typography>
 
             <Grid container spacing={3}>
-                {/* Section Calendrier - Prend maintenant toute la largeur */}
                 <Grid item xs={12}>
                     <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
                         <Calendar 
@@ -87,7 +119,6 @@ function Agenda() {
                     </Paper>
                 </Grid>
 
-                {/* Liste des prestations - S'affiche obligatoirement en dessous */}
                 <Grid item xs={12}>
                     <Box sx={{ mt: 2 }}>
                         <Typography variant="h5" sx={{ mb: 2, color: '#4a0404', fontWeight: 'medium' }}>
@@ -134,7 +165,7 @@ function Agenda() {
                 </Grid>
             </Grid>
 
-            {/* MODALE DE DÉTAILS PARTICIPANTS */}
+            {/* MODALE DE DÉTAILS PARTICIPANTS AVEC OPTION DE SUPPRESSION */}
             <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} maxWidth="sm" fullWidth>
                 <DialogTitle sx={{ bgcolor: '#4a0404', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     Détails de la Prestation
@@ -173,7 +204,20 @@ function Agenda() {
                             <List dense>
                                 {selectedPres.participants && selectedPres.participants.length > 0 ? (
                                     selectedPres.participants.map((user, index) => (
-                                        <ListItem key={index}>
+                                        <ListItem 
+                                            key={index}
+                                            secondaryAction={
+                                                // AJOUT DU BOUTON DE SUPPRESSION À DROITE
+                                                <IconButton 
+                                                    edge="end" 
+                                                    aria-label="delete" 
+                                                    color="error" 
+                                                    onClick={() => handleDeleteParticipant(user)}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            }
+                                        >
                                             <ListItemIcon><EventIcon fontSize="small" /></ListItemIcon>
                                             <ListItemText 
                                                 primary={user.nom_complet || user.email} 

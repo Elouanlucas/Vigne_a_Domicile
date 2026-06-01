@@ -195,6 +195,7 @@ CREATE TABLE avis (
     commentaire TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     reponse_admin TEXT NULL,
+    valider BOOLEAN DEFAULT FALSE,
     
     -- Clés étrangères
     CONSTRAINT fk_avis_user FOREIGN KEY (numUtilisateur) REFERENCES Utilisateur (numUtilisateur) ON DELETE CASCADE,

@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 // =========================================================================
-// 1. RÉCUPÉRER LES AVIS D'UN VIN
+// 1. RÉCUPÉRER LES AVIS D'UN VIN (Uniquement les avis validés)
 // =========================================================================
 exports.getAvisByVin = async (req, res) => {
     try {
@@ -12,7 +12,7 @@ exports.getAvisByVin = async (req, res) => {
             SELECT a.id, a.note, a.commentaire, a.reponse_admin, a.created_at, u.nom, u.prenom 
             FROM avis a
             INNER JOIN Utilisateur u ON a.numUtilisateur = u.numUtilisateur
-            WHERE a.vin_id = ?
+            WHERE a.vin_id = ? AND a.valider = TRUE
             ORDER BY a.created_at DESC
         `;
         const [rows] = await db.query(query, [vinId]);
@@ -24,18 +24,18 @@ exports.getAvisByVin = async (req, res) => {
 };
 
 // =========================================================================
-// 2. RÉCUPÉRER LES AVIS D'UNE PRESTATION
+// 2. RÉCUPÉRER LES AVIS D'UNE PRESTATION (Uniquement les avis validés)
 // =========================================================================
 exports.getAvisByPrestation = async (req, res) => {
     try {
         const { prestationId } = req.params;
-        if (! prestationId) return res.status(400).json({ error: "L'identifiant de la prestation est requis." });
+        if (!prestationId) return res.status(400).json({ error: "L'identifiant de la prestation est requis." });
 
         const query = `
             SELECT a.id, a.note, a.commentaire, a.reponse_admin, a.created_at, u.nom, u.prenom 
             FROM avis a
             INNER JOIN Utilisateur u ON a.numUtilisateur = u.numUtilisateur
-            WHERE a.prestation_id = ?
+            WHERE a.prestation_id = ? AND a.valider = TRUE
             ORDER BY a.created_at DESC
         `;
         const [rows] = await db.query(query, [prestationId]);
@@ -53,7 +53,7 @@ exports.getAllAvisGlobal = async (req, res) => {
     try {
         const query = `
             SELECT 
-                a.id, a.numUtilisateur, a.vin_id, a.prestation_id, a.note, a.commentaire, a.reponse_admin, a.created_at,
+                a.id, a.numUtilisateur, a.vin_id, a.prestation_id, a.note, a.commentaire, a.reponse_admin, a.valider, a.created_at,
                 u.nom, u.prenom,
                 v.name AS vin_nom,     
                 p.nom AS prestation_nom
@@ -89,11 +89,11 @@ exports.createAvis = async (req, res) => {
         }
 
         const query = `
-            INSERT INTO avis (numUtilisateur, vin_id, prestation_id, note, commentaire) 
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO avis (numUtilisateur, vin_id, prestation_id, note, commentaire, valider) 
+            VALUES (?, ?, ?, ?, ?, FALSE)
         `;
         await db.query(query, [numUtilisateur, vin_id || null, prestation_id || null, note, commentaire.trim()]);
-        return res.status(201).json({ message: "Votre avis a été ajouté avec succès !" });
+        return res.status(201).json({ message: "Votre avis a été soumis avec succès ! Il apparaîtra après validation par un administrateur." });
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ error: "Vous avez déjà laissé un avis sur cet élément !" });
@@ -113,7 +113,7 @@ exports.getAvisByUtilisateur = async (req, res) => {
 
         const query = `
             SELECT 
-                a.id, a.vin_id, a.prestation_id, a.note, a.commentaire, a.reponse_admin, a.created_at,
+                a.id, a.vin_id, a.prestation_id, a.note, a.commentaire, a.reponse_admin, a.valider, a.created_at,
                 v.name AS vin_nom,     
                 p.nom AS prestation_nom
             FROM avis a
@@ -146,14 +146,14 @@ exports.updateAvis = async (req, res) => {
             return res.status(400).json({ error: "La note doit être comprise entre 1 et 5." });
         }
 
-        const query = `UPDATE avis SET note = ?, commentaire = ? WHERE id = ?`;
+        const query = `UPDATE avis SET note = ?, commentaire = ?, valider = FALSE WHERE id = ?`;
         const [result] = await db.query(query, [note, commentaire.trim(), id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).json({ error: "Avis introuvable ou aucune modification effectuée." });
         }
 
-        return res.status(200).json({ message: "Avis mis à jour avec succès !" });
+        return res.status(200).json({ message: "Avis modifié avec succès ! Il sera ré-examiné par l'administrateur." });
     } catch (err) {
         console.error("❌ Erreur dans updateAvis:", err.message);
         return res.status(500).json({ error: "Erreur interne lors de la modification de l'avis." });
@@ -204,5 +204,28 @@ exports.respondAsAdmin = async (req, res) => {
     } catch (err) {
         console.error("❌ Erreur dans respondAsAdmin:", err.message);
         return res.status(500).json({ error: "Erreur interne lors de l'enregistrement de la réponse admin." });
+    }
+};
+
+// =========================================================================
+// 9. COHÉRENCE DU PANEL ADMIN : MODÉRATION / VALIDATION
+// =========================================================================
+exports.validateAvis = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { accept } = req.body; // attend un booléen : true pour valider, false pour rejeter
+
+        if (accept) {
+            const query = `UPDATE avis SET valider = TRUE WHERE id = ?`;
+            await db.query(query, [id]);
+            return res.status(200).json({ message: "Avis approuvé et publié !" });
+        } else {
+            const query = `DELETE FROM avis WHERE id = ?`;
+            await db.query(query, [id]);
+            return res.status(200).json({ message: "Avis rejeté et supprimé." });
+        }
+    } catch (err) {
+        console.error("❌ Erreur dans validateAvis:", err.message);
+        return res.status(500).json({ error: "Erreur lors de la modération de l'avis." });
     }
 };

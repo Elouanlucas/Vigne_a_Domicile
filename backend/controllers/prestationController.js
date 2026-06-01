@@ -231,3 +231,34 @@ exports.getAgendaDetails = async (req, res) => {
         res.status(500).json({ message: "Erreur lors de la récupération de l'agenda" });
     }
 };
+
+// --- DÉSINSCRIRE / SUPPRIMER UN PARTICIPANT D'UNE PRESTATION ---
+exports.deleteParticipantFromPrestation = async (req, res) => {
+    // Seul l'admin peut retirer quelqu'un d'un événement
+    if (req.user.role !== 'admin') {
+        return res.status(403).json({ message: "Accès refusé" });
+    }
+
+    const { prestationId, userEmail } = req.params;
+
+    try {
+        // 1. On récupère la ligne de commande_prestations liée à l'email de l'utilisateur
+        const sqlDelete = `
+            DELETE cp FROM commande_prestations cp
+            JOIN commandes c ON cp.commande_id = c.id
+            JOIN Utilisateur u ON c.numUtilisateur = u.numUtilisateur
+            WHERE cp.prestation_id = ? AND u.email = ?
+        `;
+
+        const [result] = await db.execute(sqlDelete, [prestationId, userEmail]);
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Réservation ou utilisateur non trouvé pour cette prestation." });
+        }
+
+        res.status(200).json({ message: "Le participant a été retiré avec succès de cette prestation." });
+    } catch (error) {
+        console.error("Erreur SQL deleteParticipantFromPrestation:", error);
+        res.status(500).json({ message: "Erreur lors de la suppression du participant" });
+    }
+};

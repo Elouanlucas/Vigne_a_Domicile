@@ -53,7 +53,6 @@ function Inscription() {
             const data = await response.json();
 
             if (response.ok) {
-                alert("Inscription réussie !");
                 navigate('/connexion');
             } else {
                 // Le backend renvoie maintenant des messages précis (ex: "Email déjà utilisé")
