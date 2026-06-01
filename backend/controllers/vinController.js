@@ -96,3 +96,13 @@ exports.updateStock = async (req, res) => {
         res.status(500).json({ error: "Erreur lors de la mise à jour du stock" });
     }
 };
+
+exports.recommandations = async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM vins WHERE recommandations = 1');
+        res.json(rows);
+    } catch (err) {
+        console.error("Erreur SQL recommandations:", err);
+        res.status(500).json({ message: "Erreur lors de la récupération des recommandations" });
+    }
+};
