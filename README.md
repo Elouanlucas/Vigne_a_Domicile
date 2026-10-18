@@ -1,70 +1,79 @@
-# Getting Started with Create React App
+# 🍇 Vigne à Domicile
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+> 🎓 **Projet d'Études** — Réalisé dans un cadre académique pour mettre en pratique le développement d'applications web modernes avec **React**.
 
-## Available Scripts
+**Vigne à Domicile** est une application web front-end permettant de consulter un catalogue de produits viticoles et de gérer un panier d'achats en ligne.
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## 🚀 Fonctionnalités
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Catalogue dynamique** : Consultation de la liste des vins et offres disponibles.
+- **Gestion du Panier** : Ajout, suppression et suivi des articles sélectionnés.
+- **Mode Sombre / Mode Black** : Basculement de thème pour un meilleur confort visuel.
+- **Navigation multi-pages** :
+  - Accueil / Catalogue
+  - Panier
+  - À propos
+- **Gestion d'état globale** : Utilisation du React Context pour l'état du thème et du panier.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🛠️ Stack Technique
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Front-end** : React (Create React App)
+- **Langage** : JavaScript (ES6+)
+- **Styles** : CSS3 / SCSS
+- **Versionning** : Git & GitHub
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📁 Structure du Projet
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```text
+Vigne_a_Domicile/
+├── public/           # Fichiers publics et index.html
+└── src/
+    ├── assets/       # Images, logos et ressources graphiques
+    ├── components/   # Composants React réutilisables
+    ├── context/      # Contextes React (Gestion du thème, panier, etc.)
+    ├── datas/        # Données de test / Mocks (fichiers JSON/JS)
+    ├── pages/        # Composants de pages (Accueil, Panier, À propos)
+    ├── styles/       # Styles globaux et modules CSS/SCSS
+    └── index.js      # Point d'entrée principal de l'application
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 💻 Installation et Lancement
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Prérequis
+- [Node.js](https://nodejs.org/) (version 16 ou supérieure recommandée)
+- `npm` ou `yarn`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 1. Cloner le projet
+```bash
+git clone https://github.com/Elouanlucas/Vigne_a_Domicile.git
+cd Vigne_a_Domicile
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2. Installer les dépendances
+```bash
+npm install
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3. Démarrer l'application
+```bash
+npm start
+```
+L'application s'ouvrira automatiquement sur [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📦 Scripts Disponibles
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Dans le répertoire du projet, vous pouvez exécuter :
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- `npm start` : Lance l'application en mode développement.
+- `npm test` : Exécute les tests interactifs.
+- `npm run build` : Assemble l'application pour la production dans le dossier `build`.
